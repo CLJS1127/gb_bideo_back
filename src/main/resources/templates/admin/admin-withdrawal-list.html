@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 출금 승인 목록</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="admin-lnb"></div>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <span class="current">출금 승인 목록</span>
+        </div>
+        <header class="mb-32">
+            <h1 class="fs-24 fw-800 text-main">출금 승인 목록</h1>
+            <p class="text-sub fs-14">아티스트들의 출금 요청 내역을 검토하고 승인합니다.</p>
+        </header>
+
+        <section class="content-card">
+            <div class="list-controls">
+                <div class="search-wrapper">
+                    <label for="withdrawal-search"><i data-lucide="search"></i></label>
+                    <input type="text" id="withdrawal-search" class="search-input" placeholder="아티스트명 검색...">
+                </div>
+                <div class="filter-group">
+                    <button class="btn-filter active">전체</button>
+                    <button class="btn-filter">승인대기</button>
+                    <button class="btn-filter">승인완료</button>
+                </div>
+            </div>
+
+            <table class="bideo-table">
+                <thead>
+                    <tr>
+                        <th class="text-center col-id">요청번호</th>
+                        <th>아티스트</th>
+                        <th class="text-center">신청 금액</th>
+                        <th class="text-center">실 수령액</th>
+                        <th class="text-center col-status">상태</th>
+                        <th class="text-center col-action">상세</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center col-id">WDL-772</td>
+                        <td class="fw-700">
+                            <div class="text-truncate">Artist_Zio</div>
+                        </td>
+                        <td class="text-center">₩ 850,000</td>
+                        <td class="text-success fw-700 text-center">₩ 821,950</td>
+                        <td class="text-center col-status"><span class="status-badge status-pending">승인대기</span></td>
+                        <td class="text-center col-action">
+                            <button class="action-btn" onclick="location.href='admin-withdrawal-detail.html?status=pending'"><i data-lucide="chevron-right"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center col-id">WDL-771</td>
+                        <td class="fw-700">
+                            <div class="text-truncate">Modern_Art_Master</div>
+                        </td>
+                        <td class="text-center">₩ 2,100,000</td>
+                        <td class="text-success fw-700 text-center">₩ 2,030,700</td>
+                        <td class="text-center col-status"><span class="status-badge status-active">승인완료</span></td>
+                        <td class="text-center col-action">
+                            <button class="action-btn" onclick="location.href='admin-withdrawal-detail.html?status=approved'"><i data-lucide="chevron-right"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center col-id">WDL-770</td>
+                        <td class="fw-700">
+                            <div class="text-truncate">Visual_Dreamer</div>
+                        </td>
+                        <td class="text-center">₩ 450,000</td>
+                        <td class="text-success fw-700 text-center">₩ 435,150</td>
+                        <td class="text-center col-status"><span class="status-badge status-urgent">반려됨</span></td>
+                        <td class="text-center col-action">
+                            <button class="action-btn" onclick="location.href='admin-withdrawal-detail.html?status=rejected'"><i data-lucide="chevron-right"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="../../static/js/admin/admin-service.js"></script>
+    <script src="../../static/js/admin/admin-layout.js"></script>
+    <script src="../../static/js/admin/admin-event.js"></script>
+
+    <!-- Common Confirmation Modal -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-body text-only">
+                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+                <div class="d-flex justify-end gap-12 mt-32">
+                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
+                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

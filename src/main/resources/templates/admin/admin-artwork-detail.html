@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 작품 상세 정보</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="admin-lnb"></div>
+
+    <main class="main-content">
+        <!-- 현재 위치 -->
+        <div class="breadcrumbs">
+            <a href="admin-artwork-list.html">작품 목록</a>
+            <i data-lucide="chevron-right"></i>
+            <span class="current">상세 정보</span>
+        </div>
+
+        <!-- 뒤로가기 버튼 -->
+        <a href="admin-artwork-list.html" class="btn-back">
+            <i data-lucide="arrow-left" class="w-16"></i>
+            목록으로 돌아가기
+        </a>
+
+        <!-- 타이틀, 서브 타이틀 -->
+        <header class="mb-40">
+            <div class="d-flex align-center gap-12 mb-8">
+                <span class="status-badge">상태 로딩중...</span>
+                <span class="text-muted fs-14">작품번호: #A-102</span>
+            </div>
+            <h1 class="fs-28 fw-800 text-main">작품 상세 내역</h1>
+        </header>
+
+        <!-- 상세 내역 (Grid) -->
+        <div class="detail-grid">
+            <div class="content-card">
+                <!-- Artwork Image Preview Section -->
+                <div class="info-section">
+                    <h2 class="info-title"><i data-lucide="eye" class="w-18"></i>작품 미리보기</h2>
+                    <div class="mt-16 cursor-pointer overflow-hidden border-radius-16" onclick="openImageModal('../../static/images/test/crocs.png')">
+                        <img src="../../static/images/test/crocs.png" alt="Artwork Preview" class="w-100 hover-scale transition-03" style="max-height: 400px; object-fit: cover;">
+                        <p class="text-center text-muted fs-12 mt-12">이미지를 클릭하면 확대해서 볼 수 있습니다.</p>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h2 class="info-title"><i data-lucide="image" class="w-18"></i>기본 정보</h2>
+                    <div class="info-row"><div class="info-label">작품명</div><div class="info-value">The Eternal Echo</div></div>
+                    <div class="info-row"><div class="info-label">아티스트</div><div class="info-value">Julian Kang</div></div>
+                    <div class="info-row"><div class="info-label">카테고리</div><div class="info-value">Digital Art / Abstract</div></div>
+                </div>
+                <div class="info-section mb-0">
+                    <h2 class="info-title"><i data-lucide="maximize" class="w-18"></i>기술 사양</h2>
+                    <div class="info-row"><div class="info-label">해상도</div><div class="info-value">8000 x 4500 px</div></div>
+                    <div class="info-row"><div class="info-label">용량</div><div class="info-value">24.5 MB</div></div>
+                </div>
+            </div>
+
+            <!-- 사이드 바 -->
+            <aside>
+                <div class="summary-card">
+                    <div class="label">관리 작업</div>
+                    <div class="value fs-18">작품 노출 설정</div>
+                    <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
+                    <!-- JS에서 동적으로 버튼 주입 예정 -->
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 공통 모달 -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-body text-only">
+                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+                <div class="d-flex justify-end gap-12 mt-32">
+                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
+                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 전시 중단 사유 모달 -->
+    <div class="modal-overlay" id="stop-exhibition-modal">
+        <div class="modal-container" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title fs-20 fw-800"><i data-lucide="alert-triangle" class="text-error mr-8"></i>전시 중단 처리</h2>
+                <button class="modal-close" onclick="BIDEO_LAYOUT.closeStopExhibitionModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="fs-14 text-sub mb-24">작품 전시를 중단하는 사유를 입력해주세요. 이 내용은 관리 기록에 저장됩니다.</p>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">중단 사유</label>
+                    <textarea class="admin-textarea" id="stop-reason" rows="4" placeholder="사유를 상세히 입력하세요 (예: 작가 요청, 부적절한 콘텐츠 등)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="BIDEO_LAYOUT.closeStopExhibitionModal()">취소</button>
+                <button class="btn-primary" id="btn-confirm-stop" onclick="BIDEO_LAYOUT.confirmStopExhibition()">중단 처리</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스크립트 -->
+    <script src="../../static/js/admin/admin-service.js"></script>
+    <script src="../../static/js/admin/admin-layout.js"></script>
+    <script src="../../static/js/admin/admin-event.js"></script>
+</body>
+</html>

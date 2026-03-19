@@ -1,0 +1,416 @@
+/* BIDEO Light SNS Style Auction Page */
+:root {
+    --bideo-white: #FFFFFF;
+    --bideo-light-gray: #F9F9F9;
+    --bideo-black: #111111;
+    --bideo-gold: #F0D999;
+    --bideo-gold-dark: #d4b870;
+    --text-main: #262626;
+    --text-sub: #8E8E8E;
+    --border-soft: #EFEFEF;
+    --red-live: #FF3040;
+}
+
+body {
+    background-color: #FFFFFF;
+    color: var(--text-main);
+    margin: 0;
+    padding-bottom: 40px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.detail-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--bideo-white);
+    min-height: 100vh;
+}
+
+/* ── Header ─────────────────────────────── */
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--bideo-gold);
+    padding: 2px;
+    background: #FFF;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.profile-text .user-name { font-size: 14px; font-weight: 700; color: var(--bideo-black); }
+.profile-text .user-meta { font-size: 12px; color: var(--text-sub); }
+
+.live-badge {
+    background: var(--red-live);
+    color: #FFF;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* ── Video Player ────────────────────────── */
+.post-media {
+    width: 100%;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+}
+
+.post-media video {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.media-label {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.55);
+    color: #FFF;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    letter-spacing: 0.4px;
+}
+
+
+/* ── Action Bar ──────────────────────────── */
+.post-actions {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.action-left { display: flex; gap: 18px; align-items: center; }
+.action-icon {
+    cursor: pointer;
+    color: var(--bideo-black);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+.action-icon:hover { color: var(--bideo-gold-dark); transform: scale(1.1); }
+
+.view-count {
+    font-size: 13px;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Body ────────────────────────────────── */
+.post-body {
+    padding: 16px 16px 40px 16px;
+}
+
+/* Title + meta */
+.post-title {
+    font-size: 21px;
+    font-weight: 800;
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+    color: var(--bideo-black);
+}
+
+.post-meta-row {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.post-meta-row span { display: flex; align-items: center; gap: 4px; }
+
+/* Section label */
+.section-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--bideo-gold-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 12px;
+}
+
+/* ── Video Spec Grid ─────────────────────── */
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.spec-card {
+    background: var(--bideo-light-gray);
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    transition: all 0.25s;
+}
+.spec-card:hover {
+    background: #FFF;
+    border-color: var(--bideo-gold);
+    box-shadow: 0 6px 20px rgba(240,217,153,0.15);
+}
+
+.spec-card .tag {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+.spec-card .val {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--bideo-black);
+}
+
+/* ── Auction Info Box ────────────────────── */
+.auction-box {
+    background: var(--bideo-light-gray);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-soft);
+    position: relative;
+    overflow: hidden;
+}
+.auction-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240,217,153,0.08) 0%, transparent 60%);
+}
+
+.auction-box .section-label { color: var(--bideo-gold-dark); margin-bottom: 20px; }
+
+.auction-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.auction-field .label {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-bottom: 4px;
+    font-weight: 600;
+}
+.auction-field .price {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--bideo-gold-dark);
+    letter-spacing: -0.5px;
+}
+.auction-field .unit {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    background: #fff;
+    padding: 6px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--border-soft);
+}
+.auction-divider {
+    border: none;
+    border-top: 1px solid var(--border-soft);
+    margin-bottom: 20px;
+}
+
+/* ── Countdown ───────────────────────────── */
+.countdown-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.deadline-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-sub);
+}
+
+.countdown-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.countdown-label {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.countdown-blocks {
+    display: flex;
+    gap: 6px;
+    flex: 1;
+}
+
+.cd-block {
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 8px 10px;
+    text-align: center;
+    flex: 1;
+}
+.cd-block .cd-num {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--bideo-black);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.cd-block .cd-unit {
+    font-size: 9px;
+    color: var(--text-sub);
+    font-weight: 600;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.cd-sep {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-sub);
+    align-self: center;
+    margin-bottom: 8px;
+}
+
+/* ── Bid Button ──────────────────────────── */
+.bid-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--bideo-black);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+}
+.bid-btn:hover { background: #333; }
+.bid-btn:active { transform: scale(0.98); }
+
+/* ── Artist Card ─────────────────────────── */
+.artist-card {
+    display: flex;
+    gap: 14px;
+    padding: 20px;
+    background: var(--bideo-light-gray);
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+    margin-bottom: 20px;
+    transition: all 0.25s;
+}
+.artist-card:hover {
+    border-color: var(--bideo-gold);
+    box-shadow: 0 6px 20px rgba(240,217,153,0.15);
+}
+
+.artist-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--bideo-gold);
+    padding: 2px;
+    background: #fff;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.artist-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.artist-info { flex: 1; min-width: 0; }
+.artist-info .artist-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--bideo-black);
+    margin-bottom: 3px;
+}
+.artist-info .artist-role {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 8px;
+}
+.artist-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.artist-tag {
+    font-size: 11px;
+    font-weight: 700;
+    background: #fff;
+    border: 1px solid var(--border-soft);
+    color: var(--text-sub);
+    padding: 3px 9px;
+    border-radius: 100px;
+}
+
+/* ── Artist Statement ────────────────────── */
+.artist-statement {
+    padding: 22px;
+    background: var(--bideo-light-gray);
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+    margin-bottom: 32px;
+}
+.artist-statement .quote-mark {
+    font-size: 40px;
+    line-height: 1;
+    color: var(--bideo-gold);
+    font-weight: 900;
+    margin-bottom: -8px;
+    display: block;
+}
+.artist-statement p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #444;
+    margin: 0;
+}
+

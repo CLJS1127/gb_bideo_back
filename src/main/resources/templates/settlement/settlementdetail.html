@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정산 상세</title>
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/src/main/resources/static/css/font.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/settlement/settlement.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/navigation.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/main.css">
+    <style>
+        .sd-page {
+            --sd-main: #f0d999;
+            --sd-main-soft: #f5f5f5;
+            --sd-main-deep: var(--fg);
+            --sd-main-line: var(--border);
+        }
+
+        .sd-page {
+            min-height: calc(100vh - 80px);
+            padding: 116px 24px 40px 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .sd-card {
+            width: min(100%, 500px);
+            margin: 0 auto;
+            background: #ffffff;
+        }
+
+        .sd-head {
+            position: relative;
+            border-bottom-width: 75px !important;
+            border-bottom-color: transparent !important;
+            padding-bottom: 0 !important;
+            min-height: 150px;
+            display: flex;
+            align-items: flex-start;
+            background: #ffffff;
+        }
+
+        .sd-head::after {
+            content: "";
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            top: 44px;
+            height: 1px;
+            background: var(--sd-main-line);
+        }
+
+        .sd-body {
+            margin-top: -74px;
+            position: relative;
+            z-index: 1;
+            background: #ffffff;
+            border-top-left-radius: 22px;
+            border-top-right-radius: 22px;
+            padding-top: 12px !important;
+            padding-bottom: 104px !important;
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sd-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sd-box {
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            margin-top: 0;
+            background: #ffffff !important;
+        }
+
+        .sd-title {
+            transform: translateY(10px);
+        }
+
+        .sd-btn {
+            margin-top: auto;
+            flex-shrink: 0;
+            background: var(--sd-main) !important;
+            color: #4f4120 !important;
+        }
+
+        .sd-line-b {
+            border-bottom-width: 1px !important;
+            border-bottom-color: var(--border) !important;
+        }
+
+        .sd-line-t {
+            border-top-width: 1px !important;
+            border-top-color: var(--border) !important;
+        }
+
+
+        .sd-deduct {
+            color: #a18a52 !important;
+        }
+
+        @media (max-width: 920px) {
+            .sd-page {
+                min-height: auto;
+                padding: 104px 16px 32px;
+                align-items: flex-start;
+            }
+
+            .sd-body {
+                margin-top: -62px;
+                border-top-left-radius: 18px;
+                border-top-right-radius: 18px;
+                min-height: auto;
+                padding-top: 10px !important;
+                padding-bottom: 64px !important;
+            }
+
+            .sd-head {
+                min-height: 132px;
+            }
+
+            .sd-head::after {
+                top: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="sd-page">
+        <div
+            class="sd-card bg-surface border border-border rounded-xl shadow-sm overflow-hidden border-2 border-primary/20">
+            <div class="sd-head px-5 sm:px-7 pt-5 sm:pt-6 pb-6 sm:pb-7 border-b border-border ">
+                <h3 class="sd-title text-base font-semibold">정산 결과</h3>
+            </div>
+            <div class="sd-body px-5 sm:px-7 py-5 sm:py-6 min-w-0 overflow-hidden">
+                <div class="sd-content">
+                    <div class="sd-box bg-primary/5 rounded-xl p-5 sm:p-6 text-center">
+                        <p class="text-sm text-muted mb-2">실수령 정산</p>
+                        <p class="sd-price text-3xl md:text-4xl font-bold text-primary">2,990,677<span
+                                class="text-lg font-normal text-muted">원</span></p>
+                    </div>
+                    <div class="sd-line-b flex justify-between items-center py-3 border-b border-border"><span
+                            class="text-sm text-muted">세전 정산</span><span class="font-medium">3,333,333<!-- -->원</span></div>
+                    <div class="space-y-3">
+                        <p class="text-sm font-medium text-fg">공제 내역</p>
+                        <div class="flex justify-between items-center text-sm py-1"><span class="text-muted">수수료</span><span
+                                class="sd-deduct font-medium">-<!-- -->127,499<!-- -->원</span></div>
+                        <div class="flex justify-between items-center text-sm py-1"><span class="text-muted">수수료</span><span
+                                class="sd-deduct font-medium">-<!-- -->100,441<!-- -->원</span></div>
+                        <div class="flex justify-between items-center text-sm py-1"><span class="text-muted">수수료</span><span
+                                class="sd-deduct font-medium">-<!-- -->6,928<!-- -->원</span></div>
+                        <div class="sd-line-t flex justify-between items-center text-sm pt-3 border-t border-border font-semibold">
+                            <span>공제 합계</span><span class="sd-deduct">-<!-- -->342,656<!-- -->원</span></div>
+                    </div>
+                    <div class="sd-line-t flex justify-between items-center py-3 border-t border-border"><span
+                            class="text-sm text-muted">실효세율</span><span class="font-medium">10.3<!-- -->%</span></div>
+                </div>
+                <button
+                    class="sd-btn w-full py-3 rounded-xl bg-surface-alt text-fg text-sm font-medium hover:bg-border transition-all">확인하기</button>
+            </div>
+        </div>
+    </main>
+
+
+</body>
+<script src="/src/main/resources/static/js/settlement/settlement.js"></script>
+<script src="/src/main/resources/static/js/main/navigation.js"></script>
+
+</html>

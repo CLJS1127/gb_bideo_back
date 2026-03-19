@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contest-preview</title>
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/main/contest-preview.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    
+    <div class="detail-container">
+        <!-- Instagram Style Header -->
+        <header class="post-header">
+            <div class="profile-info">
+                <div class="avatar">
+                    <img src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="Avatar" style="width:100%; height:100%; border-radius:50%;">
+                </div>
+                <div class="profile-text">
+                    <div class="user-name">bideo_official</div>
+                    <div class="user-meta">Seoul, Korea • 2시간 전</div>
+                </div>
+            </div>
+            <i data-lucide="more-horizontal" class="action-icon"></i>
+        </header>
+
+        <!-- Post Media (Actual Video & Poster) -->
+        <div class="post-media">
+            <span class="media-label">PROMO VIDEO</span>
+            <video controls autoplay muted loop>
+                <source src="/images/main_vidios/BIDEO_introduce_video.mp4" type="video/mp4">
+                브라우저가 비디오 태그를 지원하지 않습니다.
+            </video>
+        </div>
+
+        <div class="post-media">
+            <span class="media-label">OFFICIAL POSTER</span>
+            <img src="/images/BIDEO_LOGO/BIDEO.png" alt="Contest Poster">
+        </div>
+
+        <!-- Instagram Action Bar -->
+        <div class="post-actions">
+            <div class="action-left">
+                <i data-lucide="heart" class="action-icon"></i>
+                <i data-lucide="message-circle" class="action-icon"></i>
+                <i data-lucide="send" class="action-icon"></i>
+                <i data-lucide="message-square-warning"></i>
+            </div>
+            <i data-lucide="bookmark" class="action-icon"></i>
+        </div>
+
+        <!-- Content Area -->
+        <div class="post-body">
+            <h1 class="post-title">2024 BIDEO x 시네마틱 숏폼 크리에이티브 공모전</h1>
+
+            <!-- Grid -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="tag">Deadline</div>
+                    <div class="val">D-12 (04.30)</div>
+                </div>
+                <div class="info-card">
+                    <div class="tag">Awards</div>
+                    <div class="val">총 상금 3,000만원</div>
+                </div>
+                <div class="info-card">
+                    <div class="tag">Target</div>
+                    <div class="val">A뱃지 이상 참여 가능</div>
+                </div>
+                <div class="info-card">
+                    <div class="tag">Category</div>
+                    <div class="val">시네마틱, 숏폼</div>
+                </div>
+            </div>
+
+            <!-- Bulletin Board Style Description -->
+            <div class="post-description">
+                <p><b>[공모 주제]</b><br>당신만의 시각으로 재해석한 '도시의 밤'</p>
+                <p><b>[참여 방법]</b><br>1분 내외의 영상 제작 후 본 게시글 하단의 참여하기 버튼을 통해 작품을 접수하세요.</p>
+                <p><b>[심사 기준]</b><br>창의성(40%), 기술력(30%), 대중성(30%)</p>
+                <p>수상작은 BIDEO 메인 페이지 하이라이트 섹션에 1개월간 전시되며, 오프라인 갈라 상영회 초대권이 부여됩니다.</p>
+            </div>
+
+            <!-- Additional Example Poster Image -->
+            <div class="post-media bottom-poster">
+                <span class="media-label">SUB POSTER</span>
+                <img src="/images/BIDEO_LOGO/BIDEO.png" alt="Example Poster">
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Bottom Button -->
+    <div class="apply-container">
+        <button class="btn-participate">
+            <i data-lucide="edit-3" class="w-18"></i>
+            이 공모전에 참여하기
+        </button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

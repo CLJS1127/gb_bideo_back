@@ -1,0 +1,182 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* ── Search Filter Bar ── */
+.search-filter-wrap {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin: 20px auto;
+    max-width: 1060px;
+}
+
+.search-filter-bar {
+    display: flex;
+    align-items: center;
+    height: 52px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    height: 100%;
+    padding: 0 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 14px;
+    color: #888;
+    text-align: left;
+    position: relative;
+    transition: background 0.15s;
+}
+
+.filter-item:hover {
+    background: #fafafa;
+}
+
+.filter-item + .filter-item {
+    border-left: 1px solid #e0e0e0;
+}
+
+.filter-item .filter-icon {
+    width: 18px;
+    height: 18px;
+    color: #999;
+    flex-shrink: 0;
+}
+
+.filter-item .filter-label {
+    flex: 1;
+    font-size: 14px;
+    color: #aaa;
+}
+
+.filter-item .chevron-icon {
+    width: 16px;
+    height: 16px;
+    color: #bbb;
+}
+
+/* Search input item */
+.filter-item.search-item {
+    flex: 1.5;
+}
+
+.filter-item.search-item input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    background: transparent;
+    font-family: inherit;
+}
+
+.filter-item.search-item input::placeholder {
+    color: #aaa;
+}
+
+/* 상세조건 */
+.filter-detail-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 20px;
+    height: 100%;
+    border: none;
+    border-left: 1px solid #e0e0e0;
+    background: none;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.filter-detail-btn:hover {
+    background: #fafafa;
+}
+
+.filter-detail-btn .plus-icon {
+    font-size: 16px;
+    font-weight: 300;
+    color: #888;
+    line-height: 1;
+}
+
+/* ── Empty State ── */
+.search-empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: #bbb;
+    font-size: 14px;
+}
+
+/* ── Floating Search Button ── */
+.floating-search-btn {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.4;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    transition: background 0.2s;
+    z-index: 100;
+}
+
+.floating-search-btn:hover {
+    background: #333;
+}
+
+.floating-search-btn .count-line {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.floating-search-btn .label-line {
+    font-size: 13px;
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+/* ── Dropdown Panel ── */
+.dropdown-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 300px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 200;
+    padding: 16px;
+}
+
+.filter-item.open .dropdown-panel {
+    display: block;
+}

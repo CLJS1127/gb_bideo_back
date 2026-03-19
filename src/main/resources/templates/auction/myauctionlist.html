@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 올린 경매 품목</title>
+    <link rel="stylesheet" href="/src/main/resources/static/css/auction/auctiondetails.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/common/font.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/main.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/navigation.css">
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/main/main.css">
+    <link rel="stylesheet" href="../../static/css/main/readable-main-classes.css">
+    <link rel="stylesheet" href="../../static/css/main/navigation.css">
+    <style>
+        .auction-list-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #8b7b57;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .auction-list-back svg {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+ 
+    <main class="auction-list-page">
+        <div class="auction-list-shell">
+            <header class="auction-list-header">
+                <button class="auction-list-back" type="button" onclick="history.back()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                        <path d="M14.78 5.22a.75.75 0 0 1 0 1.06L9.06 12l5.72 5.72a.75.75 0 1 1-1.06 1.06l-6.25-6.25a.75.75 0 0 1 0-1.06l6.25-6.25a.75.75 0 0 1 1.06 0Z"></path>
+                    </svg>
+                    <span>뒤로가기</span>
+                </button>
+                <h1 class="auction-list-title">내가 올린 경매 품목</h1>
+                <p class="auction-list-copy">내가 경매에 등록한 작품의 현재가, 입찰수, 남은 시간, 진행 상태를 확인할 수 있습니다.</p>
+            </header>
+
+            <section class="auction-list-board">
+                <div class="auction-list-head">
+                    <div>품목명</div>
+                    <div>현재가</div>
+                    <div>입찰수</div>
+                    <div>남은 시간</div>
+                    <div>상태</div>
+                </div>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/kream/auction.png" alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">BIDEO 리미티드 아트 포스터</h2>
+                            <p class="auction-item-meta">등록일 2026.03.11 · 카테고리 포스터</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">3,205,000원</div>
+                    <div class="auction-bid-count">12회</div>
+                    <div class="auction-time">01:42:18</div>
+                    <div class="auction-status"><span class="auction-status-badge">경매중</span></div>
+                </article>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">시그니처 브랜드 프레임 아트</h2>
+                            <p class="auction-item-meta">등록일 2026.03.10 · 카테고리 프레임</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">5,405,000원</div>
+                    <div class="auction-bid-count">8회</div>
+                    <div class="auction-time">04:16:52</div>
+                    <div class="auction-status"><span class="auction-status-badge">경매중</span></div>
+                </article>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/BIDEO_LOGO/favi_bideo_white.png"
+                                alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">에디션 무드 그래픽 세트</h2>
+                            <p class="auction-item-meta">등록일 2026.03.09 · 카테고리 그래픽</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">190,000원</div>
+                    <div class="auction-bid-count">17회</div>
+                    <div class="auction-time">07:08:33</div>
+                    <div class="auction-status"><span class="auction-status-badge">입찰대기</span></div>
+                </article>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/BIDEO_LOGO/BIDEO WHITE (1).jpg" alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">화이트 시네마 캔버스 컬렉션</h2>
+                            <p class="auction-item-meta">등록일 2026.03.08 · 카테고리 캔버스</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">860,000원</div>
+                    <div class="auction-bid-count">5회</div>
+                    <div class="auction-time">11:25:04</div>
+                    <div class="auction-status"><span class="auction-status-badge">종료</span></div>
+                </article>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/BIDEO_LOGO/BIDEO.png" alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">모션 타이포 한정 에디션</h2>
+                            <p class="auction-item-meta">등록일 2026.03.07 · 카테고리 모션그래픽</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">1,240,000원</div>
+                    <div class="auction-bid-count">14회</div>
+                    <div class="auction-time">종료됨</div>
+                    <div class="auction-status"><span class="auction-status-badge">종료</span></div>
+                </article>
+
+                <article class="auction-list-row">
+                    <div class="auction-item-main">
+                        <div class="auction-item-thumb">
+                            <img src="/src/main/resources/static/images/kream/new.jpg" alt="경매 작품 썸네일">
+                        </div>
+                        <div class="auction-item-text">
+                            <h2 class="auction-item-name">다큐멘터리 스틸 컷 컬렉션</h2>
+                            <p class="auction-item-meta">등록일 2026.03.06 · 카테고리 사진아트</p>
+                        </div>
+                    </div>
+                    <div class="auction-price">780,000원</div>
+                    <div class="auction-bid-count">9회</div>
+                    <div class="auction-time">종료됨</div>
+                    <div class="auction-status"><span class="auction-status-badge">종료</span></div>
+                </article>
+            </section>
+        </div>
+    </main>
+</body>
+
+<script src="../../static/js/main/modal-shared.js"></script>
+<script src="../../static/js/main/main.js"></script>
+<script src="../../static/js/main/closeup.js"></script>
+<script src="../../static/js/main/navigation.js"></script>
+<script src="../../static/js/main/auth-modal.js"></script>
+<script src="../../static/js/main/signup-modal.js"></script>
+
+</html>

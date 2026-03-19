@@ -1,0 +1,33 @@
+server:
+  port: 10000
+  servlet:
+    session:
+      tracking-modes: cookie
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/spring?serverTimezone=Asia/Seoul
+    username: bideo
+    password: 1234
+  session:
+    redis:
+      repository-type: indexed
+      flush-mode: immediate
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  cache:
+    type: redis
+
+mybatis:
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.app.bideo.domain; com.app.bideo.dto;
+  type-handlers-package: com.app.bideo.mybatis.handler
+  configuration:
+    map-underscore-to-camel-case: true
+
+# openssl rand -base64 32
+jwt:
+  secret: r4jL/gqxy2Gb9oT/BNj0xsHiij2hiWKobnmgD9Hrw+c=

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contest-register</title>
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/contest/contest-register.css">
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <!-- BIDEO Logo -->
+            <img class="bideo-logo" src="/images/BIDEO_LOGO/BIDEO-logo.png" width="40px">
+            <a href="#" class="nav-btn">홈</a>
+            <a href="#" class="nav-btn active">만들기</a>
+        </div>
+
+        <div class="nav-right">
+            <!-- Bell -->
+            <button class="nav-icon-btn" title="알림">
+                <svg viewBox="0 0 24 24"><path d="M12 24c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2zm8.1-6.7c-.7-.8-2.1-1.9-2.1-5.8 0-2.9-2-5.2-4.8-5.8V4.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v1.2C7.6 6.3 5.6 8.6 5.6 11.5c0 3.9-1.4 5-2.1 5.8-.3.3-.4.5-.4.7 0 .8.6 1 1.3 1h15.2c.7 0 1.3-.2 1.3-1 0-.2-.1-.4-.4-.7z"/></svg>
+            </button>
+            <!-- Message -->
+            <button class="nav-icon-btn" title="메시지">
+                <svg viewBox="0 0 24 24"><path d="M18 12.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 18 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 6 12.5M12 0C5.925 0 1 4.925 1 11c0 2.653.94 5.086 2.504 6.986L2 24l5.336-3.049A10.93 10.93 0 0 0 12 22c6.075 0 11-4.925 11-11S18.075 0 12 0"/></svg>
+            </button>
+            <!-- Profile -->
+            <button class="nav-icon-btn" title="프로필">
+                <img class="nav-avatar" src="/images/profile.png" alt="프로필" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <div class="pin-builder">
+            <!-- Builder Header -->
+            <div class="builder-header">
+                <div class="builder-header-left">
+                </div>
+                <button class="publish-btn" id="publishBtn">게시</button>
+            </div>
+
+            <!-- Builder Body -->
+            <div class="builder-body">
+                <!-- Left: Upload -->
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-placeholder">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
+                            </div>
+                            <p class="upload-text">파일을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
+                            <p class="upload-subtext">20MB 이하의 .jpg, .png, .gif 파일을<br>사용하는 것이 좋습니다.</p>
+                        </div>
+                        <img class="preview-image" id="previewImage" alt="미리보기">
+                        <input type="file" id="fileInput" accept="image/*">
+                    </div>
+                    <button class="save-from-url" id="saveFromUrl">URL에서 저장</button>
+                </div>
+
+                <!-- Right: Form -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>제목</label>
+                        <input type="text" placeholder="공모전 제목을 입력해주세요." maxlength="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label>기관</label>
+                        <input type="text" textarea placeholder="기관을 입력해주세요." maxlength="100"></textarea>
+                    </div>
+
+                    <div class="form-group"> 
+                        <label>공모기간</label>
+                    
+                            <div class="form-group" id="form"> 
+                                <label>접수 시작일</label>
+                                    <input type="date" id="startDate">
+                                <label>접수 마감일</label>
+                                    <input type="date" id="endDate">
+                                <label>결과 발표일</label>
+                                <input type="date">
+                                <div id="wrapper">
+                                        <button class="confirm-btn" onclick="checkDate()">확인</button>
+                                </div>
+                            </div>  
+                    </div>
+
+                    <div class="form-group">
+                        <label>목적 및 내용</label>
+                        <textarea placeholder="공모전의 상세 목적과 내용을 입력해주세요." maxlength="500"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>상금 및 부상</label>
+                        <input type="text" textarea placeholder="상금 및 부상을 작성해주세요." maxlength="100"></textarea>
+                    </div>
+                
+                    <div class="legal-notice">
+                        불법 촬영 콘텐츠 등을 게시하는 경우 Pinterest는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>       
+<script src="/js/contest/contest-register.js"></script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: rgba(0, 0, 0, 0.65);
+    font-family: inherit;
+}
+
+/* ── Modal Overlay ── */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+/* ── 1단계: 신고/차단/취소 시트 ── */
+.modal-sheet {
+    background: #fff;
+    width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.modal-sheet button {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.modal-sheet button:active {
+    background-color: #f0f0f0;
+}
+
+.modal-sheet button.danger {
+    color: #ED4956;
+    font-weight: 600;
+}
+
+.modal-sheet button.cancel {
+    color: #262626;
+}
+
+.modal-sheet button + button {
+    border-top: 1px solid #efefef;
+}
+
+/* ── [신고] 2단계: 신고 사유 선택 ── */
+.report-reason {
+    display: none;
+    background: #fff;
+    width: 560px;
+    max-height: 90vh;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.report-reason.active {
+    display: flex;
+}
+
+.report-reason-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-bottom: 1px solid #efefef;
+}
+
+.report-reason-header .close-btn {
+    position: absolute;
+    left: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    color: #262626;
+}
+
+.report-reason-header .close-btn:hover {
+    opacity: 0.6;
+}
+
+.report-reason-header h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.report-reason-body {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.report-reason-body .subtitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #262626;
+    padding: 20px 20px 12px;
+}
+
+.reason-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top: 1px solid #efefef;
+    cursor: pointer;
+    background: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    font-size: 14px;
+    color: #262626;
+}
+
+.reason-item:active {
+    background-color: #f7f7f7;
+}
+
+.reason-item .chevron {
+    color: #c7c7c7;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+/* ── [신고] 3단계: 신고 완료 ── */
+.report-complete {
+    display: none;
+    background: #fff;
+    width: 560px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.report-complete.active {
+    display: flex;
+}
+
+.report-complete-body {
+    padding: 32px 32px 24px;
+    text-align: center;
+}
+
+.report-complete-body .check-icon {
+    margin-bottom: 16px;
+}
+
+.report-complete-body h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #262626;
+    margin-bottom: 12px;
+}
+
+.report-complete-body .description {
+    font-size: 14px;
+    color: #737373;
+    line-height: 1.6;
+}
+
+.report-complete-body .description strong {
+    color: #262626;
+    font-weight: 600;
+}
+
+.report-complete-actions {
+    border-top: 1px solid #efefef;
+}
+
+.report-complete-actions .action-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid #efefef;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    color: #ED4956;
+    font-weight: 600;
+    text-align: left;
+}
+
+.report-complete-actions .action-link:last-child {
+    color: #262626;
+    font-weight: 400;
+}
+
+.report-complete-actions .action-link:active {
+    background-color: #f7f7f7;
+}
+
+.report-complete-actions .action-link .chevron {
+    color: #c7c7c7;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.close-complete-btn {
+    display: block;
+    width: calc(100% - 32px);
+    margin: 16px auto;
+    padding: 14px 0;
+    background: #4F46E5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.close-complete-btn:hover {
+    background: #4338CA;
+}
+
+/* ── [차단] 2단계: 차단 확인 모달 ── */
+.block-confirm {
+    display: none;
+    background: #fff;
+    width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.block-confirm.active {
+    display: flex;
+}
+
+.block-confirm-body {
+    padding: 24px 24px 20px;
+    text-align: center;
+}
+
+.block-confirm-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.block-confirm-desc {
+    font-size: 14px;
+    color: #737373;
+    line-height: 1.6;
+}
+
+.block-confirm-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.5;
+    border-top: 1px solid #efefef;
+}
+
+.block-confirm-btn:active {
+    background-color: #f0f0f0;
+}
+
+.block-confirm-btn.danger {
+    color: #ED4956;
+    font-weight: 600;
+}
+
+.block-confirm-btn.cancel {
+    color: #262626;
+}
+
+/* ── [차단] 3단계: 차단 완료 알림 ── */
+.block-done {
+    display: none;
+    background: #fff;
+    width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.block-done.active {
+    display: flex;
+}
+
+.block-done-body {
+    padding: 24px 24px 20px;
+    text-align: center;
+}
+
+.block-done-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #262626;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.block-done-desc {
+    font-size: 14px;
+    color: #737373;
+    line-height: 1.6;
+}
+
+.block-done-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+    line-height: 1.5;
+    border-top: 1px solid #efefef;
+    color: #262626;
+}
+
+.block-done-btn:active {
+    background-color: #f0f0f0;
+}

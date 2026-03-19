@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 진행중인 공모전 리스트</title>
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+    <link rel="stylesheet" href="/css/main/readable-main-classes.css">
+    <link rel="stylesheet" href="/css/main/navigation.css">
+    <link rel="stylesheet" href="/css/contest/contestlist.css">
+    <style>
+        .contest-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 0 14px;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #8f7943;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .contest-back svg {
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="contest-page">
+        <div class="contest-shell">
+            <section class="contest-header">
+                <button class="contest-back" type="button" onclick="history.back()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                        <path d="M14.78 5.22a.75.75 0 0 1 0 1.06L9.06 12l5.72 5.72a.75.75 0 1 1-1.06 1.06l-6.25-6.25a.75.75 0 0 1 0-1.06l6.25-6.25a.75.75 0 0 1 1.06 0Z"></path>
+                    </svg>
+                    <span>뒤로가기</span>
+                </button>
+                <h4 class="contest-title">내가 개최한 공모전 내역</h4>
+            </section>
+
+            <section class="contest-grid">
+                <article class="contest-item contest-panel">
+                    <div class="contest-item-thumb">
+                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
+                    </div>
+                    <div class="contest-item-body">
+                        <div class="contest-item-top">
+                            <span class="contest-badge">접수중</span>
+                            <span class="contest-dday">D-12</span>
+                        </div>
+                        <h2 class="contest-item-title">BIDEO 크리에이터 영상 공모전 2026</h2>
+                        <p class="contest-organizer">주최자 · BIDEO 운영팀</p>
+                        <div class="contest-single-meta">
+                            <div class="contest-meta-item">
+                                <p class="contest-meta-label">지원자</p>
+                                <p class="contest-meta-value">324명</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="contest-item contest-panel">
+                    <div class="contest-item-thumb">
+                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
+                    </div>
+                    <div class="contest-item-body">
+                        <div class="contest-item-top">
+                            <span class="contest-badge">종료</span>
+                            <span class="contest-dday">마감</span>
+                        </div>
+                        <h2 class="contest-item-title">전시 홍보 필름 공모전</h2>
+                        <p class="contest-organizer">주최자 · BIDEO 스튜디오</p>
+                        <div class="contest-single-meta">
+                            <div class="contest-meta-item">
+                                <p class="contest-meta-label">지원자</p>
+                                <p class="contest-meta-value">201명</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="contest-item contest-panel">
+                    <div class="contest-item-thumb">
+                        <img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="공모전 대표 이미지">
+                    </div>
+                    <div class="contest-item-body">
+                        <div class="contest-item-top">
+                            <span class="contest-badge">종료</span>
+                            <span class="contest-dday">마감</span>
+                        </div>
+                        <h2 class="contest-item-title">하은 챌린지 공모전</h2>
+                        <p class="contest-organizer">주최자 · 하은 크리에이티브</p>
+                        <div class="contest-single-meta">
+                            <div class="contest-meta-item">
+                                <p class="contest-meta-label">지원자</p>
+                                <p class="contest-meta-value">317명</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="contest-item contest-panel">
+                    <div class="contest-item-thumb">
+                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
+                    </div>
+                    <div class="contest-item-body">
+                        <div class="contest-item-top">
+                            <span class="contest-badge">접수중</span>
+                            <span class="contest-dday">D-09</span>
+                        </div>
+                        <h2 class="contest-item-title">준수 콜라보 캠페인 공모전</h2>
+                        <p class="contest-organizer">주최자 · 준수 프로젝트</p>
+                        <div class="contest-single-meta">
+                            <div class="contest-meta-item">
+                                <p class="contest-meta-label">지원자</p>
+                                <p class="contest-meta-value">189명</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="contest-item contest-panel">
+                    <div class="contest-item-thumb">
+                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
+                    </div>
+                    <div class="contest-item-body">
+                        <div class="contest-item-top">
+                            <span class="contest-badge">종료</span>
+                            <span class="contest-dday">마감</span>
+                        </div>
+                        <h2 class="contest-item-title">뮤직비디오 승민 공모전</h2>
+                        <p class="contest-organizer">주최자 · 승민 아트랩</p>
+                        <div class="contest-single-meta">
+                            <div class="contest-meta-item">
+                                <p class="contest-meta-label">지원자</p>
+                                <p class="contest-meta-value">142명</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </main>
+</body>
+
+
+<script src="/js/main/modal-shared.js"></script>
+<script src="/js/main/main.js"></script>
+<script src="/js/main/closeup.js"></script>
+<script src="/js/main/navigation.js"></script>
+<script src="/js/main/auth-modal.js"></script>
+<script src="/js/main/signup-modal.js"></script>
+</html>

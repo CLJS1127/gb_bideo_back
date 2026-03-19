@@ -1,0 +1,122 @@
+/* 스낵바 컨테이너 */
+.bideo-snackbar {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--snackbar-glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--snackbar-dark);
+    padding: 14px 32px;
+    border-radius: 100px;
+    box-shadow: var(--snackbar-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+    min-width: fit-content;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.bideo-snackbar.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 아이콘 및 메시지 */
+.bideo-snackbar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
+}
+
+.bideo-snackbar-message {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: #222;
+}
+
+/* 액션 버튼 */
+.bideo-snackbar-action {
+    margin-left: 12px;
+    padding: 8px 18px;
+    background: var(--snackbar-dark);
+    color: var(--snackbar-gold) !important;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.bideo-snackbar-action:hover {
+    background: #333;
+    transform: scale(1.05);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .bideo-snackbar {
+        bottom: 20px;
+        width: calc(100% - 20px);
+        max-width: 480px; 
+        padding: 12px 18px; 
+        gap: 12px; 
+        border-radius: 14px;
+        justify-content: flex-start; 
+    }
+    
+    .bideo-snackbar-message {
+        font-size: 13px;
+        white-space: normal;
+        line-height: 1.4;
+        text-align: left;
+        flex: 1;
+    }
+
+    .bideo-snackbar-action {
+        margin-left: 8px;
+        padding: 6px 12px;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+}
+
+/* 상태별 테마 및 애니메이션 */
+.bideo-snackbar.success i { color: #d4a017; }
+.bideo-snackbar.error i { color: #FF5252; }
+
+/* 경매 공통 테마 (Dark/Gold) */
+.bideo-snackbar.auction { background: var(--snackbar-dark); color: #fff; border-color: var(--snackbar-gold); }
+.bideo-snackbar.auction .bideo-snackbar-message { color: #fff; }
+.bideo-snackbar.auction .bideo-snackbar-icon { background: rgba(255,255,255,0.1); }
+.bideo-snackbar.auction i { color: var(--snackbar-gold); }
+
+/* 경매 낙찰 성공 (Premium Win Style) */
+.bideo-snackbar.auction-win { 
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    border: 2px solid var(--snackbar-gold);
+    box-shadow: 0 0 20px rgba(240, 217, 153, 0.4);
+}
+.bideo-snackbar.auction-win i { color: #FFD700; filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5)); }
+
+@keyframes bideo-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.bideo-snackbar.loading i { animation: bideo-spin 1.2s linear infinite; }

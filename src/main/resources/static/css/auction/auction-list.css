@@ -1,0 +1,247 @@
+:root {
+            --gestalt-theme: calico;
+            --gestalt-color-scheme: lightMode;
+            --base-font-family-default-latin: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
+        /* ── 경매 필터 탭 ─────────────────────────── */
+        .auction-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 458px 16px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .auction-filter-tabs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .auction-filter-tab {
+            padding: 8px 18px;
+            border-radius: 24px;
+            border: none;
+            background: #efefef;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            white-space: nowrap;
+        }
+
+        .auction-filter-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .auction-filter-tab.active {
+            background: #111;
+            color: #f0d999;
+        }
+
+        .auction-register-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 24px;
+            border: none;
+            background: #f0d999;
+            color: #5a471f;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+            white-space: nowrap;
+        }
+
+        .auction-register-btn:hover {
+            background: #e6cf88;
+        }
+
+        .auction-register-btn svg {
+            flex-shrink: 0;
+        }
+
+        /* ── 경매 카드 추가 스타일 ─────────────────── */
+        .auction-card-status {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .auction-card-status--live {
+            background: #FF3040;
+            color: #fff;
+        }
+
+        .auction-card-status--live::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #fff;
+            animation: blink 1.1s infinite;
+        }
+
+        .auction-card-status--upcoming {
+            background: rgba(0,0,0,0.55);
+            color: #f0d999;
+            backdrop-filter: blur(4px);
+        }
+
+        .auction-card-status--ended {
+            background: rgba(0,0,0,0.45);
+            color: #ccc;
+            backdrop-filter: blur(4px);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* 카드 하단 경매 정보 */
+        .auction-card-info {
+            padding: 6px 4px 10px;
+        }
+
+        .auction-card-title {
+            margin: 0 0 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #111;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .auction-card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .auction-card-price-wrap {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auction-card-price-label {
+            font-size: 10px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .auction-card-price {
+            font-size: 14px;
+            font-weight: 800;
+            color: #111;
+            letter-spacing: -0.02em;
+        }
+
+        .auction-card-price--ended {
+            color: #999;
+        }
+
+        .auction-card-time {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .auction-card-time-label {
+            font-size: 10px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .auction-card-time-val {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d9534f;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .auction-card-time-val--safe {
+            color: #333;
+        }
+
+        .auction-card-time-val--ended {
+            color: #aaa;
+        }
+
+        /* 오버레이 입찰 버튼 */
+        .auction-overlay-bid-btn {
+            display: block;
+            width: calc(100% - 24px);
+            margin: 0 auto;
+            padding: 10px;
+            background: #f0d999;
+            color: #5a471f;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.15s;
+        }
+
+        .auction-overlay-bid-btn:hover {
+            background: #e6cf88;
+        }
+
+        .auction-overlay-bid-btn--ended {
+            background: rgba(255,255,255,0.8);
+            color: #666;
+            cursor: default;
+        }
+
+        /* author row */
+        .auction-card-author-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+        }
+
+        .auction-card-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .auction-card-author-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #555;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .auction-card-bid-count {
+            font-size: 10px;
+            color: #aaa;
+            font-weight: 600;
+        }

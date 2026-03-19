@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIDEO - xsuxa_</title>
+<link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+<link rel="stylesheet" href="../../static/css/common/global.css">
+<link rel="stylesheet" href="../../static/css/common/buttons.css">
+<link rel="stylesheet" href="../../static/css/profile/profile.css">
+</head>
+<body data-owner="true">
+<!-- ========== MAIN ========== -->
+<input type="hidden" id="memberNo" value="">
+<div class="main-content">
+  <!-- Profile Header -->
+  <header class="profile-header">
+    <div class="profile-avatar-section">
+      <div class="profile-avatar" id="profileAvatar">
+        <svg class="camera-icon owner-only" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" opacity="0.7">
+          <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </div>
+    </div>
+    <div class="profile-info">
+      <div class="profile-username-row">
+        <h2 class="profile-username">xsuxa_</h2>
+        <div class="profile-badges owner-only" id="profileBadges"></div>
+        <svg class="settings-icon owner-only" onclick="openSettingsModal()" width="24" height="24" viewBox="0 0 24 24" fill="#262626">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/>
+        </svg>
+      </div>
+      <div class="profile-realname">이준수</div>
+      <div class="profile-stats">
+        <span>예술관 <span class="stat-number">5</span></span>
+        <a href="#" onclick="openFollowModalTab(event, 'followers')">팔로워 <span class="stat-number">311</span></a>
+        <a href="#" onclick="openFollowModalTab(event, 'following')">팔로우 <span class="stat-number">233</span></a>
+      </div>
+      <div class="profile-tags">
+        <span class="profile-tag">#베이커리</span>
+      </div>
+      <div class="profile-bio">감성 베이킹 & 일상 기록</div>
+    </div>
+  </header>
+  <!-- Action Buttons: Owner -->
+  <div class="action-buttons owner-only">
+    <a href="#" class="btn-secondary profile-action-btn" onclick="openEditModal(event)">프로필 편집</a>
+    <a href="#" class="btn-secondary profile-action-btn">대시보드 바로가기</a>
+  </div>
+  <!-- Action Buttons: Viewer -->
+  <div class="action-buttons viewer-only">
+    <button class="btn-primary profile-action-btn" id="followBtn"
+            onclick="toggleFollow()">팔로우</button>
+    <a href="#" class="btn-secondary profile-action-btn">메시지</a>
+  </div>
+  <!-- Story Highlights -->
+  <div class="video-gallery">
+    <li class="video-gallery-li" tabindex="-1">
+      <div class="video-gallery-outer">
+        <div class="video-gallery-padder">
+          <div class="video-gallery-button" role="button" tabindex="0">
+            <div class="canvas-parent">
+              <canvas class="ring-canvas" width="87" height="87" data-ring="grey"></canvas>
+              <div class="icon-container icon-container--jp">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="18" fill="#1a237e"/>
+                  <text x="18" y="22" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">UNIV</text>
+                </svg>
+              </div>
+            </div>
+            <div class="video-gallery-button__label">
+              <span class="video-gallery-button__label-text" dir="auto"><span>JP</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="video-gallery-li" tabindex="-1">
+      <div class="video-gallery-outer">
+        <div class="video-gallery-padder">
+          <div class="video-gallery-button" role="button" tabindex="0">
+            <div class="canvas-parent">
+              <canvas class="ring-canvas" width="87" height="87" data-ring="gradient" data-colors="#f0d999,#d4b96a,#111111"></canvas>
+              <div class="icon-container icon-container--un">
+                <svg width="36" height="36" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="18" fill="#29b6f6"/>
+                  <circle cx="18" cy="18" r="10" fill="none" stroke="#fff" stroke-width="1"/>
+                  <circle cx="18" cy="18" r="5" fill="none" stroke="#fff" stroke-width="0.5"/>
+                  <line x1="18" y1="4" x2="18" y2="32" stroke="#fff" stroke-width="0.5"/>
+                  <line x1="4" y1="18" x2="32" y2="18" stroke="#fff" stroke-width="0.5"/>
+                </svg>
+              </div>
+            </div>
+            <div class="video-gallery-button__label">
+              <span class="video-gallery-button__label-text" dir="auto"><span>UN</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="video-gallery-li owner-only" tabindex="-1">
+      <div class="video-gallery-outer">
+        <div class="video-gallery-padder">
+          <div class="video-gallery-button" role="button" tabindex="0">
+            <div class="canvas-parent">
+              <canvas class="ring-canvas" width="87" height="87"></canvas>
+              <div class="icon-container">
+                <svg aria-label="+ 아이콘" class="plus-icon" fill="currentColor"
+                     height="44" width="44" role="img" viewBox="0 0 24 24">
+                  <title>+ 아이콘</title>
+                  <path d="M21 11h-8V3a1 1 0 1 0-2 0v8H3a1 1 0 1 0 0 2h8v8a1 1 0 1 0 2 0v-8h8a1 1 0 1 0 0-2Z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="video-gallery-button__label">
+              <span class="video-gallery-button__label-text" dir="auto"><span>신규</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </div>
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <a href="#" class="tab-item active" data-tab="grid" onclick="switchTab(event, this)">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <rect x="1" y="1" width="6" height="6"/>
+        <rect x="9" y="1" width="6" height="6"/>
+        <rect x="17" y="1" width="6" height="6"/>
+        <rect x="1" y="9" width="6" height="6"/>
+        <rect x="9" y="9" width="6" height="6"/>
+        <rect x="17" y="9" width="6" height="6"/>
+        <rect x="1" y="17" width="6" height="6"/>
+        <rect x="9" y="17" width="6" height="6"/>
+        <rect x="17" y="17" width="6" height="6"/>
+      </svg>
+    </a>
+    <a href="#" class="tab-item owner-only" data-tab="saved" onclick="switchTab(event, this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/>
+      </svg>
+    </a>
+  </div>
+  <!-- Post Grid -->
+  <div class="post-grid">
+    <div class="post-item">
+      <div class="post-placeholder post-1"></div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+          <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+        </svg>
+    </div>
+    <div class="post-item">
+      <div class="post-placeholder post-2"></div>
+      <div class="post-overlay-icon"></div>
+    </div>
+    <div class="post-item">
+      <div class="post-placeholder post-3"></div>
+      <div class="post-overlay-icon"></div>
+    </div>
+    <div class="post-item">
+      <div class="post-placeholder post-4"></div>
+    </div>
+    <div class="post-item">
+      <div class="post-placeholder post-5"></div>
+      <div class="post-overlay-icon"></div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="#">소개</a> · <a href="#">도움말</a> · <a href="#">이용약관</a> · <a href="#">개인정보처리방침</a> · <a href="#">문의하기</a>
+    </div>
+    <div class="footer-bottom">
+      <span>한국어</span>
+      <span>© 2026 BIDEO</span>
+    </div>
+  </footer>
+</div>
+
+<!-- ========== OWNER-ONLY MODALS ========== -->
+
+<!-- Profile Edit Modal -->
+<div class="modal-overlay owner-only" id="editModal" onclick="closeModal('editModal', event)">
+  <div class="edit-modal">
+    <div class="edit-modal__top">
+      <button class="btn-close btn-close--ghost" onclick="closeModal('editModal')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path d="M15.18 12l7.16-7.16a2.25 2.25 0 10-3.18-3.18L12 8.82 4.84 1.66a2.25 2.25 0 10-3.18 3.18L8.82 12l-7.16 7.16a2.25 2.25 0 103.18 3.18L12 15.18l7.16 7.16a2.25 2.25 0 103.18-3.18z" fill="#111"/>
+        </svg>
+      </button>
+      <h3 class="edit-modal__title">프로필 편집</h3>
+      <button class="btn-text" type="button" onclick="saveProfile()">완료</button>
+    </div>
+    <form class="edit-modal__form" id="editProfileForm" onsubmit="return false;">
+      <div class="edit-modal__field">
+        <label class="edit-modal__label" for="editUsername">사용자 이름</label>
+        <input class="edit-modal__input" type="text" id="editUsername" name="username" placeholder="사용자 이름" maxlength="30">
+      </div>
+      <div class="edit-modal__field">
+        <label class="edit-modal__label" for="editRealname">이름</label>
+        <input class="edit-modal__input" type="text" id="editRealname" name="realname" placeholder="이름" maxlength="30">
+      </div>
+      <div class="edit-modal__field">
+        <label class="edit-modal__label" for="editBio">소개</label>
+        <textarea class="edit-modal__textarea" id="editBio" name="bio" placeholder="소개를 입력하세요" maxlength="150" rows="3"></textarea>
+      </div>
+      <div class="edit-modal__field">
+        <label class="edit-modal__label">태그</label>
+        <div class="edit-modal__tag-input-wrap">
+          <div class="edit-modal__tags" id="editTagList"></div>
+          <input class="edit-modal__tag-input" type="text" id="editTagInput"
+                 placeholder="#태그 입력 후 Enter" maxlength="20">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Avatar Modal -->
+<div class="modal-overlay owner-only" id="avatarModal" onclick="closeModal('avatarModal', event)">
+  <div class="avatar-modal">
+    <div class="avatar-modal__header">
+      <div class="avatar-modal__preview">
+        <button class="avatar-modal__preview-btn" title="프로필 사진">
+          <img class="avatar-modal__preview-img" alt="프로필 사진" src="">
+        </button>
+      </div>
+      <h3 class="avatar-modal__title">프로필 사진</h3>
+      <span class="avatar-modal__subtitle">BIDEO</span>
+    </div>
+    <div class="avatar-modal__actions">
+      <button class="btn-menu-item btn-menu-item--primary" onclick="document.getElementById('avatarFileInput').click()">사진 업로드</button>
+      <button class="btn-menu-item btn-menu-item--muted" onclick="closeModal('avatarModal')">취소</button>
+      <form style="display:none;">
+        <input id="avatarFileInput" accept="image/jpeg,image/png" type="file">
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Hub Modal -->
+<div class="modal-overlay owner-only" id="settingsModal" onclick="closeModal('settingsModal', event)">
+  <div class="settings-modal">
+    <h3 class="settings-modal__title">프로필 변경</h3>
+    <div class="settings-modal__actions">
+      <button class="btn-menu-item" onclick="openAvatarFromSettings()">프로필 사진 변경</button>
+      <button class="btn-menu-item" onclick="openFollowModal()">팔로우·팔로잉</button>
+      <button class="btn-menu-item" onclick="openBadgeModal()">뱃지 관리</button>
+      <button class="btn-menu-item" onclick="openPasswordModal()">패스워드 변경</button>
+      <button class="btn-menu-item" onclick="">카드 관리</button>
+      <button class="btn-menu-item btn-menu-item--muted" onclick="closeModal('settingsModal')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- Badge Modal -->
+<div class="modal-overlay modal-overlay--upper owner-only" id="badgeModal" onclick="closeModal('badgeModal', event)">
+  <div class="badge-modal">
+    <div class="badge-modal__top">
+      <button class="btn-close btn-close--ghost" onclick="closeModal('badgeModal')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path d="M15.18 12l7.16-7.16a2.25 2.25 0 10-3.18-3.18L12 8.82 4.84 1.66a2.25 2.25 0 10-3.18 3.18L8.82 12l-7.16 7.16a2.25 2.25 0 103.18 3.18L12 15.18l7.16 7.16a2.25 2.25 0 103.18-3.18z" fill="#111"/>
+        </svg>
+      </button>
+      <h3 class="badge-modal__title">뱃지 관리</h3>
+      <button class="btn-text" onclick="saveBadges()">완료</button>
+    </div>
+    <p class="badge-modal__hint">최대 2개 선택 가능</p>
+    <div class="badge-modal__grid" id="badgeGrid"></div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay modal-overlay--upper owner-only" id="passwordModal" onclick="closeModal('passwordModal', event)">
+  <div class="password-modal">
+    <div class="password-modal__top">
+      <button class="btn-close btn-close--ghost" onclick="closeModal('passwordModal')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path d="M15.18 12l7.16-7.16a2.25 2.25 0 10-3.18-3.18L12 8.82 4.84 1.66a2.25 2.25 0 10-3.18 3.18L8.82 12l-7.16 7.16a2.25 2.25 0 103.18 3.18L12 15.18l7.16 7.16a2.25 2.25 0 103.18-3.18z" fill="#111"/>
+        </svg>
+      </button>
+      <h3 class="password-modal__title">패스워드 변경</h3>
+      <button class="btn-text" onclick="savePassword()">완료</button>
+    </div>
+    <form class="password-modal__form" id="passwordForm" onsubmit="return false;">
+      <div class="password-modal__field">
+        <label class="password-modal__label" for="currentPassword">현재 비밀번호</label>
+        <input class="password-modal__input" type="password" id="currentPassword" placeholder="현재 비밀번호">
+      </div>
+      <div class="password-modal__field">
+        <label class="password-modal__label" for="newPassword">새 비밀번호</label>
+        <input class="password-modal__input" type="password" id="newPassword" placeholder="새 비밀번호">
+      </div>
+      <div class="password-modal__field">
+        <label class="password-modal__label" for="confirmPassword">새 비밀번호 확인</label>
+        <input class="password-modal__input" type="password" id="confirmPassword" placeholder="새 비밀번호 확인">
+      </div>
+      <p class="password-modal__error" id="passwordError"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ========== COMMON MODALS ========== -->
+
+<!-- Follow Modal -->
+<div class="modal-overlay modal-overlay--upper" id="followModal" onclick="closeModal('followModal', event)">
+  <div class="follow-modal">
+    <div class="follow-modal__top">
+      <button class="btn-close btn-close--ghost" onclick="closeModal('followModal')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path d="M15.18 12l7.16-7.16a2.25 2.25 0 10-3.18-3.18L12 8.82 4.84 1.66a2.25 2.25 0 10-3.18 3.18L8.82 12l-7.16 7.16a2.25 2.25 0 103.18 3.18L12 15.18l7.16 7.16a2.25 2.25 0 103.18-3.18z" fill="#111"/>
+        </svg>
+      </button>
+      <h3 class="follow-modal__title">팔로워</h3>
+      <span></span>
+    </div>
+    <div class="follow-modal__tabs">
+      <button class="follow-modal__tab active" data-follow-tab="followers" onclick="switchFollowTab(this)">팔로워</button>
+      <button class="follow-modal__tab" data-follow-tab="following" onclick="switchFollowTab(this)">팔로잉</button>
+    </div>
+    <div class="follow-modal__search">
+      <input class="follow-modal__search-input" type="text" placeholder="검색" oninput="filterFollowList(this.value)">
+    </div>
+    <div class="follow-modal__list" id="followList"></div>
+  </div>
+</div>
+
+<script src="../../static/js/profile/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매 등록</title>
+    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/font.css">
+    <link rel="stylesheet" href="../../static/css/auction/auction-register.css">
+</head>
+
+<body class="ar-body">
+
+    <!-- 배경 오버레이 -->
+    <div class="ar-backdrop" id="arBackdrop" onclick="closeModal()"></div>
+
+    <!-- 모달 -->
+    <div class="ar-modal" id="arModal">
+        <!-- 모바일 드래그 핸들 -->
+        <div class="ar-modal-handle"></div>
+
+        <!-- 모달 헤더 -->
+        <div class="ar-modal-header">
+            <button class="ar-close-btn" type="button" onclick="closeModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <h2 class="ar-title">경매 등록하기</h2>
+        </div>
+
+        <!-- 모달 바디 (스크롤 영역) -->
+        <div class="ar-modal-body">
+
+            <!-- 상품 카드 -->
+            <div class="ar-product-card">
+                <div class="ar-product-img-wrap">
+                    <img class="ar-product-img"
+                        src="../../static/images/BIDEO_LOGO/BIDEO_weight.png"
+                        alt="작품 이미지">
+                </div>
+                <div class="ar-product-info">
+                    <p class="ar-product-name-ko" id="productNameKo">BIDEO</p>
+                    <p class="ar-product-name-en" id="productNameEn">당신의 영상이 가치가 되는 곳, BIDEO</p>
+                </div>
+            </div>
+
+            <!-- 판매 희망가 -->
+            <div class="ar-section">
+                <div class="ar-section-row">
+                    <span class="ar-section-label">판매 희망가</span>
+                    <div class="ar-price-input-wrap">
+                        <input class="ar-price-input" type="text" id="sellPrice" value="100,000" placeholder="가격 입력" oninput="onPriceInput(this)" />
+                        <span class="ar-price-unit">원</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 수수료 안내 -->
+            <div class="ar-fee-section">
+                <div class="ar-fee-row">
+                    <span class="ar-fee-label">
+                        수수료
+                        <button class="ar-tooltip-btn" type="button" title="수수료 안내">?</button>
+                    </span>
+                    <span class="ar-fee-value ar-fee-value--minus" id="feeAmount">-9,350원</span>
+                </div>
+            </div>
+
+            <!-- 입찰 마감기한 -->
+            <div class="ar-section ar-deadline-section">
+                <div class="ar-section-header">
+                    <span class="ar-section-title">입찰 마감기한</span>
+                    <div class="ar-deadline-selected-wrap">
+                        <span class="ar-deadline-selected" id="deadlineSelected">0시간</span>
+                        <button class="ar-deadline-reset" type="button" onclick="resetDeadline()">초기화</button>
+                    </div>
+                </div>
+                <div class="ar-deadline-btns">
+                    <button class="ar-deadline-btn" type="button" data-hours="1" onclick="selectDeadline(this)">1시간</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="3" onclick="selectDeadline(this)">3시간</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="6" onclick="selectDeadline(this)">6시간</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="12" onclick="selectDeadline(this)">12시간</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="24" onclick="selectDeadline(this)">1일</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="168" onclick="selectDeadline(this)">7일</button>
+                    <button class="ar-deadline-btn" type="button" data-hours="720" onclick="selectDeadline(this)">1달</button>
+                </div>
+            </div>
+
+            <!-- 정산금액 -->
+            <div class="ar-settlement-section">
+                <div class="ar-settlement-row">
+                    <span class="ar-settlement-label">이용약관</span>
+                    <span class="ar-settlement-terms">희망가의 70% 넘어가면 취소 불가합니다.</span>
+                </div>
+            </div>
+
+            <!-- 정산금액 -->
+            <div class="ar-settlement-section">
+                <div class="ar-settlement-row">
+                    <span class="ar-settlement-label">정산금액</span>
+                    <span class="ar-settlement-value" id="settlementAmount">90,650원</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 모달 푸터 (고정 버튼) -->
+        <div class="ar-modal-footer">
+            <button class="ar-submit-btn" type="button" onclick="submitAuction()">
+                등록하기
+            </button>
+        </div>
+    </div>
+
+    <script src="../../static/js/auction/auction-register.js"></script>
+</body>
+
+</html>

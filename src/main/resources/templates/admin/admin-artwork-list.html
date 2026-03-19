@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 작품 목록</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="admin-lnb"></div>
+
+    <main class="main-content">
+        <!-- 현재 위치 -->
+        <div class="breadcrumbs">
+            <span class="current">작품 목록</span>
+        </div>
+
+        <!-- 타이틀, 서브 타이틀 -->
+        <header class="mb-32">
+            <h1 class="fs-24 fw-800 text-main">작품 목록</h1>
+            <p class="text-sub fs-14">BIDEO에 등록된 모든 예술 작품을 관리합니다.</p>
+        </header>
+
+        <!-- 컨텐츠 -->
+        <section class="content-card">
+
+            <!-- 컨텐츠 안 네비게이션 -->
+            <div class="list-controls">
+                <div class="search-wrapper">
+                    <label for="artwork-search"><i data-lucide="search"></i></label>
+                    <input type="text" id="artwork-search" class="search-input" placeholder="작품명 또는 아티스트 검색...">
+                </div>
+                <div class="filter-group">
+                    <button class="btn-filter active">전체</button>
+                    <button class="btn-filter">전시중</button>
+                    <button class="btn-filter">숨김</button>
+                </div>
+            </div>
+
+            <!-- 리스트 -->
+            <table class="bideo-table">
+                <thead>
+                    <tr>
+                        <th class="text-center col-id">번호</th>
+                        <th class="col-flexible">작품명</th>
+                        <th>아티스트</th>
+                        <th class="text-center">카테고리</th>
+                        <th class="text-center col-status">상태</th>
+                        <th class="text-center col-cnt">신고 누적 수</th>
+                        <th class="text-center col-action">상세</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center col-id">#A-102</td>
+                        <td class="fw-700 col-flexible">
+                            <div class="text-truncate-2">The Eternal Echo</div>
+                        </td>
+                        <td>Julian Kang</td>
+                        <td class="text-center">Digital Art</td>
+                        <td class="text-center col-status"><span class="status-badge status-active">전시중</span></td>
+                        <td class="text-center col-cnt">3</td>
+                        <td class="text-center col-action">
+                            <button class="action-btn" onclick="location.href='admin-artwork-detail.html?status=active'"><i data-lucide="chevron-right"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center col-id">#A-101</td>
+                        <td class="fw-700 col-flexible">
+                            <div class="text-truncate-2">Midnight Serenade</div>
+                        </td>
+                        <td>Sarah Chen</td>
+                        <td class="text-center">Painting</td>
+                        <td class="text-center col-status"><span class="status-badge status-urgent">숨김</span></td>
+                        <td class="text-center col-cnt">3</td>
+                        <td class="text-center col-action">
+                            <button class="action-btn" onclick="location.href='admin-artwork-detail.html?status=hidden'"><i data-lucide="chevron-right"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- 공통 모달 -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-body text-only">
+                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+                <div class="d-flex justify-end gap-12 mt-32">
+                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
+                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스크립트 -->
+    <script src="../../static/js/admin/admin-service.js"></script>
+    <script src="../../static/js/admin/admin-layout.js"></script>
+    <script src="../../static/js/admin/admin-event.js"></script>
+</body>
+</html>

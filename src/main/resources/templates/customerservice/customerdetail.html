@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO 고객센터 상세</title>
+    <link rel="stylesheet" th:href="@{/css/font.css}" href="/src/main/resources/static/css/common/font.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/customerservice/customerservice.css">
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="stylesheet" th:href="@{/css/customerservice/customerdetail.css}" href="/src/main/resources/static/css/customerservice/customerdetail.css">
+</head>
+<body>
+    <div class="detail-page">
+        <header class="help-header">
+            <a class="help-brand" href="/customerservice" aria-label="BIDEO 고객센터로 이동">
+                <img class="help-brand-logo" src="../../static/images/BIDEO_LOGO/BIDEO WHITE (1).jpg" th:src="@{/images/BIDEO_LOGO/BIDEO WHITE (1).jpg}" alt="BIDEO logo">
+                <span class="help-brand-text">고객센터</span>
+            </a>
+            <div class="header-actions">
+                <button class="locale-button" type="button" data-open-inquiry>문의하기</button>
+            </div>
+        </header>
+
+        <main class="detail-layout">
+            <aside class="help-sidebar" id="detail-categories" aria-labelledby="detail-sidebar-title">
+                <p class="sidebar-eyebrow">BIDEO Help Center</p>
+                <h1 id="detail-sidebar-title" class="sidebar-title"></h1>
+            </aside>
+
+            <div class="detail-main">
+                <div class="detail-shell">
+                    <nav class="breadcrumb" aria-label="Breadcrumb">
+                        <a href="#">알림</a>
+                    </nav>
+
+                    <header class="detail-heading">
+                        <h2>알림 설정</h2>
+                    </header>
+
+                    <section class="detail-accordion" aria-label="문서 목록">
+                        <article class="detail-article">
+                            <button class="detail-toggle" type="button" aria-expanded="false">
+                                <span>내 기기로 알림이 오는 이유</span>
+                                <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" aria-hidden="true">
+                                    <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.12l3.71-3.89a.75.75 0 1 1 1.08 1.04l-4.25 4.46a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z"></path>
+                                </svg>
+                            </button>
+                            <div class="detail-panel" hidden>
+                                <div class="article-copy">
+                                    <p>알림은 활동과 계정 상태에 따라 전송될 수 있습니다.</p>
+                                    <ul>
+                                        <li>누군가 회원님을 팔로우한 경우</li>
+                                        <li>회원님의 게시물에서 좋아요를 누르거나 댓글을 남긴 경우</li>
+                                        <li>누군가 댓글에서 회원님을 언급한 경우</li>
+                                        <li>누군가 메시지를 보낸 경우</li>
+                                        <li>누군가 라이브 방송을 시작한 경우</li>
+                                    </ul>
+                                    <p><a href="#">알림 설정 조정</a> 방법을 확인해보세요.</p>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="detail-article">
+                            <button class="detail-toggle" type="button" aria-expanded="false">
+                                <span>푸시 알림 관리하기</span>
+                                <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" aria-hidden="true">
+                                    <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.12l3.71-3.89a.75.75 0 1 1 1.08 1.04l-4.25 4.46a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z"></path>
+                                </svg>
+                            </button>
+                            <div class="detail-panel" hidden>
+                                <div class="article-copy">
+                                    <p>푸시 알림을 통해 관심 있을 만한 반응과 게시물에 대한 알림을 받을 수 있습니다.</p>
+                                    <p>푸시 알림을 일시 정지하거나 특정 알림 설정을 직접 관리할 수 있습니다.</p>
+                                    <h3>알림 설정 찾기</h3>
+                                    <ol>
+                                        <li>왼쪽 하단에서 더 보기를 클릭한 다음 설정을 클릭합니다.</li>
+                                        <li>왼쪽 메뉴에서 알림을 클릭합니다.</li>
+                                        <li>푸시 알림을 클릭하고 설정을 조정합니다.</li>
+                                    </ol>
+                                    <h3>특정 계정 알림 관리하기</h3>
+                                    <ol>
+                                        <li>알림을 관리하려는 계정을 찾습니다.</li>
+                                        <li>해당 프로필에서 알림을 누릅니다.</li>
+                                        <li>게시물, 스토리, 릴스 또는 라이브 방송을 눌러 관리합니다.</li>
+                                    </ol>
+                                    <h3>관련 도움말</h3>
+                                    <p><a href="#">앱 알림 끄기</a> 방법을 알아보세요.</p>
+                                    <p><a href="#">추천 알림 기준</a>을 알아보세요.</p>
+                                    <p><a href="#">푸시 알림 해제</a> 방법을 알아보세요.</p>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="inquiry-modal" id="inquiry-modal" hidden>
+        <div class="inquiry-backdrop" data-close-inquiry></div>
+        <section class="inquiry-dialog" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
+            <header class="inquiry-header">
+                <button class="inquiry-back" type="button" aria-label="이전으로" data-close-inquiry>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M14.78 5.22a.75.75 0 0 1 0 1.06L9.06 12l5.72 5.72a.75.75 0 1 1-1.06 1.06l-6.25-6.25a.75.75 0 0 1 0-1.06l6.25-6.25a.75.75 0 0 1 1.06 0Z"></path>
+                    </svg>
+                </button>
+                <div class="inquiry-heading">
+                    <h2 id="inquiry-title">자세히 이야기해주시겠어요?</h2>
+                    <p>이 양식은 피드백 수집만을 위한 것이며 답변이 제공되지 않습니다. 회원님 또는 다른 사람에 대한 개인정보를 포함하지 마세요.</p>
+                </div>
+                <button class="inquiry-close" type="button" aria-label="닫기" data-close-inquiry>
+                    <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                        <path d="M13.46 3.96a1 1 0 0 0-1.42-1.42L8 6.59 3.96 2.54a1 1 0 0 0-1.42 1.42L6.59 8l-4.05 4.04a1 1 0 1 0 1.42 1.42L8 9.41l4.04 4.05a1 1 0 0 0 1.42-1.42L9.41 8l4.05-4.04Z"></path>
+                    </svg>
+                </button>
+            </header>
+
+            <div class="inquiry-body">
+                <div class="inquiry-field">
+                    <textarea class="inquiry-textarea" id="inquiry-textarea" maxlength="500" placeholder="내용을 입력해주세요."></textarea>
+                    <p class="inquiry-count"><span id="inquiry-count">0</span>/500자</p>
+                </div>
+                <div class="inquiry-footer">
+                    <button class="inquiry-submit" type="button" data-submit-inquiry>제출</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="success-toast" id="success-toast" hidden>
+        <span class="success-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle>
+                <path d="M8.5 12.4l2.3 2.3 4.7-5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+        </span>
+        <div class="success-copy">
+            <strong>제출되었습니다</strong>
+            <p>의견이 정상적으로 전송되었습니다.</p>
+        </div>
+    </div>
+
+    <script th:src="@{/js/customerservice/customerdetail.js}" src="/src/main/resources/static/js/customerservice/customerdetail.js"></script>
+</body>
+</html>

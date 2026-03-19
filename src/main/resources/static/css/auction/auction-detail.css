@@ -1,0 +1,431 @@
+/* ────────── 리셋 ────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; font-family: inherit; background: none; border: none; }
+        ul { list-style: none; }
+
+        /* ────────── 기본 ────────── */
+        body {
+            background: #fff;
+            color: #111;
+            font-family: 'Pretendard', 'Noto Sans KR', -apple-system, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* ────────── 페이지 레이아웃 ────────── */
+        .page {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 32px 20px 80px;
+        }
+
+        /* 2열 그리드: 좌(영상+정보) / 우(입찰 패널) */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 36px;
+            align-items: start;
+        }
+
+        /* ══════════════════════════════
+           왼쪽 열
+        ══════════════════════════════ */
+        .col-main { min-width: 0; }
+
+        /* ── 영상 플레이어 ── */
+        .player-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #0d0d0d;
+            aspect-ratio: 16 / 9;
+        }
+        .player-wrap video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 썸네일 갤러리 스트립 */
+        .thumb-strip {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: none;
+        }
+        .thumb-strip::-webkit-scrollbar { display: none; }
+        .thumb-card {
+            flex-shrink: 0;
+            width: 112px;
+            height: 64px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            background: #0d0d0d;
+            transition: border-color 0.15s;
+        }
+        .thumb-card.active { border-color: #f0d999; }
+        .thumb-card video,
+        .thumb-card img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+        }
+
+        /* ── 작품 제목 · 메타 ── */
+        .work-header {
+            margin-top: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .work-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+        .work-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: #888;
+        }
+        .meta-item svg {
+            width: 14px; height: 14px;
+            stroke: currentColor; fill: none;
+            stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+        .meta-sep { color: #ddd; }
+
+        /* 좋아요·공유 버튼 */
+        .work-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+        }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border: 1px solid #eee;
+            border-radius: 100px;
+            font-size: 12px;
+            color: #555;
+            font-weight: 500;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .action-btn svg {
+            width: 14px; height: 14px;
+            stroke: currentColor; fill: none;
+            stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .action-btn:hover { border-color: #f0d999; color: #111; }
+
+        /* ── 아티스트/크리에이터 프로필 ── */
+        .creator-section {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .creator-avatar {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f0d999;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 800; color: #111;
+        }
+        .creator-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .creator-info { flex: 1; min-width: 0; }
+        .creator-name {
+            font-size: 16px; font-weight: 700; margin-bottom: 2px;
+        }
+        .creator-sub { font-size: 12px; color: #888; margin-bottom: 8px; }
+        .creator-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .creator-tag {
+            font-size: 11px; padding: 3px 10px;
+            border: 1px solid #eee; border-radius: 100px; color: #666;
+        }
+        .btn-follow {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border: 1.5px solid #111;
+            border-radius: 100px;
+            font-size: 13px; font-weight: 600;
+            transition: background 0.15s, color 0.15s;
+        }
+        .btn-follow:hover { background: #111; color: #f0d999; }
+
+        /* ── 작가의 말 ── */
+        .statement-section { padding: 22px 0; border-bottom: 1px solid #eee; }
+        .section-label {
+            font-size: 12px; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            color: #999; margin-bottom: 12px;
+        }
+        .statement-quote {
+            position: relative;
+            padding: 20px 24px;
+            background: #fafafa;
+            border-left: 3px solid #f0d999;
+            border-radius: 0 10px 10px 0;
+            font-size: 14px;
+            color: #444;
+            line-height: 1.85;
+            font-style: italic;
+        }
+        .statement-quote::before {
+            content: '\201C';
+            position: absolute; top: 10px; left: 14px;
+            font-size: 40px; color: #f0d999; line-height: 1;
+            font-style: normal;
+        }
+        .statement-source {
+            margin-top: 10px;
+            font-size: 11px; color: #bbb; text-align: right;
+        }
+
+        /* 작품 정보 */
+        .work-info-section { padding: 20px 0; }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #eee;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .info-cell {
+            background: #fff;
+            padding: 14px 16px;
+        }
+        .info-cell-label { font-size: 11px; color: #aaa; margin-bottom: 3px; }
+        .info-cell-value { font-size: 13px; font-weight: 600; color: #111; }
+
+        /* ══════════════════════════════
+           오른쪽: 경매 입찰 패널
+        ══════════════════════════════ */
+        .bid-panel {
+            position: sticky;
+            top: 24px;
+            border: 1px solid #eee;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        /* 패널 헤더 (LIVE 배지 + 마감까지) */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #111;
+            color: #fff;
+        }
+        .live-badge {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+        }
+        .live-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #f0d999;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.8); }
+        }
+        .panel-lot { font-size: 12px; color: #888; }
+
+        /* 카운트다운 */
+        .countdown-wrap {
+            padding: 16px 18px 14px;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .countdown-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .cd-unit {
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .cd-num {
+            font-size: 28px; font-weight: 800; letter-spacing: -0.03em;
+            color: #111; line-height: 1;
+            min-width: 52px; text-align: center;
+        }
+        .cd-lbl { font-size: 10px; color: #aaa; margin-top: 3px; }
+        .cd-sep {
+            font-size: 22px; font-weight: 800; color: #ddd;
+            align-self: flex-start; padding-top: 2px;
+        }
+        .deadline-date {
+            font-size: 11px; color: #bbb; margin-top: 8px; text-align: center;
+        }
+
+        /* 현재 최고가 */
+        .price-section {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .price-label { font-size: 11px; color: #aaa; margin-bottom: 4px; }
+        .price-value {
+            font-size: 30px; font-weight: 800;
+            letter-spacing: -0.04em; color: #111;
+        }
+        .price-unit { font-size: 16px; font-weight: 500; color: #888; margin-left: 2px; }
+        .bid-count-row {
+            display: flex; align-items: center; gap: 8px;
+            margin-top: 6px;
+        }
+        .bid-count {
+            font-size: 12px; color: #888;
+        }
+        .bid-count strong { color: #111; font-weight: 700; }
+
+        /* 입찰 단위 + 입력 */
+        .bid-input-section {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .bid-input-label { font-size: 11px; color: #aaa; margin-bottom: 8px; }
+        .bid-ctrl-wrap {
+            display: flex; align-items: stretch; gap: 0;
+            border: 1.5px solid #e0e0e0; border-radius: 10px;
+            overflow: hidden; margin-bottom: 8px;
+        }
+        .bid-ctrl-btn {
+            width: 44px;
+            background: #f8f8f8;
+            font-size: 20px; font-weight: 300; color: #444;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.12s;
+            flex-shrink: 0;
+        }
+        .bid-ctrl-btn:hover { background: #f0d999; color: #111; }
+        .bid-amount-display {
+            flex: 1;
+            text-align: center;
+            font-size: 18px; font-weight: 800;
+            color: #111;
+            padding: 10px 6px;
+            border-left: 1px solid #f0f0f0;
+            border-right: 1px solid #f0f0f0;
+        }
+        .bid-unit-row {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .bid-unit-info { font-size: 12px; color: #888; }
+        .bid-unit-info strong { color: #111; }
+        .est-purchase {
+            font-size: 12px; color: #aaa;
+        }
+        .est-purchase strong { color: #555; }
+
+        /* 입찰 버튼 영역 */
+        .bid-btn-section {
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .btn-bid-main {
+            width: 100%;
+            padding: 14px;
+            background: #111;
+            color: #f0d999;
+            font-size: 15px; font-weight: 800;
+            border-radius: 10px;
+            letter-spacing: 0.02em;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .btn-bid-main:hover { background: #222; }
+        .btn-bid-main:active { transform: scale(0.98); }
+        .btn-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-sub {
+            padding: 10px;
+            border: 1.5px solid #eee;
+            border-radius: 10px;
+            font-size: 12px; font-weight: 600; color: #444;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            transition: border-color 0.15s, color 0.15s;
+        }
+        .btn-sub svg {
+            width: 14px; height: 14px;
+            stroke: currentColor; fill: none;
+            stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .btn-sub:hover { border-color: #f0d999; color: #111; }
+        .btn-wish { color: #c44; }
+        .btn-wish:hover { border-color: #f5b5b5; background: #fff7f7; color: #c00; }
+
+        /* 판매자 정보 */
+        .seller-section {
+            padding: 14px 18px;
+        }
+        .seller-row {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+        }
+        .seller-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #f0d999;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 800; color: #111;
+            flex-shrink: 0;
+        }
+        .seller-info { flex: 1; min-width: 0; }
+        .seller-name { font-size: 13px; font-weight: 700; }
+        .seller-sub { font-size: 11px; color: #888; }
+        .seller-trust {
+            font-size: 10px; padding: 3px 8px;
+            border: 1px solid #f0d999; border-radius: 100px;
+            color: #b89a00; font-weight: 600;
+        }
+        .seller-btns { display: flex; gap: 6px; }
+        .seller-btn {
+            flex: 1;
+            padding: 7px 0;
+            border: 1px solid #eee; border-radius: 8px;
+            font-size: 11px; color: #555; font-weight: 500;
+            text-align: center;
+            transition: border-color 0.12s, color 0.12s;
+        }
+        .seller-btn:hover { border-color: #f0d999; color: #111; }
+
+        /* ── 반응형 ── */
+        @media (max-width: 860px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .bid-panel { position: static; }
+        }
+        @media (max-width: 560px) {
+            .work-title { font-size: 18px; }
+            .work-meta { gap: 10px; }
+            .work-actions { width: 100%; margin-left: 0; margin-top: 10px; }
+            .countdown-timer { gap: 4px; }
+            .cd-num { font-size: 22px; min-width: 40px; }
+            .info-grid { grid-template-columns: 1fr; }
+        }

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>알림 설정</title>
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/src/main/resources/static/css/notification/notification.css">
+</head>
+<body>
+    <div class="notification-page">
+        <header class="notification-header">
+            <button class="back-button" type="button" aria-label="뒤로가기">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                    <path d="M14.78 5.22a.75.75 0 0 1 0 1.06L9.06 12l5.72 5.72a.75.75 0 1 1-1.06 1.06l-6.25-6.25a.75.75 0 0 1 0-1.06l6.25-6.25a.75.75 0 0 1 1.06 0Z"></path>
+                </svg>
+            </button>
+            <h1>푸시 알림</h1>
+        </header>
+
+        <main class="notification-shell">
+            <section class="notification-group notification-inline">
+                <div class="group-copy">
+                    <h2>모두 일시 중단</h2>
+                    <p class="group-note">모든 푸시 알림을 잠시 받지 않습니다.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="switch-slider"></span>
+                </label>
+            </section>
+
+            <section class="notification-group">
+                <h2>팔로우</h2>
+                <div class="option-list" role="radiogroup" aria-label="팔로우 알림">
+                    <label class="option-item">
+                        <input type="radio" name="follow" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="follow" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="notification-group">
+                <h2>좋아요 및 찜</h2>
+                <div class="option-list" role="radiogroup" aria-label="좋아요 및 찜 알림">
+                    <label class="option-item">
+                        <input type="radio" name="likes_and_wishlist" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="likes_and_wishlist" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="notification-group">
+                <h2>댓글 및 멘션</h2>
+                <div class="option-list" role="radiogroup" aria-label="댓글 및 멘션 알림">
+                    <label class="option-item">
+                        <input type="radio" name="comments_and_mentions" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="comments_and_mentions" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="notification-group">
+                <h2>경매 알림</h2>
+                <div class="option-list" role="radiogroup" aria-label="경매 알림">
+                    <label class="option-item">
+                        <input type="radio" name="auction" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="auction" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="notification-group">
+                <h2>결제 및 정산</h2>
+                <div class="option-list" role="radiogroup" aria-label="결제 및 정산 알림">
+                    <label class="option-item">
+                        <input type="radio" name="payment_and_settlement" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="payment_and_settlement" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="notification-group">
+                <h2>공모전</h2>
+                <div class="option-list" role="radiogroup" aria-label="공모전 알림">
+                    <label class="option-item">
+                        <input type="radio" name="contest" value="off">
+                        <span class="radio-mark"></span>
+                        <span>해제</span>
+                    </label>
+                    <label class="option-item">
+                        <input type="radio" name="contest" value="on" checked>
+                        <span class="radio-mark"></span>
+                        <span>설정</span>
+                    </label>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="/src/main/resources/static/js/notification/notification.js"></script>
+</body>
+</html>

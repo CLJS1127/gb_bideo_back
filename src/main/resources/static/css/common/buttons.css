@@ -1,0 +1,399 @@
+/* ═══════════════════════════════════════════════════
+   BIDEO Button System — extracted from style-guide.html
+   ═══════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════
+   1. PRIMARY — 저장 / 핀 / CTA
+   ═══════════════════════════════════════════════ */
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 24px;
+    padding: 12px 25px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.btn-primary:hover {
+    background: color-mix(in srgb, var(--primary-color) 85%, black);
+}
+
+.btn-primary--lg {
+    min-height: 48px;
+    font-size: 16px;
+    padding: 12px 32px;
+}
+
+.btn-primary--full {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary--saved {
+    background: var(--secondary-color);
+    color: #fff;
+}
+
+.btn-primary--saved:hover {
+    background: color-mix(in srgb, var(--secondary-color) 80%, #333);
+}
+
+/* ═══════════════════════════════════════════════
+   2. SECONDARY — 상세보기 / 팔로우 / 보내기
+   ═══════════════════════════════════════════════ */
+.btn-secondary {
+    background: #efefef;
+    color: #111;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 25px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.btn-secondary:hover {
+    background: #e2e2e2;
+}
+
+.btn-secondary--sm {
+    min-height: 40px;
+    padding: 0 18px;
+    font-size: 14px;
+    border-radius: 999px;
+}
+
+.btn-secondary--active {
+    background: var(--secondary-color);
+    color: #fff;
+}
+
+.btn-secondary--active:hover {
+    background: color-mix(in srgb, var(--secondary-color) 80%, black);
+}
+
+.btn-secondary--cancel {
+    background: #efefef;
+    color: #ed4956;
+}
+
+.btn-secondary--cancel:hover {
+    background: #e2e2e2;
+}
+
+/* ═══════════════════════════════════════════════
+   3. ICON — 좋아요 / 공유 / 더보기
+   ═══════════════════════════════════════════════ */
+.btn-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #111;
+    transition: background 0.15s;
+}
+
+.btn-icon:hover {
+    background: #efefef;
+}
+
+.btn-icon--sm {
+    width: 36px;
+    height: 36px;
+}
+
+.btn-icon--xs {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-icon--active {
+    background: #3a3a35;
+    color: #fff;
+}
+
+.btn-icon--active:hover {
+    background: #2f2f2b;
+}
+
+.btn-icon--liked {
+    color: #e60023;
+}
+
+.btn-icon--liked:hover {
+    background: #efefef;
+}
+
+.btn-icon--glass {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.btn-icon--glass:hover {
+    background: #fff;
+}
+
+/* ═══════════════════════════════════════════════
+   4. SOCIAL — 소셜 로그인 (Google, Naver, Kakao)
+   ═══════════════════════════════════════════════ */
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 380px;
+    border: 1px solid #dadce0;
+    border-radius: 24px;
+    padding: 8px 16px;
+    background: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-social:hover {
+    background: #f7f8f8;
+}
+
+.btn-social__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.btn-social__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e0c8b0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.btn-social__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #3c4043;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-social__icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.btn-social--naver {
+    background: #03C75A;
+    border-color: #03C75A;
+    color: #fff;
+}
+
+.btn-social--naver:hover {
+    background: #02b350;
+}
+
+.btn-social--naver .btn-social__name {
+    color: #fff;
+}
+
+.btn-social--naver .btn-social__avatar {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-social--kakao {
+    background: #FEE500;
+    border-color: #FEE500;
+    color: #191919;
+}
+
+.btn-social--kakao:hover {
+    background: #ebd600;
+}
+
+.btn-social--kakao .btn-social__name {
+    color: #191919;
+}
+
+.btn-social--kakao .btn-social__avatar {
+    background: rgba(0, 0, 0, 0.08);
+    color: #191919;
+}
+
+/* ═══════════════════════════════════════════════
+   5. TEXT — 텍스트 링크 버튼
+   ═══════════════════════════════════════════════ */
+.btn-text {
+    background: none;
+    border: none;
+    color: #2b48d4;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-text:hover {
+    text-decoration: underline;
+}
+
+.btn-text--muted {
+    color: #767676;
+    font-weight: 400;
+}
+
+.btn-text--bold {
+    color: #211922;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.btn-text--bold:hover {
+    text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════════
+   6. PILL — 오버레이 / 태그
+   ═══════════════════════════════════════════════ */
+.btn-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    border: none;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    color: #111;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 0 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-pill:hover {
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.btn-pill--dark {
+    background: rgba(51, 51, 51, 0.8);
+    color: #fff;
+}
+
+.btn-pill--dark:hover {
+    background: rgba(51, 51, 51, 0.95);
+}
+
+/* ═══════════════════════════════════════════════
+   7. CLOSE — 닫기 버튼
+   ═══════════════════════════════════════════════ */
+.btn-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    cursor: pointer;
+    color: #111;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s;
+}
+
+.btn-close:hover {
+    background: #e8e8e8;
+}
+
+.btn-close--ghost {
+    background: none;
+    box-shadow: none;
+    width: 36px;
+    height: 36px;
+}
+
+.btn-close--ghost:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* ═══════════════════════════════════════════════
+   8. CARD SAVE — 카드 저장 (핀 카드용)
+   ═══════════════════════════════════════════════ */
+.btn-card-save {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 24px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.btn-card-save:hover {
+    background: color-mix(in srgb, var(--primary-color) 85%, black);
+}
+
+.btn-card-save--saved {
+    background: var(--secondary-color);
+    color: var(--active-text);
+}
+
+/* ═══════════════════════════════════════════════
+   9. MENU ITEM — 드롭다운 / 컨텍스트 메뉴
+   ═══════════════════════════════════════════════ */
+.btn-menu-item {
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #111;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.btn-menu-item:hover {
+    background: #f3f3f1;
+}
+
+/* ─── 반응형 ─── */
+@media (max-width: 600px) {
+    .btn-primary--lg { padding: 8px 16px; min-height: 40px; font-size: 14px; }
+    .btn-secondary { padding: 10px 16px; font-size: 14px; }
+    .btn-icon { width: 40px; height: 40px; }
+}

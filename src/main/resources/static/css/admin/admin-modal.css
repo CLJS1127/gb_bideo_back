@@ -1,0 +1,325 @@
+/* Admin Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* 확실하게 숨김 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show {
+    display: flex; /* 활성화 시만 표시 */
+    opacity: 1;
+}
+
+
+.modal-container {
+    background: #FFFFFF;
+    border-radius: 32px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh; /* 화면 높이의 90%로 제한 */
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15);
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 내부 헤더/푸터 고정을 위해 hidden 유지 */
+}
+
+.modal-overlay.show .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+.modal-header {
+    padding: 32px 40px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #F6F6F6;
+    flex-shrink: 0; /* 헤더 크기 고정 */
+}
+
+.modal-body {
+    padding: 32px 40px;
+    flex: 1; /* 남은 공간 차지 */
+    overflow-y: auto; /* 내용이 많으면 영역 내 스크롤 발생 */
+    /* 커스텀 셀렉트가 잘리는 문제는 z-index와 absolute 포지셔닝으로 해결해야 함 */
+}
+
+/* 스크롤바 스타일링 (핀터레스트 스타일) */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: #EEE;
+    border-radius: 10px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #DDD;
+}
+
+.modal-footer {
+    padding: 24px 40px 32px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    border-top: 1px solid #F6F6F6;
+    flex-shrink: 0; /* 푸터 크기 고정 */
+}
+
+.modal-footer button {
+    min-width: 100px;
+}
+
+/* Common Modal Close Button */
+.modal-close {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #888;
+}
+
+.modal-close:hover {
+    background: #F5F5F5;
+    color: #111;
+}
+
+.modal-close i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Form Styles inside Modal */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1px solid #EEE;
+    background: #FAFAFA;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none;
+    border-color: #111;
+    background: #FFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-textarea {
+    resize: none;
+    min-height: 120px;
+    line-height: 1.6;
+}
+
+/* Custom Select Component */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    user-select: none;
+    z-index: 10; /* 폼 요소 내에서 위로 오도록 설정 */
+}
+
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #FAFAFA;
+    border: 1px solid #EEE;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.custom-select-trigger:hover {
+    background: #F5F5F5;
+}
+
+.custom-select-wrapper.open .custom-select-trigger {
+    border-color: #111;
+    background: #FFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.custom-select-trigger i {
+    width: 18px;
+    height: 18px;
+    color: #888;
+    transition: transform 0.3s;
+}
+
+.custom-select-wrapper.open .custom-select-trigger i {
+    transform: rotate(180deg);
+    color: #111;
+}
+
+.custom-options {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #FFF;
+    border-radius: 16px;
+    border: 1px solid #EEE;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    padding: 8px;
+}
+
+.custom-select-wrapper.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.custom-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.custom-option:hover {
+    background: #F8F8F8;
+    color: #111;
+}
+
+.custom-option.selected {
+    background: #111;
+    color: var(--admin-primary);
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dot-active { background-color: #2E7D32; }
+.dot-inactive { background-color: #C53030; }
+
+.custom-option.selected .dot-active { background-color: var(--admin-primary); }
+.custom-option.selected .dot-inactive { background-color: var(--admin-primary); }
+
+.modal-title.danger {
+    color: #C53030;
+}
+
+.modal-desc {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    margin-top: 12px;
+}
+
+.modal-body.text-only {
+    padding: 40px;
+    text-align: center;
+}
+
+/* Image Preview Modal Specific */
+.modal-overlay.image-preview {
+    background: rgba(0, 0, 0, 0.9); /* 이미지를 위해 더 어두운 배경 */
+}
+
+.modal-container.image-only {
+    background: transparent;
+    box-shadow: none;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-container.image-only .modal-close {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    color: #FFF;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-container.image-only .modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #FFF;
+}
+
+.modal-image-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-image-wrapper img {
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.form-help {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+    display: block;
+    font-weight: 500;
+}

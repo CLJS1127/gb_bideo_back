@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO | Integrated Snackbar</title>
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/alarm/snackbar.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../../static/js/alarm/snackbar.js"></script>
+    <style>
+        body { background: #f4f4f4; padding: 40px 20px; font-family: 'Pretendard', sans-serif; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { font-size: 24px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .section { margin-bottom: 30px; }
+        .section h2 { font-size: 16px; color: #666; margin-bottom: 15px; }
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+        button { padding: 12px; border: 1px solid #ddd; border-radius: 10px; background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+        button:hover { background: #f0f0f0; border-color: #bbb; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>BIDEO Snackbar 통합 가이드</h1>
+
+    <!-- 찜/팔로우 -->
+    <div class="section">
+        <h2>활동 (찜, 팔로우, 좋아요)</h2>
+        <div class="btn-grid">
+            <button onclick="BideoSnackbar.show('예술관을 찜 목록에 추가했습니다.', 'heart', 3000, {label: '목록보기', url: '/gallery/wishlist'})">예술관 찜</button>
+            <button onclick="BideoSnackbar.show('예술관 찜을 취소했습니다.', 'info')">예술관 찜 취소</button>
+            <button onclick="BideoSnackbar.show('작품을 찜 목록에 추가했습니다.', 'heart', 3000, {label: '목록보기', url: '/work/wishlist'})">작품 찜</button>
+            <button onclick="BideoSnackbar.show('작품 찜을 취소했습니다.', 'info')">작품 찜 취소</button>
+            <button onclick="BideoSnackbar.show('작가를 팔로우했습니다.', 'follow', 3000, {label: '프로필보기', url: '/user/profile/1'})">팔로우</button>
+            <button onclick="BideoSnackbar.show('팔로우를 취소했습니다.', 'info')">팔로우 취소</button>
+            <button onclick="BideoSnackbar.show('작품을 좋아합니다.', 'like')">좋아요</button>
+            <button onclick="BideoSnackbar.show('좋아요를 취소했습니다.', 'info')">좋아요 취소</button>
+        </div>
+    </div>
+
+    <!-- 신고/차단/정산 -->
+    <div class="section">
+        <h2>신고, 차단, 정산</h2>
+        <div class="btn-grid">
+            <button onclick="BideoSnackbar.show('해당 사용자를 차단했습니다.', 'block', 3000, {label: '목록보기', url: '/user/blocklist'})">차단 완료</button>
+            <button onclick="BideoSnackbar.show('차단을 해제했습니다.', 'info')">차단 취소</button>
+            <button onclick="BideoSnackbar.show('신고가 접수되었습니다.', 'report', 3000, {label: '목록보기', url: '/user/reports'})">신고 완료</button>
+            <button onclick="BideoSnackbar.show('신고를 철회했습니다.', 'info')">신고 취소</button>
+            <button onclick="BideoSnackbar.show('정산 신청이 완료되었습니다.', 'settlement', 3000, {label: '내역보기', url: '/settlement/list'})">정산 신청</button>
+        </div>
+    </div>
+
+    <!-- 콘텐츠 작성 -->
+    <div class="section">
+        <h2>콘텐츠 작성</h2>
+        <div class="btn-grid">
+            <button onclick="BideoSnackbar.show('작품 작성이 완료되었습니다.', 'pen')">작품 작성 완료</button>
+            <button onclick="BideoSnackbar.show('예술관 작성이 완료되었습니다.', 'gallery')">예술관 작성 완료</button>
+            <button onclick="BideoSnackbar.show('작품 댓글이 등록되었습니다.', 'comment')">작품 댓글 성공</button>
+            <button onclick="BideoSnackbar.show('댓글 등록에 실패했습니다.', 'error')">작품 댓글 실패</button>
+            <button onclick="BideoSnackbar.show('예술관 댓글이 등록되었습니다.', 'comment')">예술관 댓글 성공</button>
+        </div>
+    </div>
+    <div></div>
+    <!-- 경매/결제 -->
+    <div class="section">
+        <h2>경매 및 결제</h2>
+        <div class="btn-grid">
+            <button onclick="BideoSnackbar.show('축하합니다! 최종 낙찰자로 선정되었습니다.', 'auction-win')">경매 낙찰 성공</button>
+            <button onclick="BideoSnackbar.show('입찰이 성공적으로 완료되었습니다.', 'auction')">경매 입찰 완료</button>
+            <button onclick="BideoSnackbar.show('입찰 실패. 다시 시도해주세요.', 'error')">경매 입찰 실패</button>
+            <button onclick="BideoSnackbar.show('결제가 취소되었습니다. 다시 시도해주세요.', 'error')">결제 취소</button>
+            <button onclick="BideoSnackbar.show('결제가 완료되었습니다.', 'payment', 3000, {label: '내역보기', url: '/payment/history'})">결제 완료</button>
+            <button onclick="BideoSnackbar.show('카드가 등록 되었습니다.', 'card')">카드 등록</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 페이지 로드 시 아이콘 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+</script>
+</body>
+</html>

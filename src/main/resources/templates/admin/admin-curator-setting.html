@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 메인 큐레이터 설정</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="admin-lnb"></div>
+
+    <main class="main-content">
+        <!-- 현재 위치 -->
+        <div class="breadcrumbs">
+            <span class="current">메인 큐레이터 설정</span>
+        </div>
+
+        <!-- 타이틀, 서브 타이틀 -->
+        <header class="mb-32">
+            <h1 class="fs-24 fw-800 text-main">메인 큐레이터 설정</h1>
+            <p class="text-sub fs-14">메인 페이지에서 작품을 추천하는 큐레이터의 정보와 테마를 관리합니다.</p>
+        </header>
+
+        <!-- 컨텐츠 -->
+        <section class="content-card">
+            <div class="info-section">
+                <h2 class="info-title"><i data-lucide="user-plus"></i> 현재 활성화된 큐레이터</h2>
+                
+                <!-- 리스트 -->
+                <table class="bideo-table">
+                    <thead>
+                        <tr>
+                            <th class="text-center col-id">순번</th>
+                            <th class="text-center col-flexible">큐레이터명</th>
+                            <th class="text-center col-flexible">추천 테마</th>
+                            <th class="text-center col-short">등록 작품수</th>
+                            <th class="text-center col-action">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center col-id">1</td>
+                            <td class="fw-700 text-center col-flexible">
+                                <span style="display: inline-block; text-align: left;">
+                                    <div class="text-truncate-2">Art Critic Kim</div>
+                                </span>
+                            </td>
+                            <td class="text-center col-flexible">
+                                <span style="display: inline-block; text-align: left;">
+                                    <div class="text-truncate-2">신진 작가 특별전</div>
+                                </span>
+                            </td>
+                            <td class="text-center col-short">12</td>
+                            <td class="text-center col-action">
+                                <button class="btn-secondary fs-12 p-8 btn-edit-curator">편집</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-40">
+                <button class="btn-primary w-200" id="btn-add-curator">새 큐레이터 등록</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Curator Modal (Registration/Edit) -->
+    <div class="modal-overlay" id="curator-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">새 큐레이터 등록</h2>
+                <button class="modal-close" onclick="closeCuratorModal()">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="curator-form">
+                    <div class="admin-form-group mb-24">
+                        <label class="admin-form-label">큐레이터명</label>
+                        <input type="text" class="admin-input" name="curatorName" placeholder="큐레이터의 이름을 입력하세요." required>
+                    </div>
+                    <div class="admin-form-group mb-24">
+                        <label class="admin-form-label">추천 테마</label>
+                        <input type="text" class="admin-input" name="themeTitle" placeholder="메인에 노출될 테마 제목을 입력하세요." required>
+                    </div>
+                    <div class="admin-form-group mb-24">
+                        <label class="admin-form-label">큐레이터 한줄 소개</label>
+                        <textarea class="admin-textarea" name="intro" rows="4" placeholder="큐레이터에 대한 짧은 소개글을 작성하세요."></textarea>
+                    </div>
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">상태 설정</label>
+                        <div class="admin-radio-group">
+                            <label class="admin-radio-label">
+                                <input type="radio" name="status" class="admin-radio-input" value="active" checked>
+                                <span>활성</span>
+                            </label>
+                            <label class="admin-radio-label">
+                                <input type="radio" name="status" class="admin-radio-input" value="inactive">
+                                <span>비활성</span>
+                            </label>
+                        </div>
+                        <small class="form-help mt-8 d-block text-muted fs-12">* '활성' 상태인 경우에만 메인 페이지에 노출됩니다.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCuratorModal()">취소</button>
+                <button class="btn-primary" id="btn-save-curator">저장하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 스크립트 -->
+    <script src="../../static/js/admin/admin-service.js"></script>
+    <script src="../../static/js/admin/admin-layout.js"></script>
+    <script src="../../static/js/admin/admin-event.js"></script>
+</body>
+</html>

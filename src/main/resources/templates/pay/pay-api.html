@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제</title>
+    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/pay/pay-api.css">
+
+    <script src="https://js.bootpay.co.kr/bootpay-5.0.2.min.js"></script>
+</head>
+<body>
+
+<div class="overlay" onclick="history.back()"></div>
+
+<div class="modal">
+    <!-- 핸들 -->
+    <div class="handle"></div>
+
+    <!-- 헤더 -->
+    <div class="modal-header">
+        <span class="modal-title">결제하기</span>
+        <button class="modal-close" onclick="history.back()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 상품 정보 -->
+    <div class="product-row">
+        <div class="product-thumb">
+            <img src="../../static/images/BIDEO_LOGO/BIDEO.png" alt="상품 이미지">
+        </div>
+        <div class="product-meta">
+            <p class="product-creator" id="creatorName">David</p>
+            <p class="product-name" id="productName">BIDEO</p>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 결제 금액 -->
+    <div class="amount-row">
+        <span class="amount-label">결제금액</span>
+        <span class="amount-value" id="displayTotalPrice">180,000원</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 결제 방법 -->
+    <div style="padding-top:16px;">
+        <p class="section-label">결제 방법</p>
+        <div class="pay-method-list">
+            <div class="pay-method-option" id="method-kakao" onclick="selectPayMethod('kakao')">
+                <div class="radio-dot"></div>
+                <span class="method-name">일반 결제</span>
+                <span class="method-sub">부트페이</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 약관 -->
+    <p class="terms">
+        결제 시 <a href="#">이용약관</a> 및 <a href="#">개인정보 처리방침</a>에 동의합니다.
+    </p>
+
+    <!-- 결제 버튼 -->
+    <div class="pay-btn-wrap">
+        <button class="pay-btn" onclick="submitPayment()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="5" width="20" height="14" rx="2"/>
+                <path d="M2 10h20"/>
+            </svg>
+            결제하기
+        </button>
+    </div>
+</div>
+
+<script src="../../static/js/pay/pay-api.js"></script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+/* Admin Component Styles */
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+.btn-group button {
+    flex: 1;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--admin-primary) !important;
+    color: #111 !important;
+    border: 1px solid #d4b870 !important;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(240, 217, 153, 0.2);
+}
+.btn-primary:hover { 
+    background: #e6c87a !important;
+    border-color: #d4b870 !important;
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 16px rgba(240, 217, 153, 0.3);
+}
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-secondary {
+    background: #111 !important;
+    color: #FFF !important;
+    border: 1px solid #333 !important;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover { 
+    background: #333 !important; 
+    border-color: #444 !important;
+    transform: translateY(-2px);
+}
+.btn-secondary:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-danger {
+    background: #fff5f5 !important;
+    color: #c53030 !important;
+    border: 1px solid #feb2b2 !important;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-danger:hover { 
+    background: #fee2e2 !important; 
+    border-color: #c53030 !important;
+    transform: translateY(-2px);
+}
+.btn-danger:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-success {
+    background: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #c8e6c9 !important;
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-success:hover { 
+    background: #d4edda !important; 
+    border-color: #2e7d32 !important;
+    transform: translateY(-2px);
+}
+.btn-success:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Cards */
+.content-card {
+    background: #FFFFFF;
+    border-radius: var(--admin-border-radius-lg);
+    padding: 40px;
+    box-shadow: var(--admin-shadow);
+    border: 1px solid #F6F6F6;
+}
+
+/* List Controls (Search & Filter) */
+.list-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    width: 400px;
+    height: 48px;
+    padding: 0 20px;
+    border-radius: 100px;
+    border: 1px solid #EEE;
+    background: #F9F9F9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: text;
+    box-sizing: border-box;
+}
+
+.search-wrapper:focus-within {
+    border-color: var(--admin-primary);
+    background: #FFF;
+    box-shadow: 0 4px 12px rgba(240, 217, 153, 0.15);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--admin-text-main);
+    padding: 0;
+}
+
+/* Standard Admin Form Elements */
+.admin-input, .admin-textarea {
+    width: 100%;
+    background: #F9F9F9;
+    border: 1px solid #EEE;
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #111;
+    font-family: inherit;
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+.admin-input:focus, .admin-textarea:focus {
+    outline: none;
+    background: #FFF;
+    border-color: var(--admin-primary);
+    box-shadow: 0 0 0 4px rgba(240, 217, 153, 0.1);
+}
+
+.admin-textarea {
+    resize: none;
+    line-height: 1.6;
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-form-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    padding-left: 4px;
+}
+
+.search-wrapper label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--admin-text-muted);
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.search-wrapper label i {
+    width: 18px;
+    stroke-width: 2.5px;
+}
+
+.filter-group {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-filter {
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid #EEE;
+    background: #FFF;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-filter:hover {
+    background: #F5F5F5;
+}
+
+.btn-filter.active {
+    background: #111;
+    color: var(--primary-color);
+    border-color: #111;
+}
+
+/* Premium BIDEO Table */
+.bideo-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+.bideo-table th {
+    padding: 0 24px 12px 24px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--admin-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bideo-table tr {
+    transition: transform 0.2s;
+}
+
+.bideo-table td {
+    height: 60px;
+    padding: 0 24px;
+    vertical-align: middle;
+    background: #FFF;
+    border-top: 1px solid #F3F3F3;
+    border-bottom: 1px solid #F3F3F3;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.bideo-table th.col-flexible,
+.bideo-table td.col-flexible {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.bideo-table td:first-child {
+    border-left: 1px solid #F3F3F3;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+
+.bideo-table td:last-child {
+    border-right: 1px solid #F3F3F3;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.bideo-table tr:hover td {
+    background: #FAFAFA;
+    border-color: #EEE;
+}
+
+.bideo-table tr:hover {
+    transform: translateY(-2px);
+}
+.bideo-table thead tr:hover {
+    transform: translateY(0px);
+}
+
+/* Optimized Column Widths (Maximum Tightness for Responsiveness) */
+.col-id {
+    width: 80px;
+    white-space: nowrap;
+}
+
+.col-status {
+    width: 85px; /* 배지 크기에 아주 타이트하게 맞춤 */
+    white-space: nowrap;
+}
+
+.col-short {
+    width: 60px; /* 입찰수, 우선순위 등 짧은 숫자/텍스트용 */
+    white-space: nowrap;
+}
+
+.col-date {
+    width: 140px;
+    white-space: nowrap;
+}
+
+.col-action {
+    width: 60px;
+    white-space: nowrap;
+}
+
+/* Specific alignments and spacing for compact columns */
+.bideo-table td.text-center {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.bideo-table th.text-center {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+/* Custom Radio & Checkbox Buttons */
+.admin-radio-group, .admin-checkbox-group {
+    display: flex;
+    gap: 24px;
+    padding: 4px 0;
+}
+
+.admin-radio-label, .admin-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.admin-radio-input, .admin-checkbox-input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #DDD;
+    background: #FFF;
+    margin: 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-radio-input { border-radius: 50%; }
+.admin-checkbox-input { border-radius: 6px; }
+
+.admin-radio-input:checked, .admin-checkbox-input:checked {
+    border-color: #111;
+    background: #111;
+}
+
+.admin-radio-input:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--admin-primary);
+    border-radius: 50%;
+}
+
+.admin-checkbox-input:checked::after {
+    content: '';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 5px;
+    height: 10px;
+    border: solid var(--admin-primary);
+    border-width: 0 2.5px 2.5px 0;
+}
+
+.admin-radio-label:hover .admin-radio-input,
+.admin-checkbox-label:hover .admin-checkbox-input {
+    border-color: #BBB;
+}
+
+.admin-radio-input:checked + span,
+.admin-checkbox-input:checked + span {
+    color: #111;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+/* Custom Select Component */
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: #F9F9F9;
+    border: 1px solid #EEE;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    transition: all 0.25s ease;
+}
+
+.custom-select-trigger:hover {
+    background: #F3F3F3;
+}
+
+/* 열림 상태 (.open 클래스로 제어) */
+.custom-select-wrapper.open .custom-select-trigger {
+    border-color: var(--admin-primary);
+    background: #FFF;
+    box-shadow: 0 0 0 4px rgba(240, 217, 153, 0.1);
+}
+
+.custom-select-trigger i {
+    width: 18px;
+    height: 18px;
+    color: #888;
+    transition: transform 0.3s ease;
+}
+
+.custom-select-wrapper.open .custom-select-trigger i {
+    transform: rotate(180deg);
+    color: var(--admin-primary);
+}
+
+.custom-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #FFF;
+    border-radius: 14px;
+    border: 1px solid #EEE;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    padding: 8px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.custom-select-wrapper.open .custom-options {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.custom-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.custom-option:hover {
+    background: #F5F5F5;
+    color: #111;
+}
+
+/* 선택된 상태 (.active 클래스로 제어) */
+.custom-option.active {
+    background: #111;
+    color: var(--admin-primary);
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.dot-active { background-color: #2E7D32; }
+.dot-inactive { background-color: #C53030; }
+
+/* 선택된 옵션 내의 점 색상 변경 */
+.custom-option.active .status-dot {
+    background-color: var(--admin-primary);
+}
+
+/* Text Truncation Utilities */
+.text-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+
+/* Action Buttons (Table Row Icons) */
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: #F5F5F5;
+    color: #666;
+    cursor: pointer;
+    margin-right: 4px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn i {
+    width: 16px;
+    height: 16px;
+}
+
+.action-btn:hover {
+    background: #111;
+    color: var(--primary-color);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 24px; /* 높이 고정: 상세 페이지 화살표 추가 시 밀림 방지 */
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-text-muted);
+}
+
+.breadcrumbs a {
+    color: var(--admin-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+    color: var(--admin-secondary);
+}
+
+.breadcrumbs i {
+    width: 12px;
+    height: 12px;
+    color: #CCC;
+}
+
+.breadcrumbs .current {
+    color: var(--admin-primary);
+    font-weight: 700;
+}
+
+/* Pinterest Style Snackbar (Toast) */
+.snackbar-container {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #111;
+    color: #FFF;
+    padding: 14px 28px;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+    z-index: 10000;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.snackbar-container.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.snackbar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.snackbar-icon.success i { color: #4CAF50; }
+.snackbar-icon.error i { color: #FF5252; }
+.snackbar-icon.info i { color: var(--admin-primary); }
+
+.snackbar-message {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+/* Back Button - Absolute Positioned at the Top */
+.btn-back {
+    position: absolute;
+    top: 35px; /* 브레드크럼보다 위쪽 위치 */
+    left: 80px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #888;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.btn-back:hover { color: #111; }
+
+/* Detail Page Layout */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+}
+
+.info-section {
+    margin-bottom: 40px;
+}
+
+.info-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-row {
+    display: flex;
+    padding: 16px 0;
+    border-bottom: 1px solid #F6F6F6;
+}
+
+.info-label {
+    width: 140px;
+    font-size: 14px;
+    color: #888;
+    font-weight: 500;
+}
+
+.info-value {
+    flex: 1;
+    font-size: 14px;
+    color: #111;
+    font-weight: 600;
+}
+
+.summary-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 32px;
+    border: 1px solid #F6F6F6;
+    transition: all 0.3s ease;
+}
+
+/* Summary Card Themes */
+.summary-card.theme-dark {
+    background: #333333 !important;
+    color: #FFFFFF !important;
+    border-color: #444 !important;
+}
+.summary-card.theme-dark .value { color: var(--admin-primary) !important; }
+.summary-card.theme-dark .action-desc { color: #AAAAAA !important; }
+
+.summary-card.theme-success {
+    background: #e8f5e9 !important;
+    color: #111 !important;
+    border-color: #c8e6c9 !important;
+}
+.summary-card.theme-success .value { color: #2e7d32 !important; }
+
+.summary-card.theme-danger {
+    background: #fff5f5 !important;
+    color: #111 !important;
+    border-color: #feb2b2 !important;
+}
+.summary-card.theme-danger .value { color: #c53030 !important; }
+.summary-card.theme-danger .label { color: #721c24 !important; }
+
+.summary-card.theme-warning {
+    background: #fff9db !important;
+    color: #111 !important;
+    border-color: #ffec99 !important;
+}
+.summary-card.theme-warning .value { color: #856404 !important; }
+.summary-card.theme-warning .label { color: #856404 !important; }
+
+.summary-card.theme-black {
+    background: #111 !important;
+    color: #FFF !important;
+}
+.summary-card.theme-black .value { color: var(--admin-primary) !important; }
+
+.summary-card .label { color: #888; font-size: 12px; margin-bottom: 8px; }
+.summary-card .value { font-size: 28px; font-weight: 800; }

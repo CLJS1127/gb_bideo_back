@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 노출 제어 상세</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
+    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="admin-lnb"></div>
+
+    <!-- 공통 모달 -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-container" style="max-width: 400px;">
+            <div class="modal-body text-only">
+                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+                <div class="d-flex justify-end gap-12 mt-32">
+                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
+                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <!-- 현재 위치 -->
+        <div class="breadcrumbs">
+            <a href="admin-display-list.html">노출 제어 목록</a>
+            <i data-lucide="chevron-right"></i>
+            <span class="current">상세 정보</span>
+        </div>
+
+        <!-- 뒤로가기 버튼 -->
+        <a href="admin-display-list.html" class="btn-back">
+            <i data-lucide="arrow-left" class="w-16"></i>
+            목록으로 돌아가기
+        </a>
+
+        <!-- 타이틀, 서브 타이틀 -->
+        <header class="mb-40">
+            <div class="d-flex align-center gap-12 mb-8">
+                <span class="status-badge">상태 로딩중...</span>
+                <span class="text-muted fs-14">노출 ID: #DISP-001</span>
+            </div>
+            <h1 class="fs-28 fw-800 text-main">노출 제어 상세</h1>
+        </header>
+
+        <!-- 상세 내역 (Grid) -->
+        <div class="detail-grid">
+            <div class="content-card">
+                <div class="info-section">
+                    <h2 class="info-title"><i data-lucide="monitor" class="w-18"></i>전시 레이아웃 정보</h2>
+                    <div class="info-row"><div class="info-label">대상 콘텐츠</div><div class="info-value">The Eternal Echo</div></div>
+                    <div class="info-row"><div class="info-label">전시 위치</div><div class="info-value">메인 페이지 - Top Highlights</div></div>
+                    <div class="info-row"><div class="info-label">우선순위</div><div class="info-value">1순위 (가장 먼저 노출)</div></div>
+                </div>
+            </div>
+
+            <!-- 사이드 바 -->
+            <aside>
+                <div class="summary-card">
+                    <div class="label">노출 스위치</div>
+                    <div class="value fs-18">실시간 전시 제어</div>
+                    <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
+                    <!-- JS에서 동적으로 버튼 주입 -->
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- 스크립트 -->
+    <script src="../../static/js/admin/admin-service.js"></script>
+    <script src="../../static/js/admin/admin-layout.js"></script>
+    <script src="../../static/js/admin/admin-event.js"></script>
+</body>
+</html>

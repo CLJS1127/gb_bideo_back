@@ -1,0 +1,229 @@
+:root {
+    --contest-bg: #ffffff;
+    --contest-surface: #ffffff;
+    --contest-line: #e7e7e7;
+    --contest-text: #1f2937;
+    --contest-muted: #7c7c7c;
+    --contest-main: #f0d999;
+    --contest-main-deep: #8a7440;
+}
+
+body {
+    background: var(--contest-bg);
+}
+
+#VerticalNavContent {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+}
+
+.contest-page {
+    min-height: calc(100vh - 80px);
+    padding: 116px 56px 64px 128px;
+    box-sizing: border-box;
+}
+
+.contest-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contest-header {
+    margin-bottom: 40px;
+}
+
+.contest-panel {
+    background: var(--contest-surface);
+    border: 1px solid var(--contest-line);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.035);
+}
+
+.contest-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--contest-main-deep);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.contest-title {
+    margin: 18px 0 10px;
+    font-size: 32px;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    color: var(--contest-text);
+}
+
+.contest-summary {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--contest-muted);
+}
+
+.contest-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 26px;
+}
+
+.contest-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px;
+}
+
+.contest-item-thumb {
+    width: 100%;
+    min-height: 136px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #f4f4f4;
+}
+
+.contest-item-thumb img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.contest-item-body {
+    min-width: 0;
+    padding-top: 8px;
+}
+
+.contest-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+.contest-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 9px;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.contest-dday {
+    font-size: 13px;
+    font-weight: 700;
+    color: #666;
+}
+
+.contest-item-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    line-height: 1.24;
+    letter-spacing: -0.03em;
+    color: var(--contest-text);
+}
+
+.contest-organizer {
+    margin: -1px 0 6px;
+    font-size: 12px;
+    color: var(--contest-muted);
+    line-height: 1.4;
+}
+
+.contest-single-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    justify-items: stretch;
+}
+
+.contest-meta-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    border: none;
+}
+
+.contest-meta-label {
+    margin: 0;
+    font-size: 12px;
+    color: var(--contest-muted);
+}
+
+.contest-meta-value {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--contest-text);
+    letter-spacing: -0.03em;
+}
+
+@media (max-width: 1080px) {
+    .contest-page {
+        padding-left: 56px;
+    }
+
+    #VerticalNavContent {
+        display: none !important;
+    }
+
+    #HeaderContent {
+        left: 0 !important;
+        right: 0 !important;
+    }
+
+    .contest-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .contest-page {
+        padding: 104px 18px 32px;
+    }
+
+    .contest-title {
+        font-size: 28px;
+    }
+
+    .contest-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .contest-item-thumb {
+        min-height: 156px;
+    }
+}
+
+@media (max-width: 520px) {
+    .contest-page {
+        padding: 98px 14px 28px;
+    }
+
+    .contest-item {
+        padding: 14px;
+    }
+
+    .contest-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
+    <title>K-Auction | Premium Online Auction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #fff;
+            color: #222;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1020px;
+            margin: 0 auto;
+            padding: 32px 20px 80px;
+        }
+
+        /* ── 2열 그리드 ── */
+        .auction-detail {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* ════════════ 왼쪽 ════════════ */
+        .image-section { min-width: 0; }
+
+        /* 작품 제목 (영상 위) */
+        .work-title-top {
+            margin-bottom: 12px;
+        }
+        .work-title-top .lot-badge {
+            font-size: 11px; font-weight: 700;
+            color: #4a6db3; letter-spacing: .05em;
+            display: block; margin-bottom: 4px;
+        }
+        .work-title-top h2 {
+            font-size: 20px; font-weight: 800;
+            color: #111; line-height: 1.3;
+            letter-spacing: -.01em;
+        }
+        .work-title-top .work-specs-top {
+            font-size: 12px; color: #888;
+            margin-top: 3px;
+        }
+
+        /* 영상 플레이어 */
+        .player-wrapper {
+            width: 100%;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+        .player-wrapper video {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            background: #000;
+        }
+        .player-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            font-size: 10px; font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 5px;
+            letter-spacing: .4px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 썸네일 갤러리 */
+        .thumbnail-list { display: flex; gap: 8px; margin-top: 10px; }
+        .thumb {
+            width: 70px; height: 58px;
+            overflow: hidden;
+            border: 1.5px solid #ccc;
+            cursor: pointer;
+            background: #ececec;
+            flex-shrink: 0;
+            transition: border-color .15s;
+            position: relative;
+        }
+        .thumb.active { border-color: #c8a040; }
+        .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        /* 하이라이트 영상 썸네일 표시 */
+        .thumb.is-video::after {
+            content: '▶';
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: #fff;
+            background: rgba(0,0,0,0.35);
+        }
+
+        /* 업로드 날짜 / 조회수 메타 */
+        .work-meta {
+            display: flex;
+            gap: 20px;
+            padding: 12px 0;
+            border-bottom: 1px solid #ebebeb;
+            margin-top: 14px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+        .meta-item svg {
+            width: 13px; height: 13px;
+            stroke: currentColor; fill: none;
+            stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+        .meta-item strong { color: #444; font-weight: 600; }
+
+        /* ════════════ 오른쪽 패널 ════════════ */
+        .info-section {
+            position: sticky;
+            top: 24px;
+            border: 1px solid #d8d8d8;
+        }
+
+        /* 작가·작품 헤더 */
+        .info-header { padding: 13px 16px 14px; border-bottom: 1px solid #ebebeb; }
+
+        .lot-number {
+            font-size: 13px; font-weight: 700;
+            color: #4a6db3; display: block;
+            margin-bottom: 6px; letter-spacing: .03em;
+        }
+        .artist-header { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+        .artist-name { font-size: 22px; font-weight: 800; color: #111; letter-spacing: -.01em; line-height: 1.2; }
+        .btn-follow {
+            font-size: 10px; color: #999;
+            border: 1px solid #ccc; background: #fff;
+            padding: 2px 10px; border-radius: 100px;
+            cursor: pointer; white-space: nowrap;
+            transition: all .15s;
+        }
+        .btn-follow:hover { border-color: #4a6db3; color: #4a6db3; }
+
+        .work-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 3px; }
+        .work-specs  { font-size: 12px; color: #4a6db3; }
+
+        /* 경매 입찰 정보 박스 */
+        .bid-info-box {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ebebeb;
+            background: #fafafa;
+        }
+        .bid-info-title {
+            font-size: 10px; font-weight: 700;
+            color: #aaa; text-transform: uppercase;
+            letter-spacing: .06em; margin-bottom: 10px;
+        }
+        .bid-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .bid-info-card {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+        .bid-info-card .card-label {
+            font-size: 10px; color: #aaa;
+            display: block; margin-bottom: 3px;
+        }
+        .bid-info-card .card-value {
+            font-size: 14px; font-weight: 800; color: #4a6db3;
+        }
+        .bid-info-card.full { grid-column: 1 / -1; }
+        .bid-info-card .card-value.closing { color: #c07010; font-size: 13px; }
+
+        /* 카운트다운 바 */
+        .timer-box {
+            padding: 8px 16px;
+            background: #f6f3eb;
+            border-bottom: 1px solid #e5dfc8;
+        }
+        .timer-label-row {
+            font-size: 10px; color: #999;
+            margin-bottom: 8px; font-weight: 600;
+            letter-spacing: .03em;
+        }
+        .cd-blocks {
+            display: flex;
+            gap: 6px;
+        }
+        .cd-block {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #e5dfc8;
+            border-radius: 6px;
+            padding: 6px 4px;
+            text-align: center;
+        }
+        .cd-num {
+            font-size: 17px; font-weight: 900;
+            color: #c07010; line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .cd-unit {
+            font-size: 9px; color: #bbb;
+            font-weight: 600; margin-top: 3px;
+            text-transform: uppercase; letter-spacing: .3px;
+        }
+        .cd-sep {
+            font-size: 14px; font-weight: 900;
+            color: #c07010; align-self: center;
+            padding-bottom: 10px;
+        }
+
+        /* 추정가 / 시작가 */
+        .price-info-area { padding: 10px 16px; border-bottom: 1px solid #ebebeb; }
+        .price-row {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 4px 0; font-size: 12px;
+        }
+        .price-row + .price-row { border-top: 1px solid #f2f2f2; }
+        .price-label { color: #666; }
+        .price-value { color: #4a6db3; font-weight: 600; }
+
+        /* 버튼 */
+        .action-buttons {
+            padding: 12px 16px 10px;
+            border-bottom: 1px solid #ebebeb;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .btn-bid {
+            width: 100%; padding: 12px;
+            background: #111; color: #fff;
+            font-size: 14px; font-weight: 700;
+            border: none; cursor: pointer;
+            letter-spacing: .04em; transition: background .15s;
+        }
+        .btn-bid:hover { background: #333; }
+        .btn-wishlist {
+            width: 100%; padding: 10px;
+            background: #fff; color: #555;
+            font-size: 13px; border: 1px solid #ccc;
+            cursor: pointer; transition: all .15s;
+        }
+        .btn-wishlist:hover { border-color: #4a6db3; color: #4a6db3; }
+
+        /* 추가 정보 */
+        .additional-info { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+        .info-item { display: flex; justify-content: space-between; font-size: 11px; }
+        .info-item span { color: #999; }
+        .info-item strong { color: #444; font-weight: 600; }
+
+        /* ── 탭 ── */
+        .detail-tabs { margin-top: 40px; }
+        .tab-header { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 20px; }
+        .tab-btn {
+            padding: 10px 20px; font-size: 13px; font-weight: 600; color: #999;
+            background: none; border: none; border-bottom: 2px solid transparent;
+            cursor: pointer; transition: all .15s;
+        }
+        .tab-btn.active { color: #111; border-bottom-color: #4a6db3; }
+        .tab-content { font-size: 13px; color: #555; line-height: 1.9; }
+
+        /* ── 아티스트/제작자 정보 ── */
+        .artist-section { margin-top: 40px; }
+        .section-heading {
+            font-size: 11px; font-weight: 700;
+            color: #4a6db3; text-transform: uppercase;
+            letter-spacing: .08em; margin-bottom: 16px;
+        }
+
+        .creator-card {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            border: 1px solid #ebebeb;
+            border-radius: 2px;
+            margin-bottom: 16px;
+            transition: border-color .15s;
+        }
+        .creator-card:hover { border-color: #c8a040; }
+
+        .creator-avatar {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            background: #f4f4f4;
+            border: 2px solid #c8a040;
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 800;
+            color: #4a6db3;
+            font-family: 'Noto Serif KR', serif;
+        }
+        .creator-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .creator-body { flex: 1; min-width: 0; }
+        .creator-name {
+            font-size: 16px; font-weight: 800;
+            color: #111; margin-bottom: 2px;
+        }
+        .creator-role {
+            font-size: 12px; color: #888;
+            margin-bottom: 10px;
+        }
+        .creator-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+        .creator-tag {
+            font-size: 11px; font-weight: 600;
+            color: #666;
+            border: 1px solid #ddd;
+            padding: 2px 10px;
+            border-radius: 100px;
+        }
+        .creator-follow-btn {
+            margin-left: auto;
+            align-self: flex-start;
+            font-size: 11px; color: #4a6db3;
+            border: 1px solid #4a6db3; background: #fff;
+            padding: 4px 14px; border-radius: 100px;
+            cursor: pointer; white-space: nowrap;
+            transition: all .15s; flex-shrink: 0;
+        }
+        .creator-follow-btn:hover { background: #4a6db3; color: #fff; }
+
+        /* 작가의 말 */
+        .artist-statement {
+            padding: 24px;
+            background: #fafafa;
+            border: 1px solid #ebebeb;
+            border-left: 3px solid #c8a040;
+        }
+        .statement-header {
+            font-size: 10px; font-weight: 700;
+            color: #aaa; text-transform: uppercase;
+            letter-spacing: .08em; margin-bottom: 14px;
+        }
+        .quote-mark {
+            font-size: 44px; line-height: .8;
+            color: #c8a040; font-weight: 900;
+            font-family: 'Noto Serif KR', serif;
+            display: block; margin-bottom: 6px;
+        }
+        .artist-statement p {
+            font-size: 14px; line-height: 1.9;
+            color: #444; margin-bottom: 14px;
+        }
+        .statement-cite {
+            font-size: 12px; color: #888;
+            font-style: normal;
+            display: block; text-align: right;
+        }
+
+        @media (max-width: 700px) {
+            .auction-detail { grid-template-columns: 1fr; }
+            .info-section { position: static; }
+            .creator-card { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <article class="auction-detail">
+
+        <!-- ── 왼쪽 ── -->
+        <section class="image-section">
+
+            <!-- 작품 제목 -->
+            <div class="work-title-top">
+                <span class="lot-badge">LOT 151934 · K-Auction Premium</span>
+                <h2>The Method of Drawing</h2>
+                <p class="work-specs-top">acrylic and colored pencil on paper, 20.5×29cm, 2017 · 이건용</p>
+            </div>
+
+            <!-- 영상 프리뷰 / 플레이어 -->
+            <div class="player-wrapper">
+                <video id="mainVideo" controls
+                       poster="https://images.k-auction.com/www/KMall/Work/0225/22500101001.jpg">
+                    <source src="" type="video/mp4">
+                </video>
+                <span class="player-badge">하이라이트 영상</span>
+            </div>
+
+            <!-- 썸네일 갤러리 -->
+            <div class="thumbnail-list">
+                <div class="thumb active" data-type="image" data-src="https://images.k-auction.com/www/KMall/Work/0225/22500101001.jpg">
+                    <img src="https://images.k-auction.com/www/KMall/Work/0225/22500101001.jpg" alt="썸네일 1">
+                </div>
+                <div class="thumb" data-type="image" data-src="https://images.k-auction.com/www/KMall/Work/0225/22500101002.jpg">
+                    <img src="https://images.k-auction.com/www/KMall/Work/0225/22500101002.jpg" alt="썸네일 2">
+                </div>
+                <div class="thumb is-video" data-type="video" data-src="" data-poster="https://images.k-auction.com/www/KMall/Work/0225/22500101001.jpg">
+                    <img src="https://images.k-auction.com/www/KMall/Work/0225/22500101001.jpg" alt="영상 썸네일">
+                </div>
+            </div>
+
+            <!-- 업로드 날짜 / 조회수 -->
+            <div class="work-meta">
+                <div class="meta-item">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    업로드 날짜&nbsp;<strong>2026.01.01</strong>
+                </div>
+                <div class="meta-item">
+                    <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    조회수&nbsp;<strong>1,248</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- ── 오른쪽: 정보 패널 ── -->
+        <section class="info-section">
+
+            <!-- LOT / 작가 / 작품 -->
+            <div class="info-header">
+                <span class="lot-number">LOT 151934</span>
+                <div class="artist-header">
+                    <h1 class="artist-name">이건용</h1>
+                    <button type="button" class="btn-follow">Follow</button>
+                </div>
+                <p class="work-title">The Method of Drawing</p>
+                <p class="work-specs">acrylic and colored pencil on paper, 20.5×29cm, 2017</p>
+            </div>
+
+            <!-- 경매 입찰 정보 -->
+            <div class="bid-info-box">
+                <div class="bid-info-title">경매 입찰 정보</div>
+                <div class="bid-info-grid">
+                    <div class="bid-info-card">
+                        <span class="card-label">현재 최고가</span>
+                        <span class="card-value">KRW 5,000,000</span>
+                    </div>
+                    <div class="bid-info-card">
+                        <span class="card-label">입찰 단위</span>
+                        <span class="card-value">+ 500,000</span>
+                    </div>
+                    <div class="bid-info-card full">
+                        <span class="card-label">경매 마감 시간</span>
+                        <span class="card-value closing">2026.03.24 (화) 오후 4:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 마감시간 카운트다운 -->
+            <div class="timer-box">
+                <div class="timer-label-row">마감까지 남은 시간</div>
+                <div class="cd-blocks">
+                    <div class="cd-block">
+                        <div class="cd-num" id="cd-d">--</div>
+                        <div class="cd-unit">Days</div>
+                    </div>
+                    <div class="cd-sep">:</div>
+                    <div class="cd-block">
+                        <div class="cd-num" id="cd-h">--</div>
+                        <div class="cd-unit">Hours</div>
+                    </div>
+                    <div class="cd-sep">:</div>
+                    <div class="cd-block">
+                        <div class="cd-num" id="cd-m">--</div>
+                        <div class="cd-unit">Min</div>
+                    </div>
+                    <div class="cd-sep">:</div>
+                    <div class="cd-block">
+                        <div class="cd-num" id="cd-s">--</div>
+                        <div class="cd-unit">Sec</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 추정가 / 시작가 -->
+            <div class="price-info-area">
+                <div class="price-row">
+                    <span class="price-label">추정가 (Estimate)</span>
+                    <span class="price-value">KRW 7,000,000 ~ 15,000,000</span>
+                </div>
+                <div class="price-row">
+                    <span class="price-label">시작가 (Starting Bid)</span>
+                    <span class="price-value">KRW 5,000,000</span>
+                </div>
+            </div>
+
+            <!-- 버튼 -->
+            <div class="action-buttons">
+                <button type="button" class="btn-bid">입찰하기 (Bid)</button>
+                <button type="button" class="btn-wishlist">관심작품 등록</button>
+            </div>
+
+            <!-- 추가 정보 -->
+            <footer class="additional-info">
+                <div class="info-item">
+                    <span>경매 마감일</span>
+                    <strong>2026.03.24 16:00</strong>
+                </div>
+                <div class="info-item">
+                    <span>배송비</span>
+                    <strong>별도 (지역별 차등 발생)</strong>
+                </div>
+            </footer>
+
+        </section>
+    </article>
+
+    <!-- 하단 탭 -->
+    <section class="detail-tabs">
+        <div class="tab-header">
+            <button type="button" class="tab-btn active" data-tab="work">작품 정보</button>
+            <button type="button" class="tab-btn" data-tab="artist">작가 정보</button>
+        </div>
+        <div class="tab-content" id="tab-work">
+            <p>본 작품은 한국 실험미술의 거장 이건용의 '신체 드로잉' 연작 중 하나입니다. 작가가 캔버스를 등지고 팔의 가동 범위만큼 선을 그어 나가는 독특한 행위 예술적 특징이 잘 드러나 있습니다.</p>
+        </div>
+        <div class="tab-content" id="tab-artist" style="display:none;">
+            <p>이건용(b.1942)은 한국 개념미술 및 행위예술의 선구자로, 신체와 공간, 시간의 관계를 탐구하는 퍼포먼스와 비디오 아트 작업으로 국제적 명성을 얻었습니다.</p>
+        </div>
+    </section>
+
+    <!-- 아티스트/제작자 정보 -->
+    <section class="artist-section">
+        <p class="section-heading">아티스트 · 제작자 정보</p>
+
+        <!-- 크리에이터 프로필 카드 -->
+        <div class="creator-card">
+            <div class="creator-avatar">건용</div>
+            <div class="creator-body">
+                <div class="creator-name">이건용 (Lee Kun-Yong)</div>
+                <div class="creator-role">현대미술 · 퍼포먼스 아트 · 신체 드로잉</div>
+                <div class="creator-tags">
+                    <span class="creator-tag">한국 개념미술</span>
+                    <span class="creator-tag">행위예술</span>
+                    <span class="creator-tag">신체 드로잉</span>
+                    <span class="creator-tag">비디오 아트</span>
+                </div>
+            </div>
+            <button type="button" class="creator-follow-btn">+ 팔로우</button>
+        </div>
+
+        <!-- 작가의 말 -->
+        <div class="artist-statement">
+            <div class="statement-header">작가의 말</div>
+            <span class="quote-mark">"</span>
+            <p>나는 신체의 가동 범위 안에서만 선을 긋는다. 캔버스를 보지 않고, 등을 돌린 채로. 그 제약 속에서 오히려 가장 솔직한 움직임이 탄생한다. 행위 자체가 작품이고, 그 흔적이 회화다.</p>
+            <cite class="statement-cite">— 이건용, 신체 드로잉 연작 노트 중에서</cite>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    /* 마감시간 카운트다운 */
+    const deadline = new Date('2026-03-24T16:00:00+09:00');
+    function tick() {
+        const diff = deadline - Date.now();
+        const pad = n => String(Math.max(0, Math.floor(n))).padStart(2, '0');
+        if (diff <= 0) {
+            ['d','h','m','s'].forEach(u => document.getElementById('cd-'+u).textContent = '00');
+            return;
+        }
+        document.getElementById('cd-d').textContent = pad(diff / 86400000);
+        document.getElementById('cd-h').textContent = pad((diff % 86400000) / 3600000);
+        document.getElementById('cd-m').textContent = pad((diff % 3600000) / 60000);
+        document.getElementById('cd-s').textContent = pad((diff % 60000) / 1000);
+    }
+    setInterval(tick, 1000);
+    tick();
+
+    /* 썸네일 클릭 → 영상/이미지 전환 */
+    const video = document.getElementById('mainVideo');
+    document.querySelectorAll('.thumb').forEach(t => {
+        t.addEventListener('click', () => {
+            document.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            const type = t.dataset.type;
+            if (type === 'video') {
+                video.src = t.dataset.src || '';
+                video.poster = t.dataset.poster || '';
+                video.load();
+            } else {
+                video.pause();
+                video.src = '';
+                video.poster = t.dataset.src;
+                video.load();
+            }
+        });
+    });
+
+    /* 탭 전환 */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            btn.classList.add('active');
+            document.getElementById('tab-' + btn.dataset.tab).style.display = 'block';
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.bideo.mapper.contest.ContestMapper">
+
+    <select id="selectContestList" resultType="ContestListResponseDTO">
+        SELECT
+            c.id,
+            c.title,
+            c.organizer,
+            c.category,
+            c.cover_image,
+            c.entry_end,
+            c.status,
+            c.entry_count,
+            c.created_datetime,
+            CASE
+                WHEN c.entry_end &lt; CURRENT_DATE THEN '마감'
+                WHEN c.entry_end = CURRENT_DATE THEN 'D-Day'
+                ELSE 'D-' || (c.entry_end - CURRENT_DATE)
+            END AS d_day
+        FROM tbl_contest c
+        WHERE c.status != 'DELETED'
+        <if test="keyword != null and keyword != ''">
+            AND (c.title ILIKE '%' || #{keyword} || '%'
+                 OR c.organizer ILIKE '%' || #{keyword} || '%')
+        </if>
+        <if test="category != null and category != ''">
+            AND c.category = #{category}
+        </if>
+        <if test="region != null and region != ''">
+            AND c.region = #{region}
+        </if>
+        <if test="status != null and status != ''">
+            AND c.status = #{status}
+        </if>
+        ORDER BY c.created_datetime DESC
+        LIMIT #{size} OFFSET (#{page} - 1) * #{size}
+    </select>
+
+    <select id="selectContestCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_contest c
+        WHERE c.status != 'DELETED'
+        <if test="keyword != null and keyword != ''">
+            AND (c.title ILIKE '%' || #{keyword} || '%'
+                 OR c.organizer ILIKE '%' || #{keyword} || '%')
+        </if>
+        <if test="category != null and category != ''">
+            AND c.category = #{category}
+        </if>
+        <if test="region != null and region != ''">
+            AND c.region = #{region}
+        </if>
+        <if test="status != null and status != ''">
+            AND c.status = #{status}
+        </if>
+    </select>
+
+    <select id="selectContestDetail" resultType="ContestDetailResponseDTO">
+        SELECT
+            c.id,
+            c.member_id,
+            m.nickname AS member_nickname,
+            c.title,
+            c.organizer,
+            c.category,
+            c.region,
+            c.description,
+            c.cover_image,
+            c.entry_start,
+            c.entry_end,
+            c.result_date,
+            c.prize_info,
+            c.price,
+            c.status,
+            c.entry_count,
+            c.view_count,
+            c.created_datetime
+        FROM tbl_contest c
+        LEFT JOIN tbl_member m ON c.member_id = m.id
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="selectContestEntryList" resultType="ContestEntryResponseDTO">
+        SELECT
+            ce.id,
+            ce.contest_id,
+            ce.work_id,
+            w.title AS work_title,
+            (SELECT wf.file_url FROM tbl_work_file wf WHERE wf.work_id = w.id ORDER BY wf.sort_order LIMIT 1) AS work_thumbnail,
+            ce.member_id,
+            m.nickname AS member_nickname,
+            ce.award_rank,
+            ce.submitted_at
+        FROM tbl_contest_entry ce
+        LEFT JOIN tbl_work w ON ce.work_id = w.id
+        LEFT JOIN tbl_member m ON ce.member_id = m.id
+        WHERE ce.contest_id = #{contestId}
+        ORDER BY ce.submitted_at DESC
+    </select>
+
+</mapper>

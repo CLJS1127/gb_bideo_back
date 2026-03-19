@@ -1,0 +1,161 @@
+/* 기본 폰트 적용 (Default Font Application) */
+:root {
+    --font-sans: 'Pretendard', 'Segoe UI', 'San Francisco', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+html, body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pretendard UI(공용 폰트) */
+/* 사용법:
+    font-family: 'Pretendard';
+    font-weight: [100~900]; // ex) 400 = normal (기본 폰트)
+*/
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
+/* Segoe UI (Windows System Font) */
+/* 사용법:
+    font-family: 'Segoe UI';
+    font-weight: [100~900];
+*/
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Light'), local('Segoe UI');
+    font-weight: 100;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Light'), local('Segoe UI');
+    font-weight: 200;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Light'), local('Segoe UI');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Semibold'), local('Segoe UI');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Bold'), local('Segoe UI');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Segoe UI';
+    src: local('Segoe UI Black'), local('Segoe UI Bold'), local('Segoe UI');
+    font-weight: 900;
+    font-display: swap;
+}
+
+/* San Francisco (macOS/iOS System Font) */
+/* 사용법:
+    font-family: 'San Francisco';
+    font-weight: [100~900];
+*/
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Light'), local('.SFNSDisplay-Light'), local('.HelveticaNeueDeskInterface-Light'), local('HelveticaNeue-Light'), local('Helvetica Neue Light'), local('Helvetica-Light'), local('Helvetica Light'), local('ArialMT');
+    font-weight: 300;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Regular'), local('.SFNSDisplay-Regular'), local('.HelveticaNeueDeskInterface-Regular'), local('HelveticaNeue'), local('Helvetica Neue'), local('Helvetica'), local('ArialMT');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Medium'), local('.SFNSDisplay-Medium'), local('.HelveticaNeueDeskInterface-MediumP4'), local('HelveticaNeue-Medium'), local('Helvetica Neue Medium'), local('Helvetica-Medium'), local('Helvetica Medium');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Semibold'), local('.SFNSDisplay-Semibold'), local('.HelveticaNeueDeskInterface-SemiboldP4'), local('HelveticaNeue-Medium'), local('Helvetica Neue Medium'), local('Helvetica-Medium'), local('Helvetica Medium');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Bold'), local('.SFNSDisplay-Bold'), local('.HelveticaNeueDeskInterface-BoldP4'), local('HelveticaNeue-Bold'), local('Helvetica Neue Bold'), local('Helvetica-Bold'), local('Helvetica Bold');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'San Francisco';
+    src: local('.SFNSText-Heavy'), local('.SFNSDisplay-Heavy'), local('.HelveticaNeueDeskInterface-HeavyP4'), local('HelveticaNeue-Bold'), local('Helvetica Neue Bold'), local('Helvetica-Bold'), local('Helvetica Bold');
+    font-weight: 900;
+    font-display: swap;
+}

@@ -1,0 +1,261 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: transparent;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── 배경 오버레이 ── */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 0;
+        }
+
+        /* ── 모달 ── */
+        .modal {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            margin: 16px;
+            background: #fff;
+            border-radius: 16px;
+        }
+
+        /* 핸들 숨김 (중앙 모달엔 불필요) */
+        .handle { display: none; }
+
+        /* ── 헤더 ── */
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 16px 20px 12px;
+            border-bottom: 1px solid #efefef;
+        }
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #262626;
+            letter-spacing: -0.2px;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #262626;
+        }
+
+        .modal-close svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* ── 상품 정보 ── */
+        .product-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+        }
+
+        .product-thumb {
+            width: 64px;
+            height: 64px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fafafa;
+            border: 1px solid #efefef;
+            flex-shrink: 0;
+        }
+
+        .product-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-creator {
+            font-size: 12px;
+            color: #8e8e8e;
+            margin-bottom: 3px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #262626;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #262626;
+            white-space: nowrap;
+        }
+
+        /* ── 구분선 ── */
+        .divider {
+            height: 1px;
+            background: #efefef;
+            margin: 0 20px;
+        }
+
+        /* ── 결제 금액 요약 ── */
+        .amount-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+        }
+
+        .amount-label {
+            font-size: 13px;
+            color: #8e8e8e;
+        }
+
+        .amount-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #262626;
+        }
+
+        /* ── 결제 방법 ── */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #8e8e8e;
+            padding: 0 20px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .pay-method-list {
+            padding: 0 20px 4px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pay-method-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border: 1.5px solid #dbdbdb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .pay-method-option:hover {
+            border-color: #a8a8a8;
+        }
+
+        .pay-method-option.selected {
+            border-color: #262626;
+            background: #fafafa;
+        }
+
+        .radio-dot {
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid #dbdbdb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.15s;
+        }
+
+        .pay-method-option.selected .radio-dot {
+            border-color: #262626;
+            background: #262626;
+        }
+
+        .pay-method-option.selected .radio-dot::after {
+            content: '';
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .method-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .method-sub {
+            font-size: 12px;
+            color: #8e8e8e;
+            margin-left: auto;
+        }
+
+        /* ── 약관 ── */
+        .terms {
+            padding: 14px 20px 10px;
+            font-size: 11px;
+            color: #a8a8a8;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .terms a {
+            color: #8e8e8e;
+            text-decoration: underline;
+        }
+
+        /* ── 결제 버튼 ── */
+        .pay-btn-wrap {
+            padding: 8px 20px 20px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            height: 52px;
+            background: #222;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            letter-spacing: -0.2px;
+            transition: background 0.15s, opacity 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pay-btn:hover { background: #333; }
+        .pay-btn:active { opacity: 0.85; }

@@ -1,0 +1,63 @@
+/* admin-snackbar.css - Admin Panel Snackbar Styles */
+
+:root {
+    --admin-snackbar-bg: #1A1A1A;
+    --admin-snackbar-text: #FFFFFF;
+    --admin-snackbar-accent: #F0D999; /* Gold */
+    --admin-snackbar-error: #FF5252;
+    --admin-snackbar-success: #4CAF50;
+    --admin-snackbar-info: #0095F6;
+}
+
+#admin-snackbar {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: var(--admin-snackbar-bg);
+    color: var(--admin-snackbar-text);
+    border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#admin-snackbar.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.snackbar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.snackbar-icon i {
+    width: 20px;
+    height: 20px;
+}
+
+/* Status Colors */
+.snackbar-icon.success { color: var(--admin-snackbar-success); }
+.snackbar-icon.error { color: var(--admin-snackbar-error); }
+.snackbar-icon.info { color: var(--admin-snackbar-info); }
+.snackbar-icon.warning { color: var(--admin-snackbar-accent); }
+
+/* Message Text */
+.snackbar-message {
+    white-space: nowrap;
+}

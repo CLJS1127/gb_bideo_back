@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정산 리스트 </title>
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/src/main/resources/static/css/font.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/settlement/settlement.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/alarm/snackbar.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/navigation.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/main.css">
+    
+</head>
+<body>
+    <!-- 정산 페이지 본문 -->
+    <main class="st-page">
+        <div class="st-wrap">
+            <section>
+                <!-- 상단 정산 신청 영역 -->
+                <div class="st-top">
+                    <div class="grid lg:grid-cols-2 gap-6 items-start">
+                        <!-- 좌측: 정산 신청 폼 -->
+                        <div>
+                            <!-- 정산 신청 안내 문구 -->
+                            <div class="st-top-copy">
+                                <h1 class="text-2xl md:text-3xl font-bold mb-2">이번 달 정산을 진행하세요</h1>
+                                <p class="text-sm text-muted">정산 금액과 계좌 정보를 확인한 뒤 비밀번호를 입력하면 바로 신청할 수 있습니다.</p>
+                            </div>
+                            <!-- 정산 신청 입력 폼 -->
+                            <div class="st-form">
+                                <div class="st-field">
+                                    <label for="settlement-amount">정산금액</label>
+                                    <input id="settlement-amount" class="st-input" type="text" value="2,990,677원">
+                                </div>
+                                <div class="st-field">
+                                    <label for="settlement-account">계좌입력</label>
+                                    <div class="st-account-row">
+                                        <input class="st-input st-inputs" type="text" placeholder="은행명">
+                                        <input id="settlement-account" class="st-input st-inputss" type="text" placeholder="계좌번호 입력">
+                                    </div>
+                                    <label class="st-memory-check" for="settlement-memory-checkbox">
+                                        <input type="checkbox" id="settlement-memory-checkbox">
+                                        <span>계좌 기억하기</span>
+                                    </label>
+                                </div>
+                                <div class="st-field">
+                                    <label for="settlement-password">비밀번호</label>
+                                    <input id="settlement-password" class="st-input" type="password" placeholder="비밀번호 입력">
+                                </div>
+                                <button type="button" class="st-btn st-btn-main">정산 신청</button>
+                            </div>
+                        </div>
+                        <!-- 우측: 정산 안내 이미지 -->
+                        <div class="flex justify-center lg:justify-end">
+                            <img src="/src/main/resources/static/images/BIDEO_LOGO/BIDEO WHITE (1).jpg" alt="정산 안내 이미지"
+                                style="width:min(100%, 360px); border-radius:24px; object-fit:cover;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 최근 정산 내역 제목 -->
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold">최근 정산 내역</h1>
+                </div>
+
+                <!-- 최근 정산 내역 표 -->
+                <div class="st-list">
+                    <!-- 표 헤더 -->
+                    <div class="st-head-row">
+                        <div class="st-col-head">정산명</div>
+                        <div class="st-col-head">정산액</div>
+                        <div class="st-col-head">상태</div>
+                        <div class="st-col-head text-right">상세</div>
+                    </div>
+                    <!-- 정산 내역 1행 -->
+                    <article class="st-row">
+                        <div>
+                            <p class="text-sm text-muted mb-1">2026.03.11</p>
+                            <h4 class="text-lg font-semibold"> 콘텐츠 판매 정산</h4>
+                        </div>
+                        <div>
+                            <strong class="text-base st-accent">2,990,677원</strong>
+                        </div>
+                        <div>
+                            <span class="st-chip st-chip-ready">정산중</span>
+                        </div>
+                        <div class="text-right">
+                            <a href="/settlement/detail" class="st-btn st-btn-main inline-flex items-center justify-center">상세보기</a>
+                        </div>
+                    </article>
+
+                    <!-- 정산 내역 2행 -->
+                    <article class="st-row">
+                        <div>
+                            <p class="text-sm text-muted mb-1">2026.02.28</p>
+                            <h4 class="text-lg font-semibold">작품 판매 정산</h4>
+                        </div>
+                        <div>
+                            <strong class="text-base">1,840,220원</strong>
+                        </div>
+                        <div>
+                            <span class="st-chip st-chip-done">완료</span>
+                        </div>
+                        <div class="text-right">
+                            <a href="/settlement/detail" class="st-btn st-btn-sub inline-flex items-center justify-center">상세보기</a>
+                        </div>
+                    </article>
+
+                    <!-- 정산 내역 3행 -->
+                    <article class="st-row">
+                        <div>
+                            <p class="text-sm text-muted mb-1">2026.02.18</p>
+                            <h4 class="text-lg font-semibold">경매 판매 정산</h4>
+                        </div>
+                        <div>
+                            <strong class="text-base">4,120,000원</strong>
+                        </div>
+                        <div>
+                            <span class="st-chip st-chip-done">완료</span>
+                        </div>
+                        <div class="text-right">
+                            <a href="/settlement/detail" class="st-btn st-btn-sub inline-flex items-center justify-center">상세보기</a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
+    </main>
+
+</body>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="/src/main/resources/static/js/alarm/snackbar.js"></script>
+<script src="/src/main/resources/static/js/settlement/settlement.js"></script>
+<script src="/src/main/resources/static/js/main/navigation.js"></script>
+</html>

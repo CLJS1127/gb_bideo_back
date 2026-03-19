@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>차단된 계정</title>
+    <link rel="shortcut icon" href="/src/main/resources/static/images/BIDEO_LOGO/BIDEO_favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="/src/main/resources/static/css/blocklist/blocklist.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/alarm/snackbar.css">
+    <link rel="stylesheet" href="/src/main/resources/static/css/main/main.css">
+</head>
+<body>
+    <div class="blocklist-page">
+        <header class="blocklist-header">
+            
+              
+            <button class="back-button" type="button" aria-label="뒤로가기" onclick="history.back()">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+                    <path d="M14.78 5.22a.75.75 0 0 1 0 1.06L9.06 12l5.72 5.72a.75.75 0 1 1-1.06 1.06l-6.25-6.25a.75.75 0 0 1 0-1.06l6.25-6.25a.75.75 0 0 1 1.06 0Z"></path>
+                </svg>
+            </button>
+            <h1>차단된 계정</h1>
+        </header>
+
+        <main class="blocklist-shell">
+            <p class="blocklist-note">상대방 프로필에서 언제든지 차단할 수 있습니다.</p>
+
+            <section class="account-list" aria-label="차단 목록">
+                <article class="account-row">
+                    <div class="account-profile">
+                        <img src="/src/main/resources/static/images/BIDEO_LOGO/unnamed.jpg" alt="power_ice_2000">
+                        <div class="account-copy">
+                            <strong>power_ice_2000</strong>
+                        </div>
+                    </div>
+                    <button class="action-button" type="button" data-open-unblock="power_ice_2000">차단 해제</button>
+                </article>
+
+                <article class="account-row">
+                    <div class="account-profile">
+                        <img src="/src/main/resources/static/images/BIDEO_LOGO/meta (1).jpg" alt="ansleybanda">
+                        <div class="account-copy">
+                            <strong>ansleybanda</strong>
+                            <span>Ansley</span>
+                        </div>
+                    </div>
+                    <button class="action-button" type="button" data-open-unblock="ansleybanda">차단 해제</button>
+                </article>
+
+                <article class="account-row">
+                    <div class="account-profile">
+                        <img src="/src/main/resources/static/images/BIDEO_LOGO/BIDEO WHITE (1).jpg" alt="doctormatrange">
+                        <div class="account-copy">
+                            <strong>doctormatrange</strong>
+                            <span>다른 계정도 함께 차단됨</span>
+                        </div>
+                    </div>
+                    <button class="action-button" type="button" data-open-unblock="doctormatrange">차단 해제</button>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal" id="unblock-modal" hidden>
+        <div class="modal-backdrop" data-close-modal></div>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="unblock-title">
+            <div class="modal-copy">
+                <h3 id="unblock-title"><span id="modal-username">power_ice_2000</span>님을 차단 해제하시겠어요?</h3>
+                <p>
+                    이제 <span id="modal-username-copy">power_ice_2000</span>님이 회원님에게 팔로우를 요청하거나 메시지를 보낼 수 있습니다.
+                    상대방에게는 차단 해제 사실이 따로 알려지지 않습니다.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button modal-button-primary" type="button" data-confirm-unblock>차단 해제</button>
+                <button class="modal-button modal-button-secondary" type="button" data-close-modal>취소</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/src/main/resources/static/js/alarm/snackbar.js"></script>
+    <script src="/src/main/resources/static/js/blocklist/blocklist.js"></script>
+</body>
+</html>

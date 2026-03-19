@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO</title>
+    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #FFF;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: var(--font-sans);
+            color: #111;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .error-content {
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 20px;
+        }
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #111;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            transition: all 0.3s ease;
+        }
+        .error-msg {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .error-sub {
+            font-size: 15px;
+            color: #8E8E8E;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            word-break: keep-all;
+        }
+        .btn-retry {
+            display: inline-block;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0095F6;
+            text-decoration: none;
+            padding: 12px 24px;
+            transition: opacity 0.2s;
+        }
+        .btn-retry:hover {
+            opacity: 0.7;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 480px) {
+            .icon-circle {
+                width: 64px;
+                height: 64px;
+            }
+            .icon-circle i {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            .error-msg {
+                font-size: 18px;
+            }
+            .error-sub {
+                font-size: 14px;
+                padding: 0 10px;
+            }
+            .btn-retry {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-content">
+        <div class="icon-circle">
+            <i data-lucide="refresh-cw" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h1 class="error-msg">페이지를 사용할 수 없습니다</h1>
+        <p class="error-sub">클릭하신 링크가 잘못되었거나 페이지가 삭제되었습니다. 관리자에게 문의하거나 홈으로 이동하세요.</p>
+        <a href="/" class="btn-retry">홈으로 돌아가기</a>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

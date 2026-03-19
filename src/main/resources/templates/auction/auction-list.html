@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO | 경매</title>
+    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/main/main.css">
+    <link rel="stylesheet" href="../../static/css/main/navigation.css">
+    <link rel="stylesheet" href="../../static/css/main/modal-shared.css">
+    <link rel="stylesheet" href="../../static/css/main/auth-modal.css">
+    <link rel="stylesheet" href="../../static/css/main/signup-modal.css">
+    <link rel="stylesheet" href="../../static/css/auction/auction-list.css">
+</head>
+
+<body class="app-root" style="margin:0">
+    <div id="__PWS_ROOT__" class="app-root__mount">
+        <div class="main-page-shell app-shell layout-box">
+            <div class="main-page-frame app-shell__frame layout-box">
+
+                <!-- ===== 상단 헤더 ===== -->
+                <div role="banner" class="main-header main-header__layout layout-box">
+                    <div data-test-id="header" id="HeaderContent" class="main-header__bar layout-box layout-top-zero layout-right-zero layout-fixed">
+                        <div class="main-header__surface layout-box">
+                            <div data-test-id="header-background" class="main-header__background layout-box size-full width-full surface-default">
+                                <div class="main-header__background-inner layout-box">
+                                    <div class="main-header__row flex-row spacing-inline-zero spacing-block-zero justify-start flex-column">
+                                        <div class="main-header__content layout-box section-padding-x-400 size-full width-full items-center flex-grow flex-row-container">
+                                            <div data-test-id="button-container"
+                                                class="main-header__actions layout-box size-full width-full items-center flex-row-container">
+                                                <!-- 검색 -->
+                                                <div data-test-id="search-box-container" id="searchBoxContainer"
+                                                    class="search-bar main-header__search search-bar__container layout-box spacing-inline-end-200 search-box-inline-zero spacing-block-start-zero flex-grow">
+                                                    <div class="search-bar__shell layout-box rounded-field-surface flex-row-container">
+                                                        <div class="search-bar__inner layout-box position-relative items-center flex-grow flex-row-container">
+                                                            <div class="search-bar__icon-slot layout-box flex-fixed spacing-inline-end-200">
+                                                                <svg aria-label="검색 아이콘" class="icon-svg display-block icon-color-subtle"
+                                                                    height="16" role="img" viewBox="0 0 24 24" width="16">
+                                                                    <path d="M17.33 18.74a10 10 0 1 1 1.41-1.41l4.47 4.47-1.41 1.41zM11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="search-bar__input-wrap layout-box flex-grow">
+                                                                <input aria-label="검색" autocomplete="off"
+                                                                    class="search-bar__input" data-test-id="search-box-input" id="search-input"
+                                                                    placeholder="경매 검색" role="combobox" type="text" value="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- 프로필 -->
+                                                <div class="profile-menu slot-block">
+                                                    <div class="profile-menu__frame layout-box display-block-wrapper">
+                                                        <div class="profile-menu__control layout-box">
+                                                            <a aria-label="내 프로필"
+                                                                class="profile-summary profile-menu__link link-reset text-color-inherit text-no-underline interactive-scale rounded-400 focus-outline-none display-block-link width-full cursor-pointer"
+                                                                href="#" tabindex="0">
+                                                                <div aria-hidden="true" class="profile-menu__avatar-shell layout-box rounded-400">
+                                                                    <div class="profile-menu__avatar-outer layout-box rounded-circle justify-center items-center flex-row-container">
+                                                                        <div class="profile-menu__avatar-inner layout-box rounded-circle justify-center items-center flex-row-container">
+                                                                            <div class="avatar-frame avatar-size-32">
+                                                                                <div class="overflow-hidden-relative rounded-circle will-change-transform">
+                                                                                    <div>
+                                                                                        <div class="layout-box position-relative avatar-bg">
+                                                                                            <img alt="내 프로필" class="profile-avatar-image"
+                                                                                                src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="avatar-overlay"></div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- 계정 드롭다운 -->
+                                                <div class="account-menu slot-block">
+                                                    <div class="account-menu__frame layout-box display-block-wrapper">
+                                                        <div class="account-menu__control layout-box">
+                                                            <button aria-expanded="false" aria-haspopup="true"
+                                                                aria-label="계정" class="account-menu-trigger icon-button button-reset"
+                                                                data-test-id="header-accounts-options-button" tabindex="0" type="button">
+                                                                <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                                                    <div class="account-menu__icon icon-container rounded-200 icon-surface-transparent">
+                                                                        <svg aria-hidden="true" class="icon-svg display-block icon-color-subtle"
+                                                                            height="12" role="img" viewBox="0 0 24 24" width="12">
+                                                                            <path d="M23.7 8.7 12 20.42.3 8.71l1.4-1.42L12 17.6 22.3 7.3z"></path>
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== 메인 콘텐츠 ===== -->
+                <div class="appContent app-content" role="main">
+                    <div class="layout-box appViewport app-viewport">
+                        <div class="mainContainer feed-shell">
+
+                            <!-- 필터 탭 -->
+                            <div class="auction-filter-bar">
+                                <div class="auction-filter-tabs">
+                                    <button class="auction-filter-tab active" data-filter="all" onclick="filterAuctions(this, 'all')">전체</button>
+                                    <button class="auction-filter-tab" data-filter="live" onclick="filterAuctions(this, 'live')">진행중</button>
+                                    <button class="auction-filter-tab" data-filter="upcoming" onclick="filterAuctions(this, 'upcoming')">예정</button>
+                                    <button class="auction-filter-tab" data-filter="ended" onclick="filterAuctions(this, 'ended')">종료</button>
+                                </div>
+                            </div>
+
+                            <!-- 마소너리 그리드 -->
+                            <div id="masonry"></div>
+                            <div id="loader" class="loader loader--hidden">로딩 중...</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script src="../../static/js/main/modal-shared.js"></script>
+<script src="../../static/js/main/navigation.js"></script>
+<script src="../../static/js/main/auth-modal.js"></script>
+<script src="../../static/js/main/signup-modal.js"></script>
+<script src="../../static/js/auction/auction-list.js"></script>
+</html>

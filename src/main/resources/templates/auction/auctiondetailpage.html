@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>경매 상세 페이지</title>
+    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="../../static/css/common/font.css">
+    <link rel="stylesheet" href="../../static/css/common/global.css">
+    <link rel="stylesheet" href="../../static/css/font.css">
+    <link rel="stylesheet" href="../../static/css/auction/auctionpage.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="detail-container">
+
+    <!-- Header (아티스트) -->
+    <header class="post-header">
+        <div class="profile-info">
+            <div class="avatar">
+                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="아티스트 프로필">
+            </div>
+            <div class="profile-text">
+                <div class="user-name">
+                    홍길동 (Hong Gil-dong)
+                    <span class="live-badge">AUCTION</span>
+                </div>
+                <div class="user-meta">서울, 대한민국 • 2024.04.18 업로드</div>
+            </div>
+        </div>
+        <i data-lucide="more-horizontal" class="action-icon"></i>
+    </header>
+
+    <!-- 영상 플레이어 -->
+    <div class="post-media">
+        <span class="media-label">HIGHLIGHT</span>
+        <video id="main-player" controls muted loop poster="">
+            <source src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" type="video/mp4">
+            브라우저가 비디오 태그를 지원하지 않습니다.
+        </video>
+    </div>
+
+
+<!-- Action Bar -->
+    <div class="post-actions">
+        <div class="action-left">
+            <i data-lucide="heart" class="action-icon"></i>
+            <i data-lucide="message-circle" class="action-icon"></i>
+            <i data-lucide="send" class="action-icon"></i>
+            <span class="view-count">
+                <i data-lucide="eye" style="width:14px;height:14px;"></i>
+                12,847회 조회
+            </span>
+        </div>
+        <i data-lucide="bookmark" class="action-icon"></i>
+    </div>
+
+    <!-- Body -->
+    <div class="post-body">
+
+        <!-- 작품 제목 + 메타 -->
+        <h1 class="post-title">도시의 빛, 그 사이에서 — Urban Interlude</h1>
+        <div class="post-meta-row">
+            <span><i data-lucide="calendar" style="width:13px;height:13px;"></i>2024.04.18 업로드</span>
+            <span><i data-lucide="eye" style="width:13px;height:13px;"></i>12,847 views</span>
+            <span><i data-lucide="heart" style="width:13px;height:13px;"></i>1,203 likes</span>
+        </div>
+
+        <!-- 경매 입찰 정보 + 카운트다운 -->
+        <div class="auction-box">
+            <div class="section-label">Auction Info</div>
+
+            <!-- 현재 최고가 / 입찰 단위 -->
+            <div class="auction-row">
+                <div class="auction-field">
+                    <div class="label">현재 최고가</div>
+                    <div class="price">₩ 1,450,000</div>
+                </div>
+                <div class="auction-field">
+                    <div class="label">입찰 단위</div>
+                    <div class="unit" id="bid-unit">+ 10%</div>
+                </div>
+            </div>
+
+            <hr class="auction-divider">
+
+            <!-- 마감 카운트다운 + 마감 날짜 -->
+            <div class="countdown-wrap">
+                <div class="countdown-row">
+                    <span class="countdown-label">마감까지</span>
+                    <div class="countdown-blocks">
+                        <div class="cd-block">
+                            <div class="cd-num" id="cd-days">02</div>
+                            <div class="cd-unit">Days</div>
+                        </div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-block">
+                            <div class="cd-num" id="cd-hours">14</div>
+                            <div class="cd-unit">Hours</div>
+                        </div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-block">
+                            <div class="cd-num" id="cd-mins">37</div>
+                            <div class="cd-unit">Mins</div>
+                        </div>
+                        <span class="cd-sep">:</span>
+                        <div class="cd-block">
+                            <div class="cd-num" id="cd-secs">08</div>
+                            <div class="cd-unit">Secs</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="deadline-row">
+                    <i data-lucide="calendar-clock" style="width:12px;height:12px;"></i>
+                    <span id="auction-deadline">2026.03.15 18:00 마감</span>
+                </div>
+            </div>
+
+            <hr class="auction-divider">
+
+            <!-- 입찰하기 버튼 -->
+            <button class="bid-btn" id="bid-btn">
+                <i data-lucide="gavel" style="width:16px;height:16px;"></i>
+                입찰하기
+            </button>
+        </div>
+
+        <!-- ⑧ 아티스트/제작자 정보 -->
+        <div class="section-label">Artist</div>
+        <div class="artist-card">
+            <div class="artist-avatar">
+                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="아티스트">
+            </div>
+            <div class="artist-info">
+                <div class="artist-name">홍길동 (Hong Gil-dong)</div>
+                <div class="artist-role">시네마틱 필름메이커 · 서울</div>
+                <div class="artist-tags">
+                    <span class="artist-tag">#시네마틱</span>
+                    <span class="artist-tag">#4K</span>
+                    <span class="artist-tag">#도시촬영</span>
+                    <span class="artist-tag">#드론</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 작가의 말 -->
+        <div class="section-label">작가의 말</div>
+        <div class="artist-statement">
+            <span class="quote-mark">"</span>
+            <p>
+                도시의 밤은 무수한 빛의 언어로 가득합니다. 이 작품은 서울 도심을 3개월간 촬영하며 담아낸
+                빛과 그림자의 대화입니다. 네온사인이 젖은 아스팔트에 녹아드는 그 찰나를 4K로 포착해,
+                일상 속에서 잊혀가는 도시의 시적 순간을 기록하고 싶었습니다.
+                이 작품이 당신의 공간에 놓였을 때, 도시의 숨결이 함께하길 바랍니다.
+            </p>
+        </div>
+
+    </div><!-- /post-body -->
+</div><!-- /detail-container -->
+
+<script>
+    lucide.createIcons();
+
+    /* ── 카운트다운 타이머 ── */
+    const deadline = new Date(Date.now() + (2 * 86400 + 14 * 3600 + 37 * 60 + 8) * 1000);
+
+    function updateCountdown() {
+        const diff = deadline - Date.now();
+        if (diff <= 0) {
+            document.getElementById('cd-days').textContent  = '00';
+            document.getElementById('cd-hours').textContent = '00';
+            document.getElementById('cd-mins').textContent  = '00';
+            document.getElementById('cd-secs').textContent  = '00';
+            return;
+        }
+        const pad = n => String(Math.floor(n)).padStart(2, '0');
+        document.getElementById('cd-days').textContent  = pad(diff / 86400000);
+        document.getElementById('cd-hours').textContent = pad((diff % 86400000) / 3600000);
+        document.getElementById('cd-mins').textContent  = pad((diff % 3600000) / 60000);
+        document.getElementById('cd-secs').textContent  = pad((diff % 60000) / 1000);
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+
+</script>
+</body>
+</html>

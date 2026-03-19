@@ -1,0 +1,490 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Pretendard, "Noto Sans KR", sans-serif;
+    background: #ffffff;
+    color: #111111;
+}
+
+.card-page {
+    min-height: 100vh;
+    padding: 132px 24px 80px;
+}
+
+.my-page-content {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.content_area {
+    width: 100%;
+}
+
+.my_payment {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
+
+.content_title.has_sub {
+    display: flex;
+    justify-content: space-between;
+    gap: 22px;
+    align-items: center;
+}
+
+.title {
+    min-width: 0;
+    flex: 1;
+}
+
+.title h3 {
+    margin: 0 0 6px;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.sub_title {
+    margin: 0;
+    max-width: 620px;
+    color: #7a7a7a;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.btn_box {
+    flex-shrink: 0;
+}
+
+.btn.btn_add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 142px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid #dddddd;
+    background: #ffffff;
+    color: #111111;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.my-content {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.profile_group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.group_title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #222222;
+}
+
+.my_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px;
+    border: 1px solid #f0f0f0;
+    border-radius: 14px;
+    background: #fdfdfd;
+}
+
+.my_item.default-style.basic {
+    background: #faf9f6;
+    border-color: #ece7dc;
+}
+
+.my_item.other {
+    padding: 18px 0;
+    border: 0;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.info_bind {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.radio_input {
+    display: none;
+}
+
+.radio_item.hide-radio {
+    flex-shrink: 0;
+}
+
+.card_info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.card-company-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 8px;
+    border: 1px solid #dcdcdc;
+    background: #ffffff;
+    color: #555555;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.card_num {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #666666;
+    font-size: 12px;
+}
+
+.num_bind {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #111111;
+}
+
+.dot .dot {
+    width: 4px;
+    height: 4px;
+    background: #111111;
+}
+
+.dot.single {
+    width: 6px;
+    height: 6px;
+}
+
+.hyphen {
+    width: 7px;
+    height: 1px;
+    background: #bdbdbd;
+}
+
+.last_num_box {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.last_num {
+    font-weight: 700;
+    color: #111111;
+    font-size: 12px;
+}
+
+.mark {
+    color: #b9a36a;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.btn_bind {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn.outline_greylight.small {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    height: 34px;
+    padding: 0 13px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #555555;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn.outline_greylight.small[hidden] {
+    display: none !important;
+}
+
+.card-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+}
+
+.card-modal.is-open {
+    display: flex;
+}
+
+.card-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 17, 17, 0.22);
+    backdrop-filter: blur(7px);
+}
+
+.card-modal__panel {
+    position: relative;
+    width: min(100%, 430px);
+    min-height: 830px;
+    max-height: min(98vh, 1080px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid #e5dfd3;
+    box-shadow: 0 24px 50px rgba(79, 63, 38, 0.16);
+}
+
+.card-modal__header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 22px 22px 15px;
+    border-bottom: 1px solid #f0eadf;
+}
+
+.card-modal__title {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 19px;
+    font-weight: 700;
+    color: #111111;
+    text-align: center;
+}
+
+.card-modal__close {
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: none;
+}
+
+.card-modal__close svg {
+    width: 18px;
+    height: 18px;
+    fill: #111111;
+}
+
+.card-modal__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 34px 22px 42px;
+}
+
+.card-modal__intro {
+    margin-bottom: 30px;
+}
+
+.card-modal__headline {
+    margin: 0 0 8px;
+    font-size: 23px;
+    line-height: 1.28;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.card-modal__caption {
+    margin: 0;
+    color: #7b7468;
+    font-size: 14px;
+}
+
+.card-form {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-form__group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card-form__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111111;
+}
+
+.card-form__input,
+.card-number {
+    border: 1px solid #d9d1c3;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.card-form__input {
+    width: 100%;
+    height: 50px;
+    padding: 0 15px;
+    font-size: 14px;
+    outline: 0;
+}
+
+.card-form__input:focus,
+.card-number:focus-within {
+    border-color: #111111;
+    background: #ffffff;
+}
+
+.card-form__group.is-invalid .card-form__input,
+.card-form__group.is-invalid .card-number {
+    border-color: #d9d1c3;
+    background: #ffffff;
+}
+
+.card-number {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 13px;
+    height: 54px;
+    flex-wrap: nowrap;
+}
+
+.card-number__input {
+    min-width: 0;
+    flex: 1 1 0;
+    border: 0;
+    outline: 0;
+    font-size: 14px;
+    text-align: center;
+    background: transparent;
+}
+
+.card-number__dash {
+    color: #9ca3af;
+    text-align: center;
+}
+
+.card-form__help {
+    min-height: 16px;
+    margin: 0;
+    color: #8a8174;
+    font-size: 12px;
+}
+
+.card-form__group.is-invalid .card-form__help {
+    color: #d93025;
+    font-weight: 600;
+}
+
+.card-modal__actions {
+    margin-top: auto;
+    padding-top: 24px;
+}
+
+.card-action {
+    width: 100%;
+    height: 50px;
+    border-radius: 12px;
+    border: 0;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.card-action--primary {
+    background: var(--primary-color, #f0d999);
+    color: #111111;
+}
+
+@media (max-width: 640px) {
+    .card-page {
+        padding: 108px 16px 60px;
+    }
+
+    .content_title.has_sub,
+    .my_item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn_box,
+    .btn.btn_add,
+    .btn_bind,
+    .btn.outline_greylight.small {
+        width: 100%;
+    }
+
+    .card-modal {
+        padding: 16px;
+    }
+
+    .card-modal__panel {
+        width: 100%;
+        min-height: auto;
+        border-radius: 16px;
+    }
+
+    .card-modal__header,
+    .card-modal__body {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .card-modal__title {
+        font-size: 24px;
+    }
+
+    .card-modal__headline {
+        font-size: 20px;
+    }
+
+    .card-number {
+        gap: 4px;
+        padding: 0 8px;
+    }
+}

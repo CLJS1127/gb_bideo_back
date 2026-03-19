@@ -1,0 +1,138 @@
+/* Admin Core & Layout */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #FDFDFD;
+    font-family: var(--font-sans);
+    display: flex;
+    color: var(--admin-text-main);
+    min-width: 1280px; /* 최소 너비를 1280px로 상향 고정 */
+}
+table tr th {
+    text-align: center !important;
+}
+/* Sidebar Layout */
+.sidebar {
+    width: var(--admin-sidebar-width);
+    height: 100vh;
+    background-color: #FFFFFF;
+    border-right: 1px solid #EEEEEE;
+    padding: 32px 20px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+/* Logo Section */
+.logo-container {
+    padding: 0 12px 40px 12px;
+    display: flex;
+    justify-content: center;
+}
+.logo-container img {
+    height: 100px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Navigation Groups */
+.nav-group {
+    margin-bottom: 28px;
+}
+
+.nav-group-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--admin-text-muted);
+    padding: 0 16px 12px 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+/* Nav Items */
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    text-decoration: none;
+    color: var(--admin-text-main);
+    font-weight: 600;
+    border-radius: var(--admin-border-radius);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 6px;
+}
+
+.nav-item:hover {
+    background-color: var(--admin-hover-bg);
+    transform: translateX(4px);
+}
+
+.nav-item.active {
+    background-color: var(--admin-active-bg);
+    color: var(--admin-active-text);
+    box-shadow: 0 8px 16px rgba(17, 17, 17, 0.15);
+}
+
+.nav-item i {
+    margin-right: 14px;
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+    stroke-width: 2.5px;
+}
+
+/* Sub Menu Support - Accordion Style */
+.nav-submenu {
+    padding-left: 24px;
+    margin-left: 28px;
+    border-left: 1px solid #EEE;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.nav-submenu.show {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 4px;
+    padding-bottom: 8px;
+}
+
+.nav-sub-item {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: var(--admin-text-sub);
+    font-size: 13.5px;
+    font-weight: 500;
+    border-radius: var(--admin-border-radius);
+    transition: all 0.2s;
+    margin-bottom: 2px;
+}
+
+.nav-sub-item:hover {
+    color: var(--secondary-color);
+    background-color: var(--admin-hover-bg);
+    font-weight: 600;
+}
+
+/* Content Area Layout */
+.main-content {
+    margin-left: var(--admin-sidebar-width);
+    flex-grow: 1;
+    padding: 80px 80px; /* 상단 여백을 늘려 버튼 공간 확보 */
+    max-width: var(--admin-content-max-width);
+    position: relative; /* 버튼 배치를 위한 기준점 */
+}
+
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: #DDD;
+    border-radius: 10px;
+}
