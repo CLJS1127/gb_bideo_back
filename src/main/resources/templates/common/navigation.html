@@ -1,25 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIDEO | 네비게이션</title>
-    <link rel="icon" href="static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="static/css/common/font.css">
-    <link rel="stylesheet" href="static/css/common/global.css">
-    <link rel="stylesheet" href="static/css/main/main.css">
-    <link rel="stylesheet" href="static/css/main/navigation.css">
-    <style>
-        :root {
-            --gestalt-theme: calico;
-            --gestalt-color-scheme: lightMode;
-            --base-font-family-default-latin: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
-    </style>
-</head>
-<body style="margin:0">
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
 <!-- ===== 좌측 사이드 네비게이션 ===== -->
-<nav id="VerticalNavContent" class="side-nav side-nav--rail layout-box flex-column layout-top-zero surface-default layout-fixed items-center flex-row-container"
+<nav th:fragment="navigation" id="VerticalNavContent" class="side-nav side-nav--rail layout-box flex-column layout-top-zero surface-default layout-fixed items-center flex-row-container"
     style="overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--sema-color-border-decorative);height:100vh;width:72px;z-index:672">
     <div class="side-nav__inner layout-box section-padding-y-400" style="height:100%">
         <div class="side-nav__content side-nav__group layout-box flex-column justify-between items-center flex-row-container" style="gap:24px;height:100%">
@@ -32,7 +15,7 @@
                                 <a aria-label="홈" class="side-nav__item-link side-nav__logo-link icon-button link-reset text-color-inherit text-no-underline interactive-scale focus-outline-none button-reset-inner cursor-pointer-inner"
                                     href="#" tabindex="0">
                                     <div class="side-nav__icon-wrap icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
-                                        <img src="static/images/BIDEO_LOGO/favi_bideo_white.png" alt="">
+                                        <img src="/static/images/BIDEO_LOGO/favi_bideo_white.png" alt="">
                                     </div>
                                 </a>
                             </div>
@@ -193,11 +176,5 @@
         </div>
     </div>
 </nav>
-
-<script src="static/js/main/modal-shared.js"></script>
-<script src="static/js/main/navigation.js"></script>
-<script src="static/js/main/closeup.js"></script>
-<script src="static/js/main/auth-modal.js"></script>
-<script src="static/js/main/signup-modal.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+window.onload = () => {
     var contestCards = document.querySelectorAll(".contest-item");
 
     if (!contestCards.length) {
@@ -12,4 +12,4 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "/contest/detail";
         });
     });
-});
+};

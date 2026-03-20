@@ -1,25 +1,71 @@
 <!DOCTYPE html>
-<html class="bg-surface-0" lang="ko">
+<html class="bg-surface-0" lang="ko" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/common/layout}">
 
 <head>
     <title>BIDEO | 영상 경매 & 거래 플랫폼</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/main/intro-main.css" />
-    <link rel="stylesheet" href="../../static/css/main/modal-shared.css" />
-    <link rel="stylesheet" href="../../static/css/main/auth-modal.css" />
-    <link rel="stylesheet" href="../../static/css/main/signup-modal.css" />
+    <link rel="icon" href="static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="static/css/common/font.css">
+    <link rel="stylesheet" href="static/css/common/global.css">
+    <link rel="stylesheet" href="static/css/main/intro-main.css" />
+    <link rel="stylesheet" href="static/css/main/modal-shared.css" />
+    <link rel="stylesheet" href="static/css/main/auth-modal.css" />
+    <link rel="stylesheet" href="static/css/main/signup-modal.css" />
+    <script>history.scrollRestoration = 'manual'; window.scrollTo(0, 0);</script>
+    <script>
+        document.querySelectorAll('.keen-slider').forEach(slider => {
+            let isDown = false, startX, scrollLeft, velX = 0, rafId = null;
+
+            slider.addEventListener('mousedown', e => {
+                isDown = true;
+                slider.classList.add('is-dragging');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+                velX = 0;
+                if (rafId) cancelAnimationFrame(rafId);
+            });
+
+            slider.addEventListener('mouseleave', () => { if (isDown) endDrag(); });
+            slider.addEventListener('mouseup', () => { if (isDown) endDrag(); });
+
+            slider.addEventListener('mousemove', e => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const dx = x - startX;
+                velX = dx - (slider.scrollLeft - scrollLeft + dx);
+                slider.scrollLeft = scrollLeft - dx;
+            });
+
+            function endDrag() {
+                isDown = false;
+                slider.classList.remove('is-dragging');
+                momentum();
+            }
+
+            function momentum() {
+                if (Math.abs(velX) < 0.5) { slider.style.scrollSnapType = 'x mandatory'; return; }
+                slider.scrollLeft -= velX;
+                velX *= 0.92;
+                rafId = requestAnimationFrame(momentum);
+            }
+        });
+    </script>
+    <script src="static/js/main/modal-shared.js"></script>
+    <script src="static/js/main/auth-modal.js"></script>
+    <script src="static/js/main/signup-modal.js"></script>
+    <script src="static/js/main/intro-main.js"></script>
 </head>
 
 <body class="_otnfkq0">
+<th:block layout:fragment="content">
     <div id="__next">
         <header class="site-intro-header" id="site-intro-header">
             <div class="site-intro-header__inner">
                 <a class="site-intro-header__brand" aria-label="BIDEO 홈">
-                    <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png" alt="BIDEO 로고">
+                    <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png" alt="BIDEO 로고">
                     <span class="site-intro-header__brand-copy">
                         <span>Premium Video Marketplace</span>
                     </span>
@@ -66,7 +112,7 @@
                     <div class="hero-gallery-row">
                         <article class="hero-gallery-card hero-gallery-card--wide">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--aurora">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                                 <span class="hero-gallery-card__pulse"></span>
                             </div>
@@ -77,7 +123,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--spot">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>크리에이터 스냅</strong>
@@ -86,7 +132,7 @@
                         </article>
                         <article class="hero-gallery-card">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--grid">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                             </div>
                             <div class="hero-gallery-card__meta">
@@ -96,7 +142,7 @@
                         </article>
                         <article class="hero-gallery-card">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--wave">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>컬러 싱크 릴</strong>
@@ -105,7 +151,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--frame">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>세로 티저</strong>
@@ -114,7 +160,7 @@
                         </article>
                         <article class="hero-gallery-card">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--spot">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                             </div>
                             <div class="hero-gallery-card__meta">
@@ -126,7 +172,7 @@
                     <div class="hero-gallery-row hero-gallery-row--secondary">
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--grid">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>인물 보정 샘플</strong>
@@ -135,7 +181,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--aurora">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>브랜디드 목업</strong>
@@ -144,7 +190,7 @@
                         </article>
                         <article class="hero-gallery-card">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--wave">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                             </div>
                             <div class="hero-gallery-card__meta">
@@ -154,7 +200,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--cinema">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--frame">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                                 <span class="hero-gallery-card__pulse"></span>
                             </div>
@@ -165,7 +211,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--spot">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>업스케일 데모</strong>
@@ -174,7 +220,7 @@
                         </article>
                         <article class="hero-gallery-card">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--aurora">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                     alt="BIDEO 쇼케이스">
                             </div>
                             <div class="hero-gallery-card__meta">
@@ -184,7 +230,7 @@
                         </article>
                         <article class="hero-gallery-card hero-gallery-card--portrait">
                             <div class="hero-gallery-card__visual hero-gallery-card__visual--wave">
-                                <img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
+                                <img src="static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO 썸네일">
                             </div>
                             <div class="hero-gallery-card__meta">
                                 <strong>뮤직 티저</strong>
@@ -240,7 +286,7 @@
                                 class="items-center justify-center gap-2 font-medium transition duration-150 ease-in-out disabled:cursor-not-allowed disabled:opacity-50 disabled:aria-pressed:cursor-default disabled:aria-pressed:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surface-border-alpha-1 active:outline-none text-nowrap h-8 px-4 text-xs rounded-lg bg-surface-0 text-default-foreground-0 aria-pressed:bg-surface-2 hover:bg-surface-1 disabled:hover:bg-surface-0 active:bg-surface-3 disabled:active:bg-surface-0 absolute left-1/2 top-8 z-10 hidden -translate-x-1/2 -translate-y-1/2 sm:block">음소거
                                 해제</button><video
                                 class="aspect-video w-full max-w-[1448] flex-1 rounded-lg bg-[#1C1C1C] object-cover object-left"
-                                src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" preload="auto"
+                                src="static/images/main_vidios/BIDEO_introduce_video.mp4" preload="auto"
                                 autoplay="" playsinline="" muted="" loop="" controls=""
                                 controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -335,8 +381,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -351,8 +397,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -367,8 +413,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -383,8 +429,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -399,8 +445,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -415,8 +461,8 @@
                         <div
                             class="relative mx-auto w-[82%] max-w-[720px] min-w-[254px] overflow-hidden rounded-xl group aspect-video h-auto lg:h-auto">
                             <video class="size-full object-cover"
-                                src="../../static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
-                                poster="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                                src="static/images/main_vidios/Logo_Animation_and_Branding_Videos.mp4"
+                                poster="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
                                 preload="metadata" autoplay="" playsinline="" muted="" loop="" controls=""
                                 aria-label="인기 영상 재생" controlsList="nodownload noremoteplayback noplaybackrate"></video>
                         </div>
@@ -694,7 +740,7 @@
                 <div class="site-intro-footer__inner">
                     <div class="site-intro-footer__brand-block">
                         <a class="site-intro-footer__brand" aria-label="BIDEO 홈">
-                            <img src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png" alt="BIDEO 로고">
+                            <img src="static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png" alt="BIDEO 로고">
                             <span>BIDEO</span>
                         </a>
                         <p class="site-intro-footer__description">
@@ -738,50 +784,6 @@
         </main>
         <div style="position:absolute;z-index:5"></div>
     </div>
+</th:block>
 </body>
-<script>history.scrollRestoration = 'manual'; window.scrollTo(0, 0);</script>
-<script>
-    document.querySelectorAll('.keen-slider').forEach(slider => {
-        let isDown = false, startX, scrollLeft, velX = 0, rafId = null;
-
-        slider.addEventListener('mousedown', e => {
-            isDown = true;
-            slider.classList.add('is-dragging');
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-            velX = 0;
-            if (rafId) cancelAnimationFrame(rafId);
-        });
-
-        slider.addEventListener('mouseleave', () => { if (isDown) endDrag(); });
-        slider.addEventListener('mouseup', () => { if (isDown) endDrag(); });
-
-        slider.addEventListener('mousemove', e => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const dx = x - startX;
-            velX = dx - (slider.scrollLeft - scrollLeft + dx);
-            slider.scrollLeft = scrollLeft - dx;
-        });
-
-        function endDrag() {
-            isDown = false;
-            slider.classList.remove('is-dragging');
-            momentum();
-        }
-
-        function momentum() {
-            if (Math.abs(velX) < 0.5) { slider.style.scrollSnapType = 'x mandatory'; return; }
-            slider.scrollLeft -= velX;
-            velX *= 0.92;
-            rafId = requestAnimationFrame(momentum);
-        }
-    });
-</script>
-<script src="../../static/js/main/modal-shared.js"></script>
-<script src="../../static/js/main/auth-modal.js"></script>
-<script src="../../static/js/main/signup-modal.js"></script>
-<script src="../../static/js/main/intro-main.js"></script>
-
 </html>
