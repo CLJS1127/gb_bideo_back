@@ -1,115 +1,320 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>contest-register</title>
+    <title>공모전 등록 | BIDEO</title>
     <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
     <link rel="stylesheet" href="/css/common/font.css">
     <link rel="stylesheet" href="/css/common/global.css">
-    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/main/main.css">
+    <link rel="stylesheet" href="/css/main/navigation.css">
     <link rel="stylesheet" href="/css/contest/contest-register.css">
 </head>
+
 <body>
 
-    <!-- Top Navigation -->
-    <nav class="top-nav">
-        <div class="nav-left">
-            <!-- BIDEO Logo -->
-            <img class="bideo-logo" src="/images/BIDEO_LOGO/BIDEO-logo.png" width="40px">
-            <a href="#" class="nav-btn">홈</a>
-            <a href="#" class="nav-btn active">만들기</a>
+    <!-- ===== 상단 헤더 (검색바 + 프로필) ===== -->
+    <div role="banner" class="main-header layout-box">
+        <div data-test-id="header" id="HeaderContent"
+            class="main-header__bar layout-box layout-top-zero layout-right-zero layout-fixed"
+            style="left:72px;transition:left 0.3s ease-in-out, right 0.3s ease-in-out;z-index:671">
+            <div class="layout-box">
+                <div data-test-id="header-background" class="layout-box size-full width-full surface-default">
+                    <div class="layout-box">
+                        <div class="flex-row spacing-inline-zero spacing-block-zero justify-start flex-column"
+                            style="height:80px;width:100%">
+                            <div class="layout-box section-padding-x-400 size-full width-full items-center flex-grow flex-row-container">
+                                <div data-test-id="button-container"
+                                    class="layout-box size-full width-full items-center flex-row-container"
+                                    style="height:56px">
+                                    <!-- 검색 -->
+                                    <div data-test-id="search-box-container" id="searchBoxContainer"
+                                        class="search-bar layout-box spacing-inline-end-200 search-box-inline-zero spacing-block-start-zero flex-grow"
+                                        style="min-width:407px">
+                                        <div class="layout-box rounded-field-surface flex-row-container"
+                                            style="background-color: var(--sema-color-background-secondary); height: 48px;">
+                                            <div class="layout-box position-relative items-center flex-grow flex-row-container"
+                                                style="padding:0 0 0 16px;height:100%">
+                                                <div class="layout-box flex-fixed spacing-inline-end-200"
+                                                    style="pointer-events:none">
+                                                    <svg aria-label="검색 아이콘"
+                                                        class="icon-svg display-block icon-color-subtle" height="16"
+                                                        role="img" viewBox="0 0 24 24" width="16">
+                                                        <path d="M17.33 18.74a10 10 0 1 1 1.41-1.41l4.47 4.47-1.41 1.41zM11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="layout-box flex-grow" style="height:100%">
+                                                    <input aria-label="검색" autocomplete="off"
+                                                        data-test-id="search-box-input" id="search-input"
+                                                        placeholder="검색" role="combobox"
+                                                        style="background-color:transparent;border:none;color:var(--sema-color-text-default);font-family:var(--base-font-family-default-latin);font-size:16px;font-weight:normal;height:100%;outline:none;padding:0;width:100%"
+                                                        type="text" value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 프로필 -->
+                                    <div class="slot-block">
+                                        <div class="layout-box display-block-wrapper">
+                                            <div class="layout-box">
+                                                <a aria-label="내 프로필"
+                                                    class="profile-summary link-reset text-color-inherit text-no-underline interactive-scale rounded-400 focus-outline-none display-block-link width-full cursor-pointer"
+                                                    href="#" tabindex="0">
+                                                    <div aria-hidden="true" class="layout-box rounded-400"
+                                                        style="height:48px;width:48px">
+                                                        <div class="layout-box rounded-circle justify-center items-center flex-row-container"
+                                                            style="height:100%;width:100%">
+                                                            <div class="layout-box rounded-circle justify-center items-center flex-row-container"
+                                                                style="height:38px;width:38px">
+                                                                <div class="avatar-frame avatar-size-32">
+                                                                    <div class="overflow-hidden-relative rounded-circle will-change-transform">
+                                                                        <div>
+                                                                            <div class="layout-box position-relative"
+                                                                                style="background-color:var(--sema-color-background-default);padding-bottom:100%">
+                                                                                <img alt="내 프로필"
+                                                                                    class="profile-avatar-image"
+                                                                                    src="/images/BIDEO_LOGO/BIDEO_favicon.png">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="avatar-overlay"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 계정 드롭다운 -->
+                                    <div class="slot-block">
+                                        <div class="layout-box display-block-wrapper">
+                                            <div class="layout-box">
+                                                <button aria-expanded="false" aria-haspopup="true" aria-label="계정"
+                                                    class="icon-button button-reset"
+                                                    data-test-id="header-accounts-options-button" tabindex="0"
+                                                    type="button">
+                                                    <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                                        <div class="icon-container rounded-200 icon-surface-transparent"
+                                                            style="height:24px;width:24px">
+                                                            <svg aria-hidden="true"
+                                                                class="icon-svg display-block icon-color-subtle"
+                                                                height="12" role="img" viewBox="0 0 24 24" width="12">
+                                                                <path d="M23.7 8.7 12 20.42.3 8.71l1.4-1.42L12 17.6 22.3 7.3z"></path>
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="nav-right">
-            <!-- Bell -->
-            <button class="nav-icon-btn" title="알림">
-                <svg viewBox="0 0 24 24"><path d="M12 24c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2zm8.1-6.7c-.7-.8-2.1-1.9-2.1-5.8 0-2.9-2-5.2-4.8-5.8V4.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v1.2C7.6 6.3 5.6 8.6 5.6 11.5c0 3.9-1.4 5-2.1 5.8-.3.3-.4.5-.4.7 0 .8.6 1 1.3 1h15.2c.7 0 1.3-.2 1.3-1 0-.2-.1-.4-.4-.7z"/></svg>
-            </button>
-            <!-- Message -->
-            <button class="nav-icon-btn" title="메시지">
-                <svg viewBox="0 0 24 24"><path d="M18 12.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 18 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 6 12.5M12 0C5.925 0 1 4.925 1 11c0 2.653.94 5.086 2.504 6.986L2 24l5.336-3.049A10.93 10.93 0 0 0 12 22c6.075 0 11-4.925 11-11S18.075 0 12 0"/></svg>
-            </button>
-            <!-- Profile -->
-            <button class="nav-icon-btn" title="프로필">
-                <img class="nav-avatar" src="/images/profile.png" alt="프로필" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
-            </button>
+    <!-- ===== 좌측 사이드 네비게이션 ===== -->
+    <nav id="VerticalNavContent"
+        class="side-nav layout-box flex-column layout-top-zero surface-default layout-fixed items-center flex-row-container"
+        style="overflow-y:auto;overflow-x:hidden;border-right:1px solid var(--sema-color-border-decorative);height:100vh;width:72px;z-index:672">
+        <div class="layout-box section-padding-y-400" style="height:100%">
+            <div class="side-nav__group layout-box flex-column justify-between items-center flex-row-container"
+                style="gap:24px;height:100%">
+                <div class="side-nav__group side-nav__group--primary layout-box flex-column items-center flex-row-container"
+                    style="gap:24px">
+                    <!-- BIDEO 로고 -->
+                    <div class="layout-box">
+                        <a aria-label="홈"
+                            class="icon-button link-reset text-color-inherit text-no-underline interactive-scale focus-outline-none button-reset-inner cursor-pointer-inner"
+                            href="#" tabindex="0">
+                            <div class="icon-container rounded-400-surface icon-surface-transparent"
+                                style="height:48px;width:48px">
+                                <img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="">
+                            </div>
+                        </a>
+                    </div>
+                    <!-- 홈 -->
+                    <div class="layout-box">
+                        <a aria-label="홈"
+                            class="icon-button link-reset text-color-inherit text-no-underline interactive-scale focus-outline-none button-reset-inner cursor-pointer-inner"
+                            href="#" tabindex="0">
+                            <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                    <path d="M9.59.92a3.63 3.63 0 0 1 4.82 0l7.25 6.44A4 4 0 0 1 23 10.35v8.46a3.9 3.9 0 0 1-3.6 3.92 106 106 0 0 1-14.8 0A3.9 3.9 0 0 1 1 18.8v-8.46a4 4 0 0 1 1.34-3zM12 16a5 5 0 0 1-3.05-1.04l-1.23 1.58a7 7 0 0 0 8.56 0l-1.23-1.58A5 5 0 0 1 12 16"></path>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- 내 프로필 -->
+                    <div class="layout-box">
+                        <a aria-label="내 프로필"
+                            class="icon-button link-reset text-color-inherit text-no-underline interactive-scale focus-outline-none button-reset-inner cursor-pointer-inner"
+                            href="#" tabindex="0">
+                            <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                    <path d="M23 5a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4zm-10 6V3h6a2 2 0 0 1 2 2v6zm8 8a2 2 0 0 1-2 2h-6v-8h8zM5 3h6v18H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2"></path>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- 만들기 -->
+                    <div class="layout-box">
+                        <button aria-label="만들기" class="icon-button button-reset" tabindex="0" type="button">
+                            <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                    <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                        <path d="M11 11H6v2h5v5h2v-5h5v-2h-5V6h-2zM5 1a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4zm16 4v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <!-- 알림 -->
+                    <div class="layout-box">
+                        <button aria-label="알림" class="icon-button button-reset" tabindex="0" type="button">
+                            <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                    <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                        <path d="M16 19h8v-2h-.34a3.15 3.15 0 0 1-3.12-2.76l-.8-6.41a7.8 7.8 0 0 0-15.48 0l-.8 6.41A3.15 3.15 0 0 1 .34 17H0v2h8v1h.02a3.4 3.4 0 0 0 3.38 3h1.2a3.4 3.4 0 0 0 3.38-3H16zm1.75-10.92.8 6.4c.12.95.5 1.81 1.04 2.52H4.4c.55-.7.92-1.57 1.04-2.51l.8-6.41a5.8 5.8 0 0 1 11.5 0M13.4 19c.33 0 .6.27.6.6 0 .77-.63 1.4-1.4 1.4h-1.2a1.4 1.4 0 0 1-1.4-1.4c0-.33.27-.6.6-.6z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <!-- 메시지 -->
+                    <div class="layout-box">
+                        <button aria-label="메시지" class="icon-button button-reset" tabindex="0" type="button">
+                            <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                    <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                        <path d="M7 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m5 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m-5 10c1.8 0 3.5-.41 5-1.15l3.69.65A2 2 0 0 0 23 20.7l-.65-3.7A11.5 11.5 0 1 0 12 23.5m8.55-7.36-.28.58.76 4.31-4.31-.76-.58.28q-1.89.93-4.14.95a9.5 9.5 0 1 1 8.55-5.36"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <div class="side-nav__group side-nav__group--secondary layout-box flex-column items-center flex-row-container">
+                    <!-- 고객센터 -->
+                    <div class="layout-box">
+                        <button aria-label="고객 지원" class="icon-button button-reset" tabindex="0" type="button">
+                            <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                    <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                        <path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24m0 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20m-1 4a3 3 0 0 0-3 3h2a1 1 0 1 1 2 0c0 .6-.4 1.1-.9 1.4C10.4 10.8 10 11.6 10 12.5V13h2v-.5c0-.3.2-.6.5-.8A3 3 0 0 0 14 9a3 3 0 0 0-3-3m-1 10v2h2v-2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <!-- 설정 -->
+                    <div class="layout-box">
+                        <button aria-label="대시보드" class="icon-button button-reset" tabindex="0" type="button">
+                            <div class="button-reset-inner interactive-scale cursor-pointer-inner">
+                                <div class="icon-container rounded-400-surface icon-surface-transparent" style="height:48px;width:48px">
+                                    <svg aria-hidden="true" class="icon-svg display-block icon-color-default" height="24" role="img" viewBox="0 0 24 24" width="24">
+                                        <path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10m3 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m1.13-10.29A2 2 0 0 0 14.7.31a12 12 0 0 0-5.4 0c-.73.17-1.26.74-1.43 1.4l-.58 2.14-2.14-.57a2 2 0 0 0-1.93.54 12 12 0 0 0-2.7 4.67c-.22.72.01 1.46.5 1.95L2.59 12l-1.57 1.56a2 2 0 0 0-.5 1.95 12 12 0 0 0 2.7 4.68c.51.54 1.27.72 1.93.54l2.14-.58.58 2.14c.17.67.7 1.24 1.43 1.4a12 12 0 0 0 5.4 0 2 2 0 0 0 1.43-1.4l.58-2.14 2.13.58c.67.18 1.43 0 1.94-.55a12 12 0 0 0 2.7-4.67 2 2 0 0 0-.5-1.94L21.4 12l1.57-1.56c.49-.5.71-1.23.5-1.95a12 12 0 0 0-2.7-4.67 2 2 0 0 0-1.93-.54l-2.14.57zm-6.34.54a10 10 0 0 1 4.42 0l.56 2.12a2 2 0 0 0 2.45 1.41l2.13-.57a10 10 0 0 1 2.2 3.83L20 10.59a2 2 0 0 0 0 2.83l1.55 1.55a10 10 0 0 1-2.2 3.82l-2.13-.57a2 2 0 0 0-2.44 1.42l-.57 2.12a10 10 0 0 1-4.42 0l-.57-2.12a2 2 0 0 0-2.45-1.42l-2.12.57a10 10 0 0 1-2.2-3.82L4 13.42a2 2 0 0 0 0-2.83L2.45 9.03a10 10 0 0 1 2.2-3.82l2.13.57a2 2 0 0 0 2.44-1.41z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="main-wrapper">
-        <div class="pin-builder">
-            <!-- Builder Header -->
-            <div class="builder-header">
-                <div class="builder-header-left">
-                </div>
-                <button class="publish-btn" id="publishBtn">게시</button>
-            </div>
+    <!-- ===== 메인 콘텐츠 ===== -->
+    <main class="cl-page">
+        <div class="cl-shell">
 
-            <!-- Builder Body -->
-            <div class="builder-body">
-                <!-- Left: Upload -->
-                <div class="upload-section">
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-placeholder">
-                            <div class="upload-icon">
-                                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
-                            </div>
-                            <p class="upload-text">파일을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
-                            <p class="upload-subtext">20MB 이하의 .jpg, .png, .gif 파일을<br>사용하는 것이 좋습니다.</p>
-                        </div>
-                        <img class="preview-image" id="previewImage" alt="미리보기">
-                        <input type="file" id="fileInput" accept="image/*">
+            <div class="pin-builder">
+                <!-- Builder Header -->
+                <div class="builder-header">
+                    <div class="builder-header-left">
                     </div>
-                    <button class="save-from-url" id="saveFromUrl">URL에서 저장</button>
+                    <button class="publish-btn" id="publishBtn">게시</button>
                 </div>
 
-                <!-- Right: Form -->
-                <div class="form-section">
-                    <div class="form-group">
-                        <label>제목</label>
-                        <input type="text" placeholder="공모전 제목을 입력해주세요." maxlength="100">
-                    </div>
-
-                    <div class="form-group">
-                        <label>기관</label>
-                        <input type="text" textarea placeholder="기관을 입력해주세요." maxlength="100"></textarea>
-                    </div>
-
-                    <div class="form-group"> 
-                        <label>공모기간</label>
-                    
-                            <div class="form-group" id="form"> 
-                                <label>접수 시작일</label>
-                                    <input type="date" id="startDate">
-                                <label>접수 마감일</label>
-                                    <input type="date" id="endDate">
-                                <label>결과 발표일</label>
-                                <input type="date">
-                                <div id="wrapper">
-                                        <button class="confirm-btn" onclick="checkDate()">확인</button>
+                <!-- Builder Body -->
+                <div class="builder-body">
+                    <!-- Left: Upload -->
+                    <div class="upload-section">
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-placeholder">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
                                 </div>
-                            </div>  
+                                <p class="upload-text">파일을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
+                                <p class="upload-subtext">20MB 이하의 .jpg, .png, .gif 파일을<br>사용하는 것이 좋습니다.</p>
+                            </div>
+                            <img class="preview-image" id="previewImage" alt="미리보기">
+                            <input type="file" id="fileInput" accept="image/*">
+                        </div>
+                        <button class="save-from-url" id="saveFromUrl">URL에서 저장</button>
                     </div>
 
-                    <div class="form-group">
-                        <label>목적 및 내용</label>
-                        <textarea placeholder="공모전의 상세 목적과 내용을 입력해주세요." maxlength="500"></textarea>
-                    </div>
+                    <!-- Right: Form -->
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label>제목</label>
+                            <input type="text" placeholder="공모전 제목을 입력해주세요." maxlength="100">
+                        </div>
 
-                    <div class="form-group">
-                        <label>상금 및 부상</label>
-                        <input type="text" textarea placeholder="상금 및 부상을 작성해주세요." maxlength="100"></textarea>
-                    </div>
-                
-                    <div class="legal-notice">
-                        불법 촬영 콘텐츠 등을 게시하는 경우 Pinterest는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+                        <div class="form-group">
+                            <label>기관</label>
+                            <input type="text" textarea placeholder="기관을 입력해주세요." maxlength="100"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>공모기간</label>
+
+                                <div class="form-group" id="form">
+                                    <label>접수 시작일</label>
+                                        <input type="date" id="startDate">
+                                    <label>접수 마감일</label>
+                                        <input type="date" id="endDate">
+                                    <label>결과 발표일</label>
+                                    <input type="date">
+                                    <div id="wrapper">
+                                            <button class="confirm-btn" onclick="checkDate()">확인</button>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>목적 및 내용</label>
+                            <textarea placeholder="공모전의 상세 목적과 내용을 입력해주세요." maxlength="500"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>상금 및 부상</label>
+                            <input type="text" textarea placeholder="상금 및 부상을 작성해주세요." maxlength="100"></textarea>
+                        </div>
+
+                        <div class="legal-notice">
+                            불법 촬영 콘텐츠 등을 게시하는 경우 Pinterest는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
-    </div>       
-<script src="/js/contest/contest-register.js"></script>
+    </main>
+
+    <script src="/js/main/modal-shared.js"></script>
+    <script src="/js/main/main.js"></script>
+    <script src="/js/main/closeup.js"></script>
+    <script src="/js/main/navigation.js"></script>
+    <script src="/js/main/auth-modal.js"></script>
+    <script src="/js/main/signup-modal.js"></script>
+    <script src="/js/contest/contest-register.js"></script>
 </body>
+
 </html>
