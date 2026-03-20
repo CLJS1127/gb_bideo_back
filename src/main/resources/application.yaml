@@ -3,7 +3,18 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+<<<<<<< Updated upstream
+=======
+  ssl:
+    enabled: true
+    certificate: classpath:key/localhost+3.pem
+    certificate-private-key: classpath:key/localhost+3-key.pem
+>>>>>>> Stashed changes
 spring:
+  config:
+    import:
+      - optional:classpath:application-sol.yaml
+      - optional:classpath:application-oauth.yaml
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/spring?serverTimezone=Asia/Seoul
