@@ -3,12 +3,24 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+
+
+  ssl:
+    enabled: true
+    certificate: classpath:key/localhost+3.pem
+    certificate-private-key: classpath:key/localhost+3-key.pem
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/spring?serverTimezone=Asia/Seoul
+    url: jdbc:postgresql://localhost:5432/bideo?serverTimezone=Asia/Seoul
     username: bideo
     password: 1234
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 10MB
+      max-file-size: 20MB
+      max-request-size: 25MB
   session:
     redis:
       repository-type: indexed

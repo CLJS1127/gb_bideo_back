@@ -9,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class WorkUpdateRequestDTO {
+    private Long id;
+    private Long galleryId;
     private String title;
     private String category;
     private String description;
@@ -20,4 +22,6 @@ public class WorkUpdateRequestDTO {
     private Boolean showSimilar;
     private String linkUrl;
     private List<Long> tagIds;
+    private List<String> tagNames;
+    private List<WorkFileRequestDTO> files;
 }

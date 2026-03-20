@@ -1,143 +1,121 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>작품 상세</title>
-    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/font.css">
-    <link rel="stylesheet" href="../../static/css/work/detail.css">
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/work/detail.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <!-- Modal Overlay -->
-    <div class="modal-overlay">
-        <!-- Close Button -->
-        <button class="modal-close" title="닫기">&times;</button>
+<div class="modal-overlay">
+    <button class="modal-close" title="닫기">&times;</button>
 
-        <!-- Modal Content -->
-        <article class="modal-content">
-            <!-- Scroll Area -->
-            <div class="post-scroll-area">
+    <article class="modal-content">
+        <div class="post-scroll-area">
+            <div class="post-image-section">
+                <video
+                    th:if="${work.files != null and !#lists.isEmpty(work.files) and work.files[0].fileType != null and #strings.startsWith(work.files[0].fileType, 'video/')}"
+                    th:src="${work.files[0].fileUrl}"
+                    controls
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    style="width:100%; height:100%; object-fit:contain;"
+                ></video>
 
-                <!-- Image -->
-                <div class="post-image-section">
-                    <img
-                        src="../../static/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
-                        alt="게시물 이미지"
-                    >
-                </div>
+                <img
+                    th:if="${work.files != null and !#lists.isEmpty(work.files) and work.files[0].fileType != null and #strings.startsWith(work.files[0].fileType, 'image/')}"
+                    th:src="${work.files[0].fileUrl}"
+                    alt="게시물 이미지"
+                    style="width:100%; height:100%; object-fit:contain;"
+                >
 
-                <!-- Info -->
-                 <!-- Actions -->
-                <section class="post-actions">
-                    <div class="action-buttons">
-                        <!-- Like -->
-                        <button class="action-btn" title="좋아요">
-                            <svg aria-label="좋아요" fill="#262626" viewBox="0 0 24 24">
-                                <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/>
-                            </svg>
-                        </button>
-                        <!-- Comment -->
-                        <button class="action-btn" title="댓글">
-                            <svg aria-label="댓글 달기" fill="#262626" viewBox="0 0 24 24">
-                                <path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <!-- Share -->
-                        <button class="action-btn" title="공유">
-                            <svg aria-label="게시물 공유" fill="#262626" viewBox="0 0 24 24">
-                                <line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"/>
-                                <polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <!-- Report -->
-                        <button class="action-btn" title="신고">
-                            <i data-lucide="message-square-warning"></i>
-                        </button>
-                        <!-- Bookmark (right-aligned) -->
-                        <button class="action-btn" title="저장">
-                            <svg aria-label="저장" fill="#262626" viewBox="0 0 24 24">
-                                <polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                            </svg>
-                        </button>
-                        <!-- Trade -->
-                        <button class="action-btn4" title="거래">
-                            <i data-lucide="arrow-left-right"></i>
-                            <div class="trade">거래하기</div>
-                        </button>
-                        <!-- auction -->
-                        <button class="action-btn5" title="경매">
-                            <i data-lucide="badge-dollar-sign"></i>
-                            <div class="auction">경매하기</div>
-                        </button>
-                    </div>
+                <img
+                    th:if="${work.files == null or #lists.isEmpty(work.files)}"
+                    src="/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png"
+                    alt="게시물 이미지"
+                >
+            </div>
 
-                    <div class="price">가격 : 150달러</div>
-                    <div class="post-date">2026년 3월 5일</div>
-                </section>
-                    <!-- Caption & Comments -->
-                    <div class="post-comments">
-                    <!-- Caption -->
+            <section class="post-comments">
+                <div class="comment-detail-top">
                     <div class="comment">
-                        <img class="avatar-small"
-                            src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png"
-                            alt="BIDEO"
-                        >
+                        <img class="avatar-small" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO">
                         <div class="comment-content">
-                            <a href="#" class="username">(creator name)David</a>
-                            <span class="text"></a>
-(title)BIDEO
-(content)
-[ &#x2714;&#xfe0f;&#x1f49a;&#x1f4ab;&#x1f498;&#x1f9da;&#x1fabd;]
-
-<a href="#" class="hashtag">#BIDEO</a> <a href="#" class="hashtag">#비디오</a> <a href="#" class="hashtag">#작품</a>
-</span>
-                            <div class="timestamp">1주</div>
+                            <div class="comment-header">
+                                <a href="#" class="username" th:text="${work.memberNickname != null ? work.memberNickname : '작성자'}">작성자</a>
+                                <span class="timestamp-inline" th:text="${#temporals.format(work.createdDatetime, 'yyyy년 M월 d일')}">작성일</span>
+                            </div>
+                            <span class="text">
+                                <strong th:text="${work.title}">제목</strong>
+                                <span th:text="${work.description}">설명</span>
+                                <th:block th:each="tag : ${work.tags}">
+                                    <a href="#" class="hashtag" th:text="${'#' + tag.tagName}">#tag</a>
+                                    <span> </span>
+                                </th:block>
+                            </span>
                         </div>
                     </div>
-                    <div class="right">
-                    <!-- Comment Input -->
+
+                    <section class="post-actions">
+                        <div class="action-buttons">
+                            <button class="action-btn" title="좋아요">
+                                <svg aria-label="좋아요" fill="#262626" viewBox="0 0 24 24">
+                                    <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn" title="댓글">
+                                <svg aria-label="댓글 달기" fill="#262626" viewBox="0 0 24 24">
+                                    <path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn" title="공유">
+                                <svg aria-label="게시물 공유" fill="#262626" viewBox="0 0 24 24">
+                                    <line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"/>
+                                    <polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+                                </svg>
+                            </button>
+                            <button class="action-btn" title="신고">
+                                <i data-lucide="message-square-warning"></i>
+                            </button>
+                            <button class="action-btn4" title="거래">
+                                <i data-lucide="arrow-left-right"></i>
+                                <div class="trade">거래하기</div>
+                            </button>
+                            <button class="action-btn5" title="경매">
+                                <i data-lucide="badge-dollar-sign"></i>
+                                <div class="auction">경매하기</div>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="right">
+                    <div class="price above-comment-input"
+                         th:if="${work.price != null}"
+                         th:text="${#numbers.formatInteger(work.price, 3, 'COMMA') + '원'}">가격</div>
+
                     <div class="comment-input-section">
                         <input type="text" placeholder="댓글 입력...">
                         <button>게시</button>
                     </div>
 
-                    <!-- Comment List -->
                     <div class="comment-list">
-                        <!-- Comment Item -->
                         <div class="comment-item">
-                            <img class="avatar-small" src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" width="10px" alt="lee.hata">
+                            <img class="avatar-small" src="/images/BIDEO_LOGO/BIDEO_favicon.png" width="10" alt="system">
                             <div class="comment-item-content">
                                 <div class="comment-item-body">
-                                    <a href="#" class="username">lee.hata</a>
-                                    <span class="comment-item-text">♥ ♥ ♥ ♥ </span>
+                                    <a href="#" class="username">system</a>
+                                    <span class="comment-item-text" th:text="${'좋아요 ' + work.likeCount + ' · 조회수 ' + work.viewCount}">통계</span>
                                 </div>
                                 <div class="comment-item-meta">
-                                    <span class="comment-time">6분</span>
-                                    <button class="reply-btn">답글 달기</button>
-                                </div>
-                            </div>
-                            <button class="comment-like-btn" title="좋아요">
-                                <svg aria-label="좋아요" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="12" height="12">
-                                    <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="comment-list">
-                        <!-- Comment Item -->
-                        <div class="comment-item">
-                            <img class="avatar-small" src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" width="10px" alt="lee.hata">
-                            <div class="comment-item-content">
-                                <div class="comment-item-body">
-                                    <a href="#" class="username">recelies</a>
-                                    <span class="comment-item-text">😊 😊 😊 😊 😊</span>
-                                </div>
-                                <div class="comment-item-meta">
-                                    <span class="comment-time">6분</span>
+                                    <span class="comment-time" th:text="${'댓글 ' + work.commentCount}">댓글</span>
                                     <button class="reply-btn">답글 달기</button>
                                 </div>
                             </div>
@@ -149,11 +127,32 @@
                         </div>
                     </div>
 
+                    <div class="comment-list">
+                        <div class="comment-item">
+                            <img class="avatar-small" src="/images/BIDEO_LOGO/BIDEO_favicon.png" width="10" alt="status">
+                            <div class="comment-item-content">
+                                <div class="comment-item-body">
+                                    <a href="#" class="username">status</a>
+                                    <span class="comment-item-text" th:text="${work.status}">상태</span>
+                                </div>
+                                <div class="comment-item-meta">
+                                    <span class="comment-time" th:text="${work.licenseType != null ? work.licenseType : 'LICENSE'}">라이선스</span>
+                                    <button class="reply-btn">답글 달기</button>
+                                </div>
+                            </div>
+                            <button class="comment-like-btn" title="좋아요">
+                                <svg aria-label="좋아요" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="12" height="12">
+                                    <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div><!-- end post-scroll-area -->
-        </article>
-    </div>
+            </section>
+        </div>
+    </article>
+</div>
+
 <script>lucide.createIcons();</script>
 </body>
 </html>

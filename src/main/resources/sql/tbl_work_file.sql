@@ -29,3 +29,5 @@ comment on column tbl_work_file.height is '이미지 높이 (px)';
 comment on column tbl_work_file.sort_order is '정렬 순서';
 
 create index idx_wf_work on tbl_work_file (work_id);
+
+delete from tbl_work_file;

@@ -1,13 +1,15 @@
 package com.app.bideo.domain.work;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@ToString
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@EqualsAndHashCode(of = "id")
+@SuperBuilder
 public class WorkVO {
     private Long id;
     private Long memberId;

@@ -52,3 +52,7 @@ comment on column tbl_work.deleted_datetime is '삭제 일시 (soft delete)';
 create index idx_work_member on tbl_work (member_id);
 create index idx_work_status on tbl_work (status, created_datetime desc);
 create index idx_work_created on tbl_work (created_datetime desc);
+
+select * from tbl_work;
+
+delete from tbl_work;

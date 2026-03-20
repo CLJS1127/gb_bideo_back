@@ -10,12 +10,17 @@ import java.time.LocalDateTime;
 @Builder
 public class WorkListResponseDTO {
     private Long id;
+    private Long memberId;
     private String title;
     private String category;
+    private Boolean isTradable;
     private Integer price;
+    private String status;
     private String memberNickname;
     private String thumbnailUrl;
     private Integer viewCount;
     private Integer likeCount;
+    private Integer saveCount;
+    private Integer commentCount;
     private LocalDateTime createdDatetime;
 }

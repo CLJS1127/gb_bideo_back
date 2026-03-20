@@ -53,3 +53,5 @@ comment on column tbl_member.phone_number is '연락처';
 comment on column tbl_member.last_login_datetime is '최종 로그인 일시';
 comment on column tbl_member.status is '계정 상태 (ACTIVE/SUSPENDED/BANNED)';
 comment on column tbl_member.deleted_datetime is '탈퇴 일시 (soft delete)';
+
+select * from tbl_member;

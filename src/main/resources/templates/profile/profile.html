@@ -1,14 +1,15 @@
 
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BIDEO - xsuxa_</title>
-<link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-<link rel="stylesheet" href="../../static/css/common/global.css">
-<link rel="stylesheet" href="../../static/css/common/buttons.css">
-<link rel="stylesheet" href="../../static/css/profile/profile.css">
+<link rel="icon" type="image/png" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+<link rel="stylesheet" href="/css/common/global.css">
+<link rel="stylesheet" href="/css/common/buttons.css">
+<link rel="stylesheet" href="/css/profile/profile.css">
+  
 </head>
 <body data-owner="true">
 <!-- ========== MAIN ========== -->
@@ -34,7 +35,7 @@
       </div>
       <div class="profile-realname">이준수</div>
       <div class="profile-stats">
-        <span>예술관 <span class="stat-number">5</span></span>
+        <span>예술관 <span class="stat-number" th:text="${#lists.size(galleries)}">0</span></span>
         <a href="#" onclick="openFollowModalTab(event, 'followers')">팔로워 <span class="stat-number">311</span></a>
         <a href="#" onclick="openFollowModalTab(event, 'following')">팔로우 <span class="stat-number">233</span></a>
       </div>
@@ -57,44 +58,27 @@
   </div>
   <!-- Story Highlights -->
   <div class="video-gallery">
-    <li class="video-gallery-li" tabindex="-1">
+    <li class="video-gallery-li" tabindex="-1" th:each="gallery, stat : ${galleries}">
       <div class="video-gallery-outer">
         <div class="video-gallery-padder">
           <div class="video-gallery-button" role="button" tabindex="0">
             <div class="canvas-parent">
-              <canvas class="ring-canvas" width="87" height="87" data-ring="grey"></canvas>
-              <div class="icon-container icon-container--jp">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="18" fill="#1a237e"/>
-                  <text x="18" y="22" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">UNIV</text>
-                </svg>
+              <canvas class="ring-canvas"
+                      width="87"
+                      height="87"
+                      th:attr="data-ring=${stat.first} ? 'gradient' : 'grey', data-colors=${stat.first} ? '#f0d999,#d4b96a,#111111' : null"></canvas>
+              <div class="icon-container">
+                <img th:if="${gallery.coverImage != null and !#strings.isEmpty(gallery.coverImage)}"
+                     th:src="${gallery.coverImage}"
+                     alt="예술관 커버"
+                     class="video-gallery-cover-image">
+                <span th:if="${gallery.coverImage == null or #strings.isEmpty(gallery.coverImage)}"
+                      th:text="${#strings.length(gallery.title) > 2 ? #strings.substring(gallery.title, 0, 2) : gallery.title}"
+                      style="color:#fff;font-size:12px;font-weight:700;"></span>
               </div>
             </div>
             <div class="video-gallery-button__label">
-              <span class="video-gallery-button__label-text" dir="auto"><span>JP</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-    <li class="video-gallery-li" tabindex="-1">
-      <div class="video-gallery-outer">
-        <div class="video-gallery-padder">
-          <div class="video-gallery-button" role="button" tabindex="0">
-            <div class="canvas-parent">
-              <canvas class="ring-canvas" width="87" height="87" data-ring="gradient" data-colors="#f0d999,#d4b96a,#111111"></canvas>
-              <div class="icon-container icon-container--un">
-                <svg width="36" height="36" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="18" fill="#29b6f6"/>
-                  <circle cx="18" cy="18" r="10" fill="none" stroke="#fff" stroke-width="1"/>
-                  <circle cx="18" cy="18" r="5" fill="none" stroke="#fff" stroke-width="0.5"/>
-                  <line x1="18" y1="4" x2="18" y2="32" stroke="#fff" stroke-width="0.5"/>
-                  <line x1="4" y1="18" x2="32" y2="18" stroke="#fff" stroke-width="0.5"/>
-                </svg>
-              </div>
-            </div>
-            <div class="video-gallery-button__label">
-              <span class="video-gallery-button__label-text" dir="auto"><span>UN</span></span>
+              <span class="video-gallery-button__label-text" dir="auto"><span th:text="${gallery.title}">예술관</span></span>
             </div>
           </div>
         </div>
@@ -103,7 +87,7 @@
     <li class="video-gallery-li owner-only" tabindex="-1">
       <div class="video-gallery-outer">
         <div class="video-gallery-padder">
-          <div class="video-gallery-button" role="button" tabindex="0">
+          <div class="video-gallery-button" role="button" tabindex="0" onclick="window.location.href='/gallery/gallery-register'">
             <div class="canvas-parent">
               <canvas class="ring-canvas" width="87" height="87"></canvas>
               <div class="icon-container">
@@ -145,26 +129,44 @@
   </div>
   <!-- Post Grid -->
   <div class="post-grid">
-    <div class="post-item">
-      <div class="post-placeholder post-1"></div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
-          <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
-        </svg>
+    <div class="post-item"
+         th:each="work : ${works}"
+         th:if="${work.id != 10 and work.id != 1 and work.id != 6 and work.id != 7}"
+         th:onclick="|openWorkDetailModal(${work.id})|"
+         style="cursor:pointer;">
+        <video th:if="${work.thumbnailUrl != null and !#strings.isEmpty(work.thumbnailUrl) and work.category == 'VIDEO'}"
+               th:src="${work.thumbnailUrl}"
+               autoplay
+               muted
+               loop
+               playsinline
+               style="width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; pointer-events:none;"></video>
+        <img th:if="${work.thumbnailUrl != null and !#strings.isEmpty(work.thumbnailUrl) and work.category == 'IMAGE'}"
+             th:src="${work.thumbnailUrl}"
+             alt="작품 이미지"
+             style="width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; pointer-events:none;">
+        <div class="post-placeholder"
+             th:if="${work.thumbnailUrl == null or #strings.isEmpty(work.thumbnailUrl) or (work.category != 'VIDEO' and work.category != 'IMAGE')}"
+             th:style="${work.thumbnailUrl != null and !#strings.isEmpty(work.thumbnailUrl)}
+             ? 'background-image:url(' + work.thumbnailUrl + '); background-size:cover; background-position:center; pointer-events:none;'
+             : ''"></div>
+        <div class="post-overlay-icon" th:if="${work.isTradable}" style="pointer-events:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+            <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z"/>
+          </svg>
+        </div>
     </div>
-    <div class="post-item">
-      <div class="post-placeholder post-2"></div>
-      <div class="post-overlay-icon"></div>
-    </div>
-    <div class="post-item">
-      <div class="post-placeholder post-3"></div>
-      <div class="post-overlay-icon"></div>
-    </div>
-    <div class="post-item">
-      <div class="post-placeholder post-4"></div>
-    </div>
-    <div class="post-item">
-      <div class="post-placeholder post-5"></div>
-      <div class="post-overlay-icon"></div>
+    <div class="post-item" th:if="${#lists.isEmpty(works)}">
+      <a href="#" onclick="openSampleWorkModal(event)" style="display:block; width:100%; height:100%; text-decoration:none; color:inherit;">
+        <video
+          src="/images/main_vidios/BIDEO_introduce_video.mp4"
+          autoplay
+          muted
+          loop
+          playsinline
+          style="width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit;"
+        ></video>
+      </a>
     </div>
   </div>
   <!-- Footer -->
@@ -177,6 +179,215 @@
       <span>© 2026 BIDEO</span>
     </div>
   </footer>
+</div>
+
+<div class="modal-overlay work-detail-modal-overlay" id="workDetailModal" onclick="closeModal('workDetailModal', event)">
+  <div class="work-detail-sheet">
+    <button class="work-detail-close" type="button" onclick="closeModal('workDetailModal')">&times;</button>
+    <div class="work-detail-media-wrap" id="workDetailMediaWrap"></div>
+    <div class="work-detail-body">
+      <div class="work-detail-top">
+        <div class="work-detail-author-row">
+          <img class="work-detail-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO">
+          <div class="work-detail-author-copy">
+            <div class="work-detail-author-meta">
+              <span class="work-detail-author" id="workDetailAuthor">작성자</span>
+              <div class="work-detail-option-wrap owner-only">
+                <button class="work-detail-option-btn" type="button" aria-label="옵션 더 보기" onclick="openWorkActionModal(event)">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="1.5"></circle>
+                    <circle cx="6" cy="12" r="1.5"></circle>
+                    <circle cx="18" cy="12" r="1.5"></circle>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="work-detail-title" id="workDetailTitle">제목</div>
+            <div class="work-detail-description" id="workDetailDescription">설명</div>
+            <div class="work-detail-tags" id="workDetailTags"></div>
+            <div class="work-detail-date" id="workDetailDate">작성일</div>
+          </div>
+        </div>
+        <div class="work-detail-actions">
+          <div class="work-detail-action-row">
+            <button class="work-detail-icon-btn" type="button" title="좋아요">
+              <svg aria-label="좋아요" fill="#262626" viewBox="0 0 24 24">
+                <path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/>
+              </svg>
+            </button>
+            <button class="work-detail-icon-btn" type="button" title="댓글">
+              <svg aria-label="댓글 달기" fill="#262626" viewBox="0 0 24 24">
+                <path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="work-detail-icon-btn" type="button" title="공유">
+              <svg aria-label="게시물 공유" fill="#262626" viewBox="0 0 24 24">
+                <line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="3" y2="10.083"/>
+                <polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="work-detail-text-btn" type="button" title="거래하기">
+              <span>거래하기</span>
+            </button>
+            <button class="work-detail-text-btn" type="button" title="경매하기">
+              <span>경매하기</span>
+            </button>
+          </div>
+          <div class="work-detail-price" id="workDetailPrice"></div>
+        </div>
+      </div>
+      <div class="work-detail-comment-input">
+        <input type="text" id="workDetailCommentInput" placeholder="댓글 입력...">
+        <button type="button" id="workDetailCommentSubmit">게시</button>
+      </div>
+      <div class="work-detail-comment-list">
+        <div class="work-detail-comment-item">
+          <img class="work-detail-comment-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="system">
+          <div class="work-detail-comment-copy">
+            <div class="work-detail-comment-body">
+              <span class="work-detail-comment-name">system</span>
+              <span class="work-detail-comment-text" id="workDetailStats">좋아요 0 · 조회수 0</span>
+            </div>
+            <div class="work-detail-comment-meta">
+              <span id="workDetailCommentCount">댓글 0</span>
+            </div>
+          </div>
+        </div>
+        <div class="work-detail-comment-item">
+          <img class="work-detail-comment-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="status">
+          <div class="work-detail-comment-copy">
+            <div class="work-detail-comment-body">
+              <span class="work-detail-comment-name">status</span>
+              <span class="work-detail-comment-text" id="workDetailStatus">ACTIVE</span>
+            </div>
+            <div class="work-detail-comment-meta">
+              <span id="workDetailLicense">LICENSE</span>
+            </div>
+          </div>
+        </div>
+        <div id="workDetailCommentsContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay work-action-modal-overlay" id="workActionModal" onclick="closeModal('workActionModal', event)">
+  <div class="work-action-sheet">
+    <button class="danger" type="button" onclick="editCurrentWork()">수정하기</button>
+    <button class="danger" type="button" onclick="deleteCurrentWork()">삭제하기</button>
+    <button class="cancel" type="button" onclick="closeModal('workActionModal')">취소</button>
+  </div>
+</div>
+
+<div class="modal-overlay work-edit-modal-overlay" id="workEditModal" onclick="closeModal('workEditModal', event)">
+  <div class="work-edit-modal">
+    <div class="pin-builder work-edit-builder">
+      <div class="builder-header">
+        <div class="builder-header-left"></div>
+        <div class="work-form-header-actions">
+          <button class="publish-btn work-form-primary-btn work-edit-close-btn" type="button" onclick="closeModal('workEditModal')">취소</button>
+          <button class="publish-btn work-form-primary-btn" type="button" onclick="submitWorkEdit()">수정</button>
+        </div>
+      </div>
+      <div class="builder-body">
+        <div class="upload-section">
+          <div class="upload-area" id="workEditUploadArea">
+            <div class="upload-placeholder" id="workEditPlaceholder">
+              <div class="upload-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
+              </div>
+              <p class="upload-text">파일을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
+              <p class="upload-subtext">1280 × 720 영상 또는 이미지 파일을<br>업로드할 수 있습니다.</p>
+            </div>
+            <video class="preview-image" id="workEditPreviewVideo" muted playsinline style="display:none;"></video>
+            <img class="preview-image" id="workEditPreviewImage" alt="수정 미리보기" style="display:none;">
+            <input type="file" id="workEditFileInput" accept="video/*,image/*">
+          </div>
+          <button class="save-from-url" id="workEditPreviewButton" type="button">미리보기</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-group">
+            <label for="workEditTitle">제목</label>
+            <input type="text" id="workEditTitle" maxlength="100" placeholder="제목을 추가해주세요.">
+          </div>
+
+          <div class="form-group">
+            <label for="workEditDescription">설명</label>
+            <textarea id="workEditDescription" maxlength="500" placeholder="작품에 대한 설명을 추가하세요."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="workEditPrice">가격</label>
+            <div class="toggle-row">
+              <div class="toggle-row-text">
+                <span>거래</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="workEditTradeToggle">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <input type="text" id="workEditPrice" placeholder="가격 설정">
+          </div>
+
+          <div class="tag-section">
+            <div class="tag-input-wrapper" id="workEditTagBox">
+              <label style="font-size:12px;color:#111;width:100%;margin-bottom:2px;">태그된 주제 (0개)</label>
+              <input type="text" class="tag-input" id="workEditTagInput" placeholder="태그 검색">
+            </div>
+            <p class="tag-hint">걱정하지 마세요. 사람들에게 태그는 보여지지 않습니다.</p>
+          </div>
+
+          <div class="product-tag-section">
+            <label>예술관</label>
+            <select class="gallery-select" id="workEditGallerySelect">
+              <option value="">선택 안 함</option>
+              <option th:each="gallery : ${galleries}"
+                      th:value="${gallery.id}"
+                      th:text="${gallery.title}">예술관</option>
+            </select>
+          </div>
+
+          <div class="more-options">
+            <button class="more-options-toggle" id="workEditMoreToggle" type="button">
+              추가 옵션
+              <svg viewBox="0 0 24 24"><path d="M20 9l-8 8-8-8"/></svg>
+            </button>
+            <div class="more-options-content" id="workEditMoreContent">
+              <div class="toggle-row">
+                <div class="toggle-row-text">
+                  <span>옥션 등록하기</span>
+                  <span>경매에 등록할 수 있습니다.</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="workEditAuctionToggle">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="legal-notice">
+            불법 촬영 콘텐츠 등을 게시하는 경우 Pinterest는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay work-edit-preview-modal-overlay" id="workEditPreviewModal" onclick="closeModal('workEditPreviewModal', event)">
+  <div class="work-edit-preview-sheet">
+    <button class="work-edit-preview-close" type="button" onclick="closeModal('workEditPreviewModal')">&times;</button>
+    <div class="work-edit-preview-media" id="workEditPreviewMediaModal"></div>
+    <div class="work-edit-preview-content">
+      <h3 id="workEditPreviewTitleModal">제목</h3>
+      <p id="workEditPreviewDescriptionModal">설명</p>
+      <div id="workEditPreviewTagsModal"></div>
+      <div id="workEditPreviewPriceModal"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ========== OWNER-ONLY MODALS ========== -->
@@ -327,6 +538,6 @@
   </div>
 </div>
 
-<script src="../../static/js/profile/profile.js"></script>
+<script src="/js/profile/profile.js"></script>
 </body>
 </html>

@@ -1,40 +1,40 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>예술관 등록</title>
-    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/font.css">
-    <link rel="stylesheet" href="../../static/css/work/gallery-register.css">
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/work/gallery-register.css">
 </head>
 <body>
 
-    <!-- Top Navigation -->
-    <nav class="top-nav">
-        <div class="nav-left">
-            <!-- BIDEO Logo -->
-            <img class="bideo-logo" src="../../static/images/BIDEO_LOGO/BIDEO-logo.png" width="40px">
-            <a href="#" class="nav-btn">홈</a>
-        </div>
+<!--    &lt;!&ndash; Top Navigation &ndash;&gt;-->
+<!--    <nav class="top-nav">-->
+<!--        <div class="nav-left">-->
+<!--            &lt;!&ndash; BIDEO Logo &ndash;&gt;-->
+<!--            <img class="bideo-logo" src="../../static/images/BIDEO_LOGO/BIDEO-logo.png" width="40px">-->
+<!--            <a href="#" class="nav-btn">홈</a>-->
+<!--        </div>-->
 
-        <div class="nav-right">
-            <!-- Bell -->
-            <button class="nav-icon-btn" title="알림">
-                <svg viewBox="0 0 24 24"><path d="M12 24c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2zm8.1-6.7c-.7-.8-2.1-1.9-2.1-5.8 0-2.9-2-5.2-4.8-5.8V4.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v1.2C7.6 6.3 5.6 8.6 5.6 11.5c0 3.9-1.4 5-2.1 5.8-.3.3-.4.5-.4.7 0 .8.6 1 1.3 1h15.2c.7 0 1.3-.2 1.3-1 0-.2-.1-.4-.4-.7z"/></svg>
-            </button>
-            <!-- Message -->
-            <button class="nav-icon-btn" title="메시지">
-                <svg viewBox="0 0 24 24"><path d="M18 12.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 18 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 6 12.5M12 0C5.925 0 1 4.925 1 11c0 2.653.94 5.086 2.504 6.986L2 24l5.336-3.049A10.93 10.93 0 0 0 12 22c6.075 0 11-4.925 11-11S18.075 0 12 0"/></svg>
-            </button>
-            <!-- Profile -->
-            <button class="nav-icon-btn" title="프로필">
-                <img class="nav-avatar" src="../../static/images/profile.png" alt="프로필" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">
-            </button>
-        </div>
-    </nav>
+<!--        <div class="nav-right">-->
+<!--            &lt;!&ndash; Bell &ndash;&gt;-->
+<!--            <button class="nav-icon-btn" title="알림">-->
+<!--                <svg viewBox="0 0 24 24"><path d="M12 24c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2zm8.1-6.7c-.7-.8-2.1-1.9-2.1-5.8 0-2.9-2-5.2-4.8-5.8V4.5c0-.8-.7-1.5-1.5-1.5s-1.5.7-1.5 1.5v1.2C7.6 6.3 5.6 8.6 5.6 11.5c0 3.9-1.4 5-2.1 5.8-.3.3-.4.5-.4.7 0 .8.6 1 1.3 1h15.2c.7 0 1.3-.2 1.3-1 0-.2-.1-.4-.4-.7z"/></svg>-->
+<!--            </button>-->
+<!--            &lt;!&ndash; Message &ndash;&gt;-->
+<!--            <button class="nav-icon-btn" title="메시지">-->
+<!--                <svg viewBox="0 0 24 24"><path d="M18 12.5a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 18 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 12 12.5m-6 0a1.5 1.5 0 1 1 .001-3.001A1.5 1.5 0 0 1 6 12.5M12 0C5.925 0 1 4.925 1 11c0 2.653.94 5.086 2.504 6.986L2 24l5.336-3.049A10.93 10.93 0 0 0 12 22c6.075 0 11-4.925 11-11S18.075 0 12 0"/></svg>-->
+<!--            </button>-->
+<!--            &lt;!&ndash; Profile &ndash;&gt;-->
+<!--            <button class="nav-icon-btn" title="프로필">-->
+<!--                <img class="nav-avatar" src="../../static/images/profile.png" alt="프로필" style="width:24px;height:24px;border-radius:50%;object-fit:cover;">-->
+<!--            </button>-->
+<!--        </div>-->
+<!--    </nav>-->
 
     <!-- Main Content -->
     <div class="main-wrapper">
@@ -48,74 +48,81 @@
 
             <!-- Builder Body -->
             <div class="builder-body">
-                <!-- Image -->
-                <div class="post-image-section">
-                    <img
-                        src="../../static/images/BIDEO_LOGO/BIDEO.png" width=250px
-                        alt="게시물 이미지"
-                    >
+                <!-- Left: Upload -->
+                <div class="upload-section">
+                    <div class="upload-area" id="galleryUploadArea">
+                        <div class="upload-placeholder">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
+                            </div>
+                            <p class="upload-text">사진을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
+                            <p class="upload-subtext">이미지 파일만 업로드할 수 있습니다.</p>
+                        </div>
+                        <img class="preview-image" id="galleryPreviewImage" alt="갤러리 미리보기" style="display:none;">
+                        <input type="file" id="galleryFileInput" accept="image/*">
+                    </div>
                 </div>
 
                 <!-- Right: Form -->
                 <div class="form-section">
                     <div class="form-group">
                         <label>제목</label>
-                        <input type="text" placeholder="제목을 추가하세요." maxlength="100">
+                        <input type="text" id="galleryTitleInput" placeholder="제목을 추가하세요." maxlength="100">
                     </div>
 
                     <div class="form-group">
                         <label>설명</label>
-                        <textarea placeholder="예술관에 대한 설명을 추가하세요." maxlength="500"></textarea>
+                        <textarea id="galleryDescriptionInput" placeholder="예술관에 대한 설명을 추가하세요." maxlength="500"></textarea>
                     </div>
                     <div class="tag-section">
                         <div class="tag-input-wrapper" id="tagWrapper">
                             <label style="font-size:12px;color:#111;width:100%;margin-bottom:2px;">태그된 주제 (0개)</label>
                             <input type="text" class="tag-input" id="tagInput" placeholder="태그 검색">
                         </div>
-                        <p class="tag-hint">걱정하지 마세요. 사람들에게 태그는 보여지지 않습니다.</p>
+                        <p class="tag-hint">자유롭게 추가 해 보세요.</p>
                     </div>
 
-                    <div class="product-tag-section">
-                        <label>상품 태그</label>
-                        <button class="product-tag-btn">상품 추가</button>
-                    </div>
+<!--                    <div class="product-tag-section">-->
+<!--                        <label>상품 태그</label>-->
+<!--                        <button class="product-tag-btn">상품 추가</button>-->
+<!--                    </div>-->
 
-                    <div class="more-options">
-                        <button class="more-options-toggle" id="moreToggle">
-                            추가 옵션
-                            <svg viewBox="0 0 24 24"><path d="M20 9l-8 8-8-8"/></svg>
-                        </button>
-                        <div class="more-options-content" id="moreContent">
-                            <div class="toggle-row">
-                                <div class="toggle-row-text">
-                                    <span>댓글 허용</span>
-                                    <span>다른 사용자가 댓글을 남길 수 있습니다</span>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                            <div class="toggle-row">
-                                <div class="toggle-row-text">
-                                    <span>비슷한 작품 표시하기</span>
-                                    <span>비슷한 제품의 쇼핑 추천을 표시합니다</span>
-                                </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" checked>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="more-options">-->
+<!--                        <button class="more-options-toggle" id="moreToggle">-->
+<!--                            추가 옵션-->
+<!--                            <svg viewBox="0 0 24 24"><path d="M20 9l-8 8-8-8"/></svg>-->
+<!--                        </button>-->
+<!--                        <div class="more-options-content" id="moreContent">-->
+<!--                            <div class="toggle-row">-->
+<!--                                <div class="toggle-row-text">-->
+<!--                                    <span>댓글 허용</span>-->
+<!--                                    <span>다른 사용자가 댓글을 남길 수 있습니다</span>-->
+<!--                                </div>-->
+<!--                                <label class="toggle-switch">-->
+<!--                                    <input type="checkbox" checked>-->
+<!--                                    <span class="toggle-slider"></span>-->
+<!--                                </label>-->
+<!--                            </div>-->
+<!--                            <div class="toggle-row">-->
+<!--                                <div class="toggle-row-text">-->
+<!--                                    <span>비슷한 작품 표시하기</span>-->
+<!--                                    <span>비슷한 제품의 쇼핑 추천을 표시합니다</span>-->
+<!--                                </div>-->
+<!--                                <label class="toggle-switch">-->
+<!--                                    <input type="checkbox" checked>-->
+<!--                                    <span class="toggle-slider"></span>-->
+<!--                                </label>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <div class="legal-notice">
-                        불법 촬영 콘텐츠 등을 게시하는 경우 Pinterest는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+                        불법 촬영 콘텐츠 등을 게시하는 경우 Bideo는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
                     </div>
                 </div>
             </div>
         </div>
     </div>
-<script src="../../static/js/work/gallery-register.js"></script>
+<script src="/js/work/gallery-register.js"></script>
 </body>
 </html>

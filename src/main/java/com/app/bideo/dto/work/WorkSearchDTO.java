@@ -11,6 +11,9 @@ public class WorkSearchDTO extends PageRequestDTO {
     private String keyword;
     private String category;
     private Long memberId;
+    private String licenseType;
     private Boolean isTradable;
+    private Boolean allowComment;
+    private Boolean showSimilar;
     private String status;
 }

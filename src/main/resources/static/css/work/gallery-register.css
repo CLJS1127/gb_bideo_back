@@ -161,7 +161,7 @@ body {
 }
 
 .publish-btn {
-    background: #111;
+    background: #f0d999;
     color: #fff;
     border: none;
     padding: 8px 16px;
@@ -172,7 +172,7 @@ body {
 }
 
 .publish-btn:hover {
-    background: #ad081b;
+    background:black;
 }
 
 /* ── Pin Builder Body ── */

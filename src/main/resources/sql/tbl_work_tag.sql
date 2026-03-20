@@ -21,3 +21,5 @@ comment on column tbl_work_tag.work_id is '작품 FK';
 comment on column tbl_work_tag.tag_id is '태그 FK';
 
 create index idx_wt_tag on tbl_work_tag (tag_id);
+
+delete from tbl_work_tag;

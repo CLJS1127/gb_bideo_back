@@ -47,7 +47,8 @@ body {
     display: flex;
     flex-direction: column;
     background: #000;
-    width: auto;
+    width: min(90vw, 1200px);
+    height: auto;
     max-width: 90vw;
     max-height: 95vh;
     overflow: hidden;
@@ -56,19 +57,23 @@ body {
 /* ── Image Section ── */
 .post-image-section {
     width: 100%;
-    height: 100vh;
+    height: auto;
+    min-height: 320px;
+    max-height: 78vh;
     flex-shrink: 0;
     background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 6px;
 }
 
-.post-image-section img {
-    width: 1920px;
-    height: 1080px;
-    max-width: 90vw;
-    max-height: 70vh;
+.post-image-section img,
+.post-image-section video {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 78vh;
     display: block;
     object-fit: contain;
 }
@@ -76,9 +81,15 @@ body {
 /* ── Info Section ── */
 /* Scroll Area */
 .post-scroll-area {
-    flex: 1;
-    min-height: 0;
+    flex: 0 1 auto;
+    min-height: auto;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.post-scroll-area::-webkit-scrollbar {
+    display: none;
 }
 
 /* Post Header */
@@ -138,22 +149,23 @@ body {
 /* Caption / Comments Section */
 .post-comments {
     padding: 16px;
+    display: block;
+}
+
+.comment-detail-top {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-}
-
-.comment {
-    width: 50%;
-}
-
-.right {
-    width: 50%;
-}
-
-.comment {
-    display: flex;
+    gap: 24px;
     margin-bottom: 16px;
+    width: 100%;
+}
+
+.comment {
+    width: calc(100% - 360px);
+    display: flex;
+    margin-bottom: 0;
+    align-items: flex-start;
 }
 
 .comment .avatar-small {
@@ -167,26 +179,43 @@ body {
 
 .comment-content {
     flex: 1;
+    max-width: 100%;
+    padding-top: 2px;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
 }
 
 .comment-content .username {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-main);
     text-decoration: none;
     margin-right: 4px;
 }
 
 .comment-content .text {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-sub);
     white-space: pre-line;
+    line-height: 1.35;
 }
 
 .comment-content .timestamp {
+    font-size: 13px;
+    color: #8e8e8e;
+    margin-top: 4px;
+    display: block;
+}
+
+.timestamp-inline {
     font-size: 12px;
     color: #8e8e8e;
-    margin-top: 8px;
+    white-space: nowrap;
 }
 
 .hashtag {
@@ -201,14 +230,42 @@ body {
 
 /* Actions */
 .post-actions {
-    border-top: 1px solid #efefef;
-    padding: 8px 16px;
+    border-top: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    text-align: right;
+    width: auto;
+    flex-shrink: 0;
+    margin-right: 0;
+    gap: 4px;
 }
 
 .action-buttons {
     display: flex;
-    gap: 16px;
-    margin-bottom: 8px;
+    flex-wrap: nowrap;
+    gap: 25px;
+    margin-bottom: 0;
+    justify-content: flex-end;
+    width: auto;
+}
+
+.post-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.right {
+    width: 100%;
+}
+
+.above-comment-input {
+    margin: 0 16px 8px 16px;
+    text-align: right;
 }
 
 .action-btn {
@@ -229,21 +286,23 @@ body {
 
 .likes-count {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     margin-bottom: 8px;
 }
 
 .post-date {
-    font-size: 10px;
+    font-size: 11px;
     color: #8e8e8e;
     text-transform: uppercase;
     letter-spacing: 0.2px;
+    display: block;
 }
 
 .price {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 25px;
     margin-bottom: 4px;
+    display: block;
 }
 
 .action-btn4 {
@@ -325,7 +384,7 @@ body {
 }
 
 .comment-item-body {
-    font-size: 14px;
+    font-size: 15px;
     color: #262626;
     line-height: 1.4;
 }
@@ -342,7 +401,7 @@ body {
 }
 
 .comment-item-text {
-    font-size: 14px;
+    font-size: 15px;
     color: #262626;
 }
 
@@ -354,14 +413,14 @@ body {
 }
 
 .comment-time {
-    font-size: 12px;
+    font-size: 13px;
     color: #8e8e8e;
 }
 
 .reply-btn {
     background: none;
     border: none;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #8e8e8e;
     cursor: pointer;
@@ -404,14 +463,16 @@ body {
     }
 
     .post-image-section {
-        min-height: 100vh;
+        min-height: 240px;
+        max-height: 68vh;
     }
 
-    .post-image-section img {
-        width: 100%;
+    .post-image-section img,
+    .post-image-section video {
+        width: auto;
         height: auto;
         max-width: 100vw;
-        max-height: 100vh;
+        max-height: 68vh;
     }
 
     .modal-close {
@@ -501,14 +562,14 @@ body {
 /* Mobile 세로 */
 @media (max-width: 767px) and (orientation: portrait) {
     .post-image-section img {
-        max-height: 100vh;
+        max-height: 68vh;
     }
 }
 
 /* Mobile 가로 */
 @media (max-width: 767px) and (orientation: landscape) {
     .post-image-section img {
-        max-height: 100vh;
+        max-height: 68vh;
     }
 }
 
@@ -519,11 +580,12 @@ body {
         max-height: 95vh;
     }
 
-    .post-image-section img {
-        width: 1280px;
-        height: 720px;
+    .post-image-section img,
+    .post-image-section video {
+        width: auto;
+        height: auto;
         max-width: 88vw;
-        max-height: 65vh;
+        max-height: 72vh;
     }
 
     .post-comments {
@@ -547,11 +609,12 @@ body {
         max-height: 95vh;
     }
 
-    .post-image-section img {
-        width: 1920px;
-        height: 1080px;
+    .post-image-section img,
+    .post-image-section video {
+        width: auto;
+        height: auto;
         max-width: 90vw;
-        max-height: 70vh;
+        max-height: 78vh;
     }
 }
 

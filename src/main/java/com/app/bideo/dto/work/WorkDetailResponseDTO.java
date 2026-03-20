@@ -1,6 +1,7 @@
 package com.app.bideo.dto.work;
 
 import com.app.bideo.dto.common.TagResponseDTO;
+import com.app.bideo.dto.interaction.CommentResponseDTO;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Builder
 public class WorkDetailResponseDTO {
     private Long id;
+    private Long galleryId;
     private Long memberId;
     private String memberNickname;
     private String memberProfileImage;
@@ -32,7 +34,10 @@ public class WorkDetailResponseDTO {
     private String status;
     private List<TagResponseDTO> tags;
     private List<WorkFileResponseDTO> files;
+    private List<CommentResponseDTO> comments;
     private Boolean isLiked;
     private Boolean isBookmarked;
     private LocalDateTime createdDatetime;
+    private LocalDateTime updatedDatetime;
+    private LocalDateTime deletedDatetime;
 }

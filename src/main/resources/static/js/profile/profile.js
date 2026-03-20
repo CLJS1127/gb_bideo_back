@@ -4,6 +4,230 @@ const RING_SIZE = 87;
 const RING_RADIUS = 40.5;
 const RING_ACTIVE = '#c4a84d';
 const RING_GREY = 'rgb(219, 223, 228)';
+let currentWorkDetail = null;
+let workEditTags = [];
+let workEditSelectedFile = null;
+let workEditExistingMediaUrl = null;
+const workEditGallerySelect = document.getElementById('workEditGallerySelect');
+const workEditPreviewModal = document.getElementById('workEditPreviewModal');
+const workEditPreviewMediaModal = document.getElementById('workEditPreviewMediaModal');
+const workEditPreviewTitleModal = document.getElementById('workEditPreviewTitleModal');
+const workEditPreviewDescriptionModal = document.getElementById('workEditPreviewDescriptionModal');
+const workEditPreviewTagsModal = document.getElementById('workEditPreviewTagsModal');
+const workEditPreviewPriceModal = document.getElementById('workEditPreviewPriceModal');
+
+function getWorkEditUploadArea() {
+  return document.getElementById('workEditUploadArea');
+}
+
+function resetWorkDetailSheetSize() {
+  const mediaWrap = document.getElementById('workDetailMediaWrap');
+  if (!mediaWrap) return;
+  mediaWrap.style.height = '';
+}
+
+function fitWorkDetailSheetToMedia(mediaWidth, mediaHeight) {
+  const mediaWrap = document.getElementById('workDetailMediaWrap');
+  if (!mediaWrap || !mediaWidth || !mediaHeight) return;
+  mediaWrap.style.height = '';
+}
+
+function formatWorkDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+}
+
+function formatWorkPrice(price) {
+  if (price === null || price === undefined) return '';
+  return `${Number(price).toLocaleString('ko-KR')}원`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function renderWorkComments(comments) {
+  const commentsContainer = document.getElementById('workDetailCommentsContainer');
+  if (!commentsContainer) return;
+
+  if (!comments || !comments.length) {
+    commentsContainer.innerHTML = `
+      <div class="work-detail-comment-item">
+        <img class="work-detail-comment-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="empty">
+        <div class="work-detail-comment-copy">
+          <div class="work-detail-comment-body">
+            <span class="work-detail-comment-name">comment</span>
+            <span class="work-detail-comment-text">아직 댓글이 없습니다.</span>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  commentsContainer.innerHTML = comments.map((comment) => `
+    <div class="work-detail-comment-item">
+      <img class="work-detail-comment-avatar" src="${comment.memberProfileImage || '/images/BIDEO_LOGO/BIDEO_favicon.png'}" alt="${escapeHtml(comment.memberNickname || 'user')}">
+      <div class="work-detail-comment-copy">
+        <div class="work-detail-comment-body">
+          <span class="work-detail-comment-name">${escapeHtml(comment.memberNickname || 'user')}</span>
+          <span class="work-detail-comment-text">${escapeHtml(comment.content || '')}</span>
+        </div>
+        <div class="work-detail-comment-meta">
+          <span>${formatWorkDate(comment.createdDatetime)}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderWorkMedia(work) {
+  const wrap = document.getElementById('workDetailMediaWrap');
+  if (!wrap) return Promise.resolve();
+
+  resetWorkDetailSheetSize();
+
+  const file = work?.files?.[0];
+  const mediaUrl = file?.fileUrl || work?.thumbnailUrl || '/images/BIDEO_LOGO/BIDEO_transparent_4x_nobg3.png';
+  const fileType = file?.fileType || '';
+
+  if (fileType.startsWith('video/') || work?.category === 'VIDEO') {
+    wrap.innerHTML = `
+      <video class="work-detail-media" src="${mediaUrl}" controls autoplay muted loop playsinline></video>
+    `;
+    const video = wrap.querySelector('video');
+    return new Promise((resolve) => {
+      video.addEventListener('loadedmetadata', () => {
+        fitWorkDetailSheetToMedia(video.videoWidth, video.videoHeight);
+        resolve();
+      }, { once: true });
+      video.addEventListener('error', () => resolve(), { once: true });
+    });
+  }
+
+  wrap.innerHTML = `
+    <img class="work-detail-media" src="${mediaUrl}" alt="작품 상세">
+  `;
+  const image = wrap.querySelector('img');
+  return new Promise((resolve) => {
+    image.addEventListener('load', () => {
+      fitWorkDetailSheetToMedia(image.naturalWidth, image.naturalHeight);
+      resolve();
+    }, { once: true });
+    image.addEventListener('error', () => resolve(), { once: true });
+  });
+}
+
+async function renderWorkDetailModal(work) {
+  currentWorkDetail = work;
+  document.getElementById('workDetailAuthor').textContent = work.memberNickname || '작성자';
+  document.getElementById('workDetailDate').textContent = formatWorkDate(work.createdDatetime);
+  document.getElementById('workDetailTitle').textContent = work.title || '';
+  document.getElementById('workDetailDescription').textContent = work.description || '';
+
+  const priceEl = document.getElementById('workDetailPrice');
+  const formattedPrice = formatWorkPrice(work.price);
+  priceEl.textContent = formattedPrice;
+  priceEl.style.display = formattedPrice ? 'block' : 'none';
+
+  const tagsEl = document.getElementById('workDetailTags');
+  const tags = (work.tags || []).map((tag) => `#${tag.tagName}`).join(' ');
+  tagsEl.textContent = tags;
+  tagsEl.style.display = tags ? 'block' : 'none';
+
+  const statsEl = document.getElementById('workDetailStats');
+  const likeCount = work.likeCount ?? 0;
+  const viewCount = work.viewCount ?? 0;
+  statsEl.textContent = `좋아요 ${likeCount} · 조회수 ${viewCount}`;
+
+  const commentCountEl = document.getElementById('workDetailCommentCount');
+  commentCountEl.textContent = `댓글 ${work.commentCount ?? 0}`;
+  renderWorkComments(work.comments || []);
+
+  const statusEl = document.getElementById('workDetailStatus');
+  statusEl.textContent = work.status || 'ACTIVE';
+
+  const licenseEl = document.getElementById('workDetailLicense');
+  licenseEl.textContent = work.licenseType || 'LICENSE';
+
+  await renderWorkMedia(work);
+  closeModal('workActionModal');
+  document.getElementById('workDetailModal').classList.add('active');
+}
+
+async function submitWorkComment() {
+  if (!currentWorkDetail?.id) return;
+
+  const input = document.getElementById('workDetailCommentInput');
+  if (!input) return;
+
+  const content = input.value.trim();
+  if (!content) {
+    alert('댓글 내용을 입력해주세요.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/works/${currentWorkDetail.id}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        targetType: 'WORK',
+        targetId: currentWorkDetail.id,
+        content
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || '댓글 등록에 실패했습니다.');
+    }
+
+    const updatedWork = await response.json();
+    input.value = '';
+    await renderWorkDetailModal(updatedWork);
+  } catch (error) {
+    alert(error.message || '댓글 등록에 실패했습니다.');
+  }
+}
+
+async function openWorkDetailModal(workId) {
+  try {
+    const response = await fetch(`/api/works/${workId}`);
+    if (!response.ok) {
+      throw new Error('작품 정보를 불러오지 못했습니다.');
+    }
+    const work = await response.json();
+    await renderWorkDetailModal(work);
+  } catch (error) {
+    alert(error.message || '작품 정보를 불러오지 못했습니다.');
+  }
+}
+
+async function openSampleWorkModal(event) {
+  event.preventDefault();
+  await renderWorkDetailModal({
+    memberNickname: 'bideo',
+    createdDatetime: '2026-03-19T12:00:00',
+    title: 'BIDEO 소개 영상',
+    description: '댓글 없는 샘플 게시글입니다.',
+    price: null,
+    category: 'VIDEO',
+    thumbnailUrl: '/images/main_vidios/BIDEO_introduce_video.mp4',
+    likeCount: 0,
+    viewCount: 0,
+    tags: [{ tagName: 'bideo' }, { tagName: 'sample' }]
+  });
+}
 
 // ─── 하이라이트 캔버스 링 ─────────────────────────
 function drawRing(canvas, active) {
@@ -23,7 +247,282 @@ function closeModal(id, e) {
   const modal = document.getElementById(id);
   if (!e || e.target === modal) {
     modal.classList.remove('active');
+    if (id === 'workDetailModal') {
+      resetWorkDetailSheetSize();
+    }
   }
+}
+
+function openWorkActionModal(event) {
+  event.stopPropagation();
+  document.getElementById('workActionModal')?.classList.add('active');
+}
+
+async function editCurrentWork() {
+  closeModal('workActionModal');
+  if (!currentWorkDetail?.id) return;
+  populateWorkEditModal(currentWorkDetail);
+  document.getElementById('workEditModal')?.classList.add('active');
+}
+
+async function deleteCurrentWork() {
+  closeModal('workActionModal');
+  if (!currentWorkDetail?.id) return;
+  if (!window.confirm('이 게시글을 삭제하시겠습니까?')) return;
+
+  try {
+    const response = await fetch(`/api/works/${currentWorkDetail.id}`, {
+      method: 'DELETE'
+    });
+
+    if (!response.ok) {
+      throw new Error('게시글 삭제에 실패했습니다.');
+    }
+
+    closeModal('workDetailModal');
+    window.location.reload();
+  } catch (error) {
+    alert(error.message || '게시글 삭제에 실패했습니다.');
+  }
+}
+
+function renderWorkEditTags() {
+  const tagBox = document.getElementById('workEditTagBox');
+  const tagInput = document.getElementById('workEditTagInput');
+  if (!tagBox || !tagInput) return;
+
+  tagBox.querySelectorAll('.work-edit-modal__tag-item').forEach((element) => element.remove());
+
+  workEditTags.forEach((tag, index) => {
+    const tagItem = document.createElement('span');
+    tagItem.className = 'work-edit-modal__tag-item';
+    tagItem.innerHTML = `${tag}<button class="work-edit-modal__tag-remove" type="button" data-index="${index}">&times;</button>`;
+    tagBox.insertBefore(tagItem, tagInput);
+  });
+
+  const label = tagBox.querySelector('label');
+  if (label) {
+    label.textContent = `태그된 주제 (${workEditTags.length}개)`;
+  }
+}
+
+function addWorkEditTag(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return;
+  const normalized = trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+  if (workEditTags.includes(normalized)) return;
+  workEditTags.push(normalized);
+  renderWorkEditTags();
+}
+
+function removeWorkEditTag(index) {
+  workEditTags.splice(index, 1);
+  renderWorkEditTags();
+}
+
+function resetWorkEditMedia() {
+  const previewVideo = document.getElementById('workEditPreviewVideo');
+  const previewImage = document.getElementById('workEditPreviewImage');
+  const placeholder = document.getElementById('workEditPlaceholder');
+  const uploadArea = getWorkEditUploadArea();
+  if (!previewVideo || !previewImage || !placeholder) return;
+
+  previewVideo.pause();
+  previewVideo.removeAttribute('src');
+  previewVideo.load();
+  previewVideo.style.display = 'none';
+  previewImage.removeAttribute('src');
+  previewImage.style.display = 'none';
+  placeholder.style.display = 'block';
+  uploadArea?.classList.remove('has-image');
+}
+
+function showWorkEditMediaFromUrl(url, category) {
+  const previewVideo = document.getElementById('workEditPreviewVideo');
+  const previewImage = document.getElementById('workEditPreviewImage');
+  const placeholder = document.getElementById('workEditPlaceholder');
+  const uploadArea = getWorkEditUploadArea();
+  if (!previewVideo || !previewImage || !placeholder) return;
+
+  placeholder.style.display = 'none';
+  uploadArea?.classList.add('has-image');
+
+  if (category === 'IMAGE') {
+    previewVideo.pause();
+    previewVideo.removeAttribute('src');
+    previewVideo.load();
+    previewVideo.style.display = 'none';
+    previewImage.src = url;
+    previewImage.style.display = 'block';
+    return;
+  }
+
+  previewImage.removeAttribute('src');
+  previewImage.style.display = 'none';
+  previewVideo.src = url;
+  previewVideo.style.display = 'block';
+  previewVideo.controls = true;
+  previewVideo.muted = true;
+  previewVideo.loop = true;
+  previewVideo.playsInline = true;
+  previewVideo.load();
+  previewVideo.play().catch(() => {});
+}
+
+function showWorkEditMediaFile(file, category) {
+  if (category === 'IMAGE') {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      showWorkEditMediaFromUrl(event.target?.result, 'IMAGE');
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  showWorkEditMediaFromUrl(objectUrl, category);
+}
+
+function populateWorkEditModal(work) {
+  document.getElementById('workEditTitle').value = work.title || '';
+  document.getElementById('workEditDescription').value = work.description || '';
+  const workEditPrice = document.getElementById('workEditPrice');
+  workEditPrice.dataset.storedValue = work.price ? Number(work.price).toLocaleString('ko-KR') : '';
+  workEditPrice.value = '';
+  document.getElementById('workEditTradeToggle').checked = false;
+  document.getElementById('workEditAuctionToggle').checked = false;
+  document.getElementById('workEditMoreToggle')?.classList.remove('open');
+  document.getElementById('workEditMoreContent')?.classList.remove('visible');
+
+  workEditTags = (work.tags || []).map((tag) => `#${tag.tagName}`);
+  renderWorkEditTags();
+
+  if (workEditGallerySelect) {
+    workEditGallerySelect.value = work.galleryId ? String(work.galleryId) : '';
+  }
+
+  workEditSelectedFile = null;
+  document.getElementById('workEditFileInput').value = '';
+
+  const file = work.files?.[0];
+  workEditExistingMediaUrl = file?.fileUrl || work.thumbnailUrl || null;
+
+  if (workEditExistingMediaUrl) {
+    showWorkEditMediaFromUrl(workEditExistingMediaUrl, work.category || 'VIDEO');
+  } else {
+    resetWorkEditMedia();
+  }
+
+  syncWorkEditPriceInput();
+}
+
+async function submitWorkEdit() {
+  if (!currentWorkDetail?.id) return;
+
+  const title = document.getElementById('workEditTitle').value.trim();
+  const description = document.getElementById('workEditDescription').value.trim();
+  const tradeEnabled = document.getElementById('workEditTradeToggle').checked;
+  const rawPrice = document.getElementById('workEditPrice').value.replace(/,/g, '').trim();
+
+  if (!title) {
+    alert('제목을 입력해주세요.');
+    return;
+  }
+
+  if (!workEditSelectedFile && !workEditExistingMediaUrl) {
+    alert('사진 또는 영상을 먼저 업로드해주세요.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('category', currentWorkDetail.category || 'VIDEO');
+  formData.append('description', description);
+  if (rawPrice) {
+    formData.append('price', Number(rawPrice));
+  }
+  formData.append('licenseType', currentWorkDetail.licenseType || 'PERSONAL');
+  formData.append('licenseTerms', currentWorkDetail.licenseTerms || '');
+  formData.append('isTradable', tradeEnabled);
+  formData.append('allowComment', currentWorkDetail.allowComment ?? true);
+  formData.append('showSimilar', currentWorkDetail.showSimilar ?? true);
+  formData.append('linkUrl', currentWorkDetail.linkUrl || '');
+  if (workEditGallerySelect?.value) {
+    formData.append('galleryId', workEditGallerySelect.value);
+  }
+  workEditTags.forEach((tag) => formData.append('tagNames', tag));
+  if (workEditSelectedFile) {
+    formData.append('mediaFile', workEditSelectedFile);
+  }
+
+  try {
+    const response = await fetch(`/api/works/${currentWorkDetail.id}/edit`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || '게시글 수정에 실패했습니다.');
+    }
+
+    const updatedWork = await response.json();
+    currentWorkDetail = updatedWork;
+    closeModal('workEditModal');
+    closeModal('workDetailModal');
+    await openWorkDetailModal(updatedWork.id);
+    window.location.reload();
+  } catch (error) {
+    alert(error.message || '게시글 수정에 실패했습니다.');
+  }
+}
+
+function syncWorkEditPriceInput() {
+  const workEditTradeToggle = document.getElementById('workEditTradeToggle');
+  const workEditAuctionToggle = document.getElementById('workEditAuctionToggle');
+  const workEditPrice = document.getElementById('workEditPrice');
+  if (!workEditTradeToggle || !workEditPrice || !workEditAuctionToggle) return;
+
+  const enabled = workEditTradeToggle.checked || workEditAuctionToggle.checked;
+  workEditPrice.disabled = !enabled;
+  workEditPrice.style.opacity = enabled ? '1' : '0.5';
+  workEditPrice.style.cursor = enabled ? 'text' : 'not-allowed';
+  if (enabled && !workEditPrice.value && workEditPrice.dataset.storedValue) {
+    workEditPrice.value = workEditPrice.dataset.storedValue;
+  }
+  if (!enabled) {
+    if (workEditPrice.value) {
+      workEditPrice.dataset.storedValue = workEditPrice.value;
+    }
+    workEditPrice.value = '';
+  }
+}
+
+function openWorkEditPostPreview({ title, description, tags, price, mediaType, mediaUrl }) {
+  if (!workEditPreviewModal || !workEditPreviewMediaModal) {
+    return;
+  }
+
+  workEditPreviewTitleModal.textContent = title || '제목 없음';
+  workEditPreviewDescriptionModal.textContent = description || '설명이 없습니다.';
+  workEditPreviewTagsModal.textContent = (tags || []).join(' ');
+  workEditPreviewTagsModal.style.display = tags?.length ? 'block' : 'none';
+  workEditPreviewPriceModal.textContent = price ? `${price}${price.includes('원') ? '' : '원'}` : '';
+  workEditPreviewPriceModal.style.display = price ? 'block' : 'none';
+
+  if (!mediaUrl || !mediaType) {
+    workEditPreviewMediaModal.innerHTML = `
+      <div class="work-edit-preview-empty">
+        사진 또는 영상을 선택하면<br>이 위치에서 게시글 전체 미리보기가 보입니다.
+      </div>
+    `;
+  } else if (mediaType === 'IMAGE') {
+    workEditPreviewMediaModal.innerHTML = `<img src="${mediaUrl}" alt="게시글 미리보기">`;
+  } else {
+    workEditPreviewMediaModal.innerHTML = `<video src="${mediaUrl}" controls autoplay muted loop playsinline></video>`;
+  }
+
+  workEditPreviewModal.classList.add('active');
 }
 
 // ─── 탭 아이콘 ───────────────────────────────────
@@ -495,13 +994,144 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
+
+  const workEditUploadArea = document.getElementById('workEditUploadArea');
+  const workEditFileInput = document.getElementById('workEditFileInput');
+  const workEditTagInput = document.getElementById('workEditTagInput');
+  const workEditTagBox = document.getElementById('workEditTagBox');
+  const workEditTradeToggle = document.getElementById('workEditTradeToggle');
+  const workEditAuctionToggle = document.getElementById('workEditAuctionToggle');
+  const workEditPrice = document.getElementById('workEditPrice');
+  const workEditPreviewButton = document.getElementById('workEditPreviewButton');
+  const workEditMoreToggle = document.getElementById('workEditMoreToggle');
+  const workEditMoreContent = document.getElementById('workEditMoreContent');
+  const workDetailCommentInput = document.getElementById('workDetailCommentInput');
+  const workDetailCommentSubmit = document.getElementById('workDetailCommentSubmit');
+
+  if (workEditUploadArea && workEditFileInput) {
+    workEditUploadArea.addEventListener('click', (event) => {
+      if (event.target.closest('.save-from-url') || event.target.closest('.publish-btn')) {
+        return;
+      }
+      workEditFileInput.click();
+    });
+
+    workEditUploadArea.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      workEditUploadArea.classList.add('dragover');
+    });
+
+    workEditUploadArea.addEventListener('dragleave', () => {
+      workEditUploadArea.classList.remove('dragover');
+    });
+
+    workEditUploadArea.addEventListener('drop', (event) => {
+      event.preventDefault();
+      workEditUploadArea.classList.remove('dragover');
+      const file = event.dataTransfer.files[0];
+      if (!file) return;
+      workEditFileInput.files = event.dataTransfer.files;
+      workEditFileInput.dispatchEvent(new Event('change'));
+    });
+
+    workEditFileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('video/') && !file.type.startsWith('image/')) {
+        alert('영상 또는 이미지 파일만 업로드할 수 있습니다.');
+        return;
+      }
+
+      workEditSelectedFile = file;
+      workEditExistingMediaUrl = null;
+      currentWorkDetail.category = file.type.startsWith('image/') ? 'IMAGE' : 'VIDEO';
+      showWorkEditMediaFile(file, currentWorkDetail.category);
+    });
+  }
+
+  if (workEditPreviewButton) {
+    workEditPreviewButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      const previewMediaUrl = workEditSelectedFile
+        ? URL.createObjectURL(workEditSelectedFile)
+        : workEditExistingMediaUrl;
+
+      openWorkEditPostPreview({
+        title: document.getElementById('workEditTitle').value.trim(),
+        description: document.getElementById('workEditDescription').value.trim(),
+        tags: workEditTags,
+        price: workEditPrice?.value.trim(),
+        mediaType: currentWorkDetail?.category || 'VIDEO',
+        mediaUrl: previewMediaUrl
+      });
+    });
+  }
+
+  if (workEditTagInput) {
+    workEditTagInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addWorkEditTag(workEditTagInput.value);
+        workEditTagInput.value = '';
+      }
+
+      if (event.key === 'Backspace' && !workEditTagInput.value && workEditTags.length) {
+        removeWorkEditTag(workEditTags.length - 1);
+      }
+    });
+  }
+
+  if (workEditTagBox) {
+    workEditTagBox.addEventListener('click', (event) => {
+      if (event.target.classList.contains('work-edit-modal__tag-remove')) {
+        removeWorkEditTag(Number(event.target.dataset.index));
+        return;
+      }
+      workEditTagInput?.focus();
+    });
+  }
+
+  if (workEditTradeToggle && workEditPrice) {
+    workEditTradeToggle.addEventListener('change', () => {
+      if (workEditTradeToggle.checked && workEditAuctionToggle) {
+        workEditAuctionToggle.checked = false;
+      }
+      syncWorkEditPriceInput();
+    });
+
+    workEditAuctionToggle?.addEventListener('change', () => {
+      if (workEditAuctionToggle.checked && workEditTradeToggle) {
+        workEditTradeToggle.checked = false;
+      }
+      syncWorkEditPriceInput();
+    });
+    workEditPrice.addEventListener('input', (event) => {
+      const digitsOnly = event.target.value.replace(/,/g, '').replace(/\D/g, '');
+      event.target.value = digitsOnly ? Number(digitsOnly).toLocaleString('ko-KR') : '';
+    });
+    syncWorkEditPriceInput();
+  }
+
+  workEditMoreToggle?.addEventListener('click', () => {
+    workEditMoreToggle.classList.toggle('open');
+    workEditMoreContent?.classList.toggle('visible');
+  });
+
+  workDetailCommentSubmit?.addEventListener('click', submitWorkComment);
+  workDetailCommentInput?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      submitWorkComment();
+    }
+  });
 });
 
 // ─── ESC 키 핸들러 (통합) ─────────────────────────
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
 
-  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal'];
+  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal', 'workDetailModal'];
   for (const id of upperModals) {
     const el = document.getElementById(id);
     if (el && el.classList.contains('active')) {

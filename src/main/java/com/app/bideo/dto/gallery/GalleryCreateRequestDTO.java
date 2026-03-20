@@ -9,6 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class GalleryCreateRequestDTO {
+    private Long id;
+    private Long memberId;
     private String title;
     private String description;
     private String coverImage;
