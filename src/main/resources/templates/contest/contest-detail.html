@@ -301,9 +301,20 @@
 
                     <!-- 액션 버튼 -->
                     <div class="cl-actions">
-                        <a href="#" class="cl-btn-apply">
-                            참여하기
-                        </a>
+                        <form method="post"
+                              th:action="@{|/contest/${contest.id}/entries|}"
+                              th:object="${entryForm}"
+                              style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                            <input type="hidden" th:field="*{contestId}">
+                            <select th:field="*{workId}"
+                                    style="height:44px;padding:0 14px;border-radius:8px;border:1px solid var(--cl-line);min-width:220px;">
+                                <option value="">출품할 작품 선택</option>
+                                <option th:each="work : ${availableWorks}"
+                                        th:value="${work.id}"
+                                        th:text="${work.title}">작품</option>
+                            </select>
+                            <button class="cl-btn-apply" type="submit">참여하기</button>
+                        </form>
                         <a href="#" class="cl-btn-apply">
                             수정하기
                         </a>
@@ -375,6 +386,7 @@
                     <h3 class="cl-body-heading">등록 정보</h3>
                     <p class="cl-body-text" th:text="${'등록자 : ' + contest.memberNickname}">등록자</p>
                     <p class="cl-body-text" th:text="${'조회수 : ' + contest.viewCount}">조회수</p>
+                    <p class="cl-body-text" th:if="${availableWorks != null and #lists.isEmpty(availableWorks)}">출품 가능한 내 작품이 없습니다. 먼저 작품을 등록해주세요.</p>
                 </div>
 
                 <div class="cl-divider"></div>

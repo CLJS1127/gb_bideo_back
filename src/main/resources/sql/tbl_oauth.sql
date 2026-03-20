@@ -1,25 +1,26 @@
 -- ----------------------------------------------------------
--- 1. 회원 (tbl_member)
+-- 소셜 로그인 (tbl_oauth)
 -- ----------------------------------------------------------
+drop table if exists tbl_oauth cascade;
+drop type if exists oauth_provider cascade;
+
 create type oauth_provider as enum('kakao', 'naver');
 
 create table tbl_oauth
 (
     id                  bigint generated always as identity primary key,
     member_id           bigint not null,
-    provider_id varchar(255) unique not null,
-    provider oauth_provider,
+    provider_id         varchar(255) unique not null,
+    provider            oauth_provider,
     created_datetime    timestamp    not null default now(),
     updated_datetime    timestamp    not null default now(),
     deleted_datetime    timestamp    null,
 
-    constraint fk_oauth_member foreign key (member_id) references tbl_member(id),
+    constraint fk_oauth_member foreign key (member_id) references tbl_member(id)
 );
 
-drop table if exists tbl_oauth cascade;
-
-comment on table tbl_oauth is '회원';
-comment on column tbl_oauth.id is '회원 번호 (PK)';
+comment on table tbl_oauth is '소셜 로그인';
+comment on column tbl_oauth.id is '소셜 로그인 번호 (PK)';
 comment on column tbl_oauth.member_id is '멤버 아이디';
 comment on column tbl_oauth.provider_id is '소셜 아이디';
 comment on column tbl_oauth.provider is '소셜 정보';

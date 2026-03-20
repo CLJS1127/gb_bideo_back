@@ -4,9 +4,11 @@ import com.app.bideo.auth.member.CustomUserDetails;
 import com.app.bideo.dto.common.PageResponseDTO;
 import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestDetailResponseDTO;
+import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.dto.contest.ContestEntryResponseDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
 import com.app.bideo.dto.contest.ContestSearchDTO;
+import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.service.contest.ContestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,11 +39,18 @@ public class ContestController {
     }
 
     @GetMapping("/detail/{id}")
-    public String detail(@PathVariable Long id, Model model) {
+    public String detail(@PathVariable Long id,
+                         @AuthenticationPrincipal CustomUserDetails userDetails,
+                         Model model) {
         ContestDetailResponseDTO contest = contestService.getContestDetail(id);
         List<ContestEntryResponseDTO> entries = contestService.getContestEntryList(id);
         model.addAttribute("contest", contest);
         model.addAttribute("entries", entries);
+        model.addAttribute("entryForm", ContestEntryRequestDTO.builder().contestId(id).build());
+        if (userDetails != null) {
+            List<ContestWorkOptionDTO> availableWorks = contestService.getEntryWorkOptions(userDetails.getId());
+            model.addAttribute("availableWorks", availableWorks);
+        }
         return "contest/contest-detail";
     }
 
@@ -72,5 +81,14 @@ public class ContestController {
         model.addAttribute("contestList", result.getContent());
         model.addAttribute("page", result);
         return "contest/mycontests";
+    }
+
+    @PostMapping("/{id}/entries")
+    public String submitEntry(@PathVariable Long id,
+                              @ModelAttribute("entryForm") ContestEntryRequestDTO entryForm,
+                              @AuthenticationPrincipal CustomUserDetails userDetails) {
+        entryForm.setContestId(id);
+        contestService.submitEntry(userDetails.getId(), entryForm);
+        return "redirect:/contest/detail/" + id;
     }
 }

@@ -3,9 +3,11 @@ package com.app.bideo.service.contest;
 import com.app.bideo.dto.common.PageResponseDTO;
 import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestDetailResponseDTO;
+import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.dto.contest.ContestEntryResponseDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
 import com.app.bideo.dto.contest.ContestSearchDTO;
+import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.mapper.contest.ContestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,21 @@ public class ContestService {
         return contestMapper.selectContestEntryList(contestId);
     }
 
+    public void submitEntry(Long memberId, ContestEntryRequestDTO requestDTO) {
+        if (!contestMapper.existsContest(requestDTO.getContestId())) {
+            throw new IllegalArgumentException("contest not found");
+        }
+        if (!contestMapper.existsOwnedWork(memberId, requestDTO.getWorkId())) {
+            throw new IllegalArgumentException("work does not belong to member");
+        }
+        if (contestMapper.existsContestEntry(requestDTO.getContestId(), requestDTO.getWorkId())) {
+            throw new IllegalStateException("contest entry already exists");
+        }
+
+        contestMapper.insertContestEntry(memberId, requestDTO);
+        contestMapper.increaseContestEntryCount(requestDTO.getContestId());
+    }
+
     public PageResponseDTO<ContestListResponseDTO> getHostedContestList(Long memberId) {
         List<ContestListResponseDTO> list = contestMapper.selectHostedContestList(memberId);
         return PageResponseDTO.<ContestListResponseDTO>builder()
@@ -66,5 +83,9 @@ public class ContestService {
                 .totalElements((long) list.size())
                 .totalPages(list.isEmpty() ? 0 : 1)
                 .build();
+    }
+
+    public List<ContestWorkOptionDTO> getEntryWorkOptions(Long memberId) {
+        return contestMapper.selectEntryWorkOptions(memberId);
     }
 }

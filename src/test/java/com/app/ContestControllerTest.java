@@ -7,7 +7,11 @@ import com.app.bideo.controller.contest.ContestController;
 import com.app.bideo.domain.member.MemberVO;
 import com.app.bideo.dto.common.PageResponseDTO;
 import com.app.bideo.dto.contest.ContestCreateRequestDTO;
+import com.app.bideo.dto.contest.ContestDetailResponseDTO;
+import com.app.bideo.dto.contest.ContestEntryRequestDTO;
+import com.app.bideo.dto.contest.ContestEntryResponseDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
+import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.service.contest.ContestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
+import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -100,6 +105,37 @@ class ContestControllerTest {
         assertNotNull(model.getAttribute("contestList"));
 
         verify(contestService).getParticipatedContestList(7L);
+    }
+
+    @Test
+    void detailUsesContestEntriesAndAvailableWorksModels() {
+        given(contestService.getContestDetail(9L)).willReturn(ContestDetailResponseDTO.builder().id(9L).title("상세").build());
+        given(contestService.getContestEntryList(9L)).willReturn(Collections.<ContestEntryResponseDTO>emptyList());
+        given(contestService.getEntryWorkOptions(7L))
+                .willReturn(List.of(ContestWorkOptionDTO.builder().id(3L).title("내 작품").build()));
+
+        Model model = new ConcurrentModel();
+
+        String viewName = contestController.detail(9L, authenticatedPrincipal(7L), model);
+
+        assertEquals("contest/contest-detail", viewName);
+        assertNotNull(model.getAttribute("contest"));
+        assertNotNull(model.getAttribute("entries"));
+        assertNotNull(model.getAttribute("availableWorks"));
+        assertNotNull(model.getAttribute("entryForm"));
+    }
+
+    @Test
+    void submitEntryRedirectsBackToContestDetail() {
+        ContestEntryRequestDTO requestDTO = ContestEntryRequestDTO.builder()
+                .workId(3L)
+                .build();
+
+        String viewName = contestController.submitEntry(9L, requestDTO, authenticatedPrincipal(7L));
+
+        assertEquals("redirect:/contest/detail/9", viewName);
+        verify(contestService).submitEntry(7L, requestDTO);
+        assertEquals(9L, requestDTO.getContestId());
     }
 
     private PageResponseDTO<ContestListResponseDTO> pageResponse() {
