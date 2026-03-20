@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -244,7 +244,7 @@
 
             <!-- 뒤로가기 -->
             <div class="cl-breadcrumb">
-                <a href="contestlist.html" class="cl-back-btn">
+                <a th:href="@{/contest/list}" class="cl-back-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 18l-6-6 6-6"/>
                     </svg>
@@ -258,50 +258,56 @@
             <div class="cl-hero">
                 <!-- 포스터 이미지 -->
                 <div class="cl-poster">
-                    <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="유진그룹 공식 서포터즈 유지너스 1기 모집 포스터">
+                    <img th:src="${contest.coverImage != null and !#strings.isEmpty(contest.coverImage)} ? ${contest.coverImage} : '/images/BIDEO_LOGO/BIDEO_favicon.png'"
+                         alt="공모전 포스터">
                 </div>
 
                 <!-- 정보 블록 -->
                 <div class="cl-info">
                     <!-- 상태 배지 -->
                     <div class="cl-status-row">
-                        <span class="cl-status-badge">접수중</span>
-                        <span class="cl-dday-badge">D-3</span>
+                        <span class="cl-status-badge" th:text="${contest.status}">접수중</span>
+                        <span class="cl-dday-badge"
+                              th:text="${contest.entryEnd != null ? (contest.entryEnd.isBefore(T(java.time.LocalDate).now()) ? '마감' : (contest.entryEnd.isEqual(T(java.time.LocalDate).now()) ? 'D-Day' : 'D-' + T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), contest.entryEnd))) : '-'}">D-3</span>
                     </div>
 
                     <!-- 제목 -->
-                    <h1 class="cl-contest-title">유진그룹 공식 서포터즈<br>유지너스 1기 모집</h1>
-                    <p class="cl-organizer">주최 · 유진그룹</p>
+                    <h1 class="cl-contest-title" th:text="${contest.title}">공모전 제목</h1>
+                    <p class="cl-organizer">
+                        <span>주최 · </span>
+                        <span th:text="${contest.organizer}">주최 기관</span>
+                    </p>
 
                     <!-- 메타 정보 테이블 -->
                     <div class="cl-meta-table">
                         <div class="cl-meta-row">
                             <span class="cl-meta-key">접수기간</span>
-                            <span class="cl-meta-val">26.03.04 ~ 26.03.16</span>
+                            <span class="cl-meta-val"
+                                  th:text="${contest.entryStart != null && contest.entryEnd != null} ? ${contest.entryStart + ' ~ ' + contest.entryEnd} : '-'">접수기간</span>
                         </div>
                         <div class="cl-meta-row">
                             <span class="cl-meta-key">분야</span>
-                            <span class="cl-meta-val">IT</span>
+                            <span class="cl-meta-val" th:text="${contest.category}">IT</span>
                         </div>
                         <div class="cl-meta-row">
-                            <span class="cl-meta-key">응모대상</span>
-                            <span class="cl-meta-val"></span>
+                            <span class="cl-meta-key">지역</span>
+                            <span class="cl-meta-val" th:text="${contest.region}">전국</span>
                         </div>
                         <div class="cl-meta-row">
                             <span class="cl-meta-key">상금 및 부상</span>
-                            <span class="cl-meta-val">100만원</span>
+                            <span class="cl-meta-val" th:text="${contest.prizeInfo}">100만원</span>
                         </div>
                     </div>
 
                     <!-- 액션 버튼 -->
                     <div class="cl-actions">
-                        <a href="https://form.naver.com/response/c--dPMoYGwah4ayThc21HA" target="_blank" class="cl-btn-apply">
+                        <a href="#" class="cl-btn-apply">
                             참여하기
                         </a>
-                        <a href="https://form.naver.com/response/c--dPMoYGwah4ayThc21HA" target="_blank" class="cl-btn-apply">
+                        <a href="#" class="cl-btn-apply">
                             수정하기
                         </a>
-                        <a href="contest-list.html" class="cl-btn-secondary">목록으로</a>
+                        <a th:href="@{/contest/list}" class="cl-btn-secondary">목록으로</a>
                         <button class="cl-btn-icon" id="scrapBtn" title="스크랩" onclick="toggleScrap(this)" type="button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -328,7 +334,7 @@
                 <!-- 모집개요 -->
                 <div class="cl-body-block">
                     <h3 class="cl-body-heading">모집개요</h3>
-                    <p class="cl-body-text">유진그룹(건자재, 금융, 미디어 계열사)의 브랜드 마케팅 콘텐츠를 직접 기획·제작할 크리에이터를 모집합니다.</p>
+                    <p class="cl-body-text" th:text="${contest.description}">공모전 설명</p>
                 </div>
 
                 <div class="cl-divider"></div>
@@ -337,8 +343,8 @@
                 <div class="cl-body-block">
                     <h3 class="cl-body-heading">기간 및 일정</h3>
                     <ul class="cl-body-list">
-                        <li>지원 접수 : 2026년 3월 10일 (화) ~ 2026년 3월 16일 (일)</li>
-                        <li>결과 발표 : 2026년 3월 20일 (금)</li>
+                        <li th:text="${'지원 접수 : ' + contest.entryStart + ' ~ ' + contest.entryEnd}">지원 접수</li>
+                        <li th:text="${'결과 발표 : ' + contest.resultDate}">결과 발표</li>
                     </ul>
                 </div>
 
@@ -346,9 +352,9 @@
 
                 <!-- 지원자격 -->
                 <div class="cl-body-block">
-                    <h3 class="cl-body-heading">지원자격</h3>
+                    <h3 class="cl-body-heading">출품 현황</h3>
                     <ul class="cl-body-list">
-                        <li>A 뱃지 이상</li>
+                        <li th:text="${'총 출품 수 : ' + contest.entryCount}">총 출품 수</li>
                     </ul>
                 </div>
 
@@ -358,7 +364,7 @@
                 <div class="cl-body-block">
                     <h3 class="cl-body-heading">목적 및 내용</h3>
                     <ul class="cl-body-list">
-                        <li>유진그룹 계열사 홍보 콘텐츠 기획 및 제작</li>
+                        <li th:text="${contest.description}">목적 및 내용</li>
                     </ul>
                 </div>
 
@@ -366,12 +372,9 @@
 
                 <!-- 지원방법 -->
                 <div class="cl-body-block">
-                    <h3 class="cl-body-heading">지원방법</h3>
-                    <p class="cl-body-text">아래 링크를 통해 지원해주세요.</p>
-                    <br>
-                    <a href="https://naver.me/G0pVVdkT" target="_blank" class="cl-btn-apply" style="display:inline-flex;margin-top:4px;">
-                        지원서 작성하기 →
-                    </a>
+                    <h3 class="cl-body-heading">등록 정보</h3>
+                    <p class="cl-body-text" th:text="${'등록자 : ' + contest.memberNickname}">등록자</p>
+                    <p class="cl-body-text" th:text="${'조회수 : ' + contest.viewCount}">조회수</p>
                 </div>
 
                 <div class="cl-divider"></div>
@@ -380,7 +383,7 @@
                 <div class="cl-body-block">
                     <h3 class="cl-body-heading">상금 및 부상</h3>
                     <ul class="cl-body-list">
-                        <li>100만원</li>
+                        <li th:text="${contest.prizeInfo}">100만원</li>
                     </ul>
                 </div>
 
@@ -388,20 +391,20 @@
 
                 <!-- 문의 -->
                 <div class="cl-body-block">
-                    <h3 class="cl-body-heading">문의</h3>
-                    <div class="cl-contact-box">
+                    <h3 class="cl-body-heading">출품 작품</h3>
+                    <div class="cl-contact-box" th:each="entry : ${entries}">
                         <div class="cl-contact-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                <polyline points="22,6 12,13 2,6"/>
-                            </svg>
+                            <img th:src="${entry.workThumbnail != null and !#strings.isEmpty(entry.workThumbnail)} ? ${entry.workThumbnail} : '/images/BIDEO_LOGO/BIDEO_favicon.png'"
+                                 alt="작품 썸네일"
+                                 style="width:48px;height:48px;border-radius:8px;object-fit:cover;">
                         </div>
                         <div class="cl-contact-text">
-                            이메일 : <a href="mailto:blushpink@pentac.co.kr">blushpink@pentac.co.kr</a><br>
-                            인스타그램 : <a href="https://instagram.com/hi_eugene_" target="_blank">@hi_eugene_</a><br>
-                            블로그 : <a href="https://blog.naver.com/eugene3704" target="_blank">blog.naver.com/eugene3704</a>
+                            <strong th:text="${entry.workTitle}">작품 제목</strong><br>
+                            <span>출품자 : </span><span th:text="${entry.memberNickname}">출품자</span><br>
+                            <span th:text="${entry.awardRank != null ? '수상 : ' + entry.awardRank : '수상 정보 없음'}">수상 정보</span>
                         </div>
                     </div>
+                    <p class="cl-body-text" th:if="${#lists.isEmpty(entries)}">아직 등록된 출품 작품이 없습니다.</p>
                 </div>
             </div>
 

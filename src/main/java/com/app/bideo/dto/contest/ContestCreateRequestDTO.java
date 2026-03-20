@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ContestCreateRequestDTO {
+    private Long id;
     private String title;
     private String organizer;
     private String category;

@@ -101,4 +101,85 @@
         ORDER BY ce.submitted_at DESC
     </select>
 
+    <insert id="insertContest"
+            parameterType="map"
+            useGeneratedKeys="true"
+            keyProperty="contest.id"
+            keyColumn="id">
+        INSERT INTO tbl_contest (
+            member_id,
+            title,
+            organizer,
+            category,
+            region,
+            description,
+            cover_image,
+            entry_start,
+            entry_end,
+            result_date,
+            prize_info,
+            price,
+            status
+        ) VALUES (
+            #{memberId},
+            #{contest.title},
+            #{contest.organizer},
+            #{contest.category},
+            #{contest.region},
+            #{contest.description},
+            #{contest.coverImage},
+            #{contest.entryStart},
+            #{contest.entryEnd},
+            #{contest.resultDate},
+            #{contest.prizeInfo},
+            #{contest.price},
+            'UPCOMING'
+        )
+    </insert>
+
+    <select id="selectHostedContestList" resultType="ContestListResponseDTO">
+        SELECT
+            c.id,
+            c.title,
+            c.organizer,
+            c.category,
+            c.cover_image,
+            c.entry_end,
+            c.status,
+            c.entry_count,
+            c.created_datetime,
+            CASE
+                WHEN c.entry_end &lt; CURRENT_DATE THEN '마감'
+                WHEN c.entry_end = CURRENT_DATE THEN 'D-Day'
+                ELSE 'D-' || (c.entry_end - CURRENT_DATE)
+            END AS d_day
+        FROM tbl_contest c
+        WHERE c.member_id = #{memberId}
+          AND c.deleted_datetime IS NULL
+        ORDER BY c.created_datetime DESC
+    </select>
+
+    <select id="selectParticipatedContestList" resultType="ContestListResponseDTO">
+        SELECT
+            c.id,
+            c.title,
+            c.organizer,
+            c.category,
+            c.cover_image,
+            c.entry_end,
+            c.status,
+            c.entry_count,
+            c.created_datetime,
+            CASE
+                WHEN c.entry_end &lt; CURRENT_DATE THEN '마감'
+                WHEN c.entry_end = CURRENT_DATE THEN 'D-Day'
+                ELSE 'D-' || (c.entry_end - CURRENT_DATE)
+            END AS d_day
+        FROM tbl_contest_entry ce
+        JOIN tbl_contest c ON ce.contest_id = c.id
+        WHERE ce.member_id = #{memberId}
+          AND c.deleted_datetime IS NULL
+        ORDER BY ce.submitted_at DESC
+    </select>
+
 </mapper>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -271,105 +271,38 @@
             </section>
 
             <section class="contest-grid">
-                <article class="contest-item contest-panel">
+                <a class="contest-item contest-panel"
+                   th:each="contest : ${contestList}"
+                   th:href="@{|/contest/detail/${contest.id}|}">
                     <div class="contest-item-thumb">
-                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
+                        <img th:src="${contest.coverImage != null and !#strings.isEmpty(contest.coverImage)} ? ${contest.coverImage} : '/images/BIDEO_LOGO/BIDEO_favicon.png'"
+                             alt="공모전 대표 이미지">
                     </div>
                     <div class="contest-item-body">
                         <div class="contest-item-top">
-                            <span class="contest-badge">접수중</span>
-                            <span class="contest-dday">D-12</span>
+                            <span class="contest-badge" th:text="${contest.status}">접수중</span>
+                            <span class="contest-dday" th:text="${contest.dDay}">D-12</span>
                         </div>
-                        <h2 class="contest-item-title">BIDEO 크리에이터 영상 공모전 2026</h2>
-                        <p class="contest-organizer">주최자 · BIDEO 운영팀</p>
+                        <h2 class="contest-item-title" th:text="${contest.title}">공모전 제목</h2>
+                        <p class="contest-organizer">
+                            <span>주최자 · </span>
+                            <span th:text="${contest.organizer}">BIDEO 운영팀</span>
+                        </p>
                         <div class="contest-single-meta">
                             <div class="contest-meta-item">
                                 <p class="contest-meta-label">지원자</p>
-                                <p class="contest-meta-value">324명</p>
+                                <p class="contest-meta-value" th:text="${contest.entryCount}">0</p>
                             </div>
                         </div>
                     </div>
-                </article>
+                </a>
 
-                <article class="contest-item contest-panel">
-                    <div class="contest-item-thumb">
-                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
-                    </div>
+                <div class="contest-panel" th:if="${#lists.isEmpty(contestList)}">
                     <div class="contest-item-body">
-                        <div class="contest-item-top">
-                            <span class="contest-badge">종료</span>
-                            <span class="contest-dday">마감</span>
-                        </div>
-                        <h2 class="contest-item-title">전시 홍보 필름 공모전</h2>
-                        <p class="contest-organizer">주최자 · BIDEO 스튜디오</p>
-                        <div class="contest-single-meta">
-                            <div class="contest-meta-item">
-                                <p class="contest-meta-label">지원자</p>
-                                <p class="contest-meta-value">201명</p>
-                            </div>
-                        </div>
+                        <h2 class="contest-item-title">아직 개최한 공모전이 없습니다.</h2>
+                        <p class="contest-organizer">새 공모전을 등록하면 이 목록에 표시됩니다.</p>
                     </div>
-                </article>
-
-                <article class="contest-item contest-panel">
-                    <div class="contest-item-thumb">
-                        <img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="공모전 대표 이미지">
-                    </div>
-                    <div class="contest-item-body">
-                        <div class="contest-item-top">
-                            <span class="contest-badge">종료</span>
-                            <span class="contest-dday">마감</span>
-                        </div>
-                        <h2 class="contest-item-title">하은 챌린지 공모전</h2>
-                        <p class="contest-organizer">주최자 · 하은 크리에이티브</p>
-                        <div class="contest-single-meta">
-                            <div class="contest-meta-item">
-                                <p class="contest-meta-label">지원자</p>
-                                <p class="contest-meta-value">317명</p>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="contest-item contest-panel">
-                    <div class="contest-item-thumb">
-                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
-                    </div>
-                    <div class="contest-item-body">
-                        <div class="contest-item-top">
-                            <span class="contest-badge">접수중</span>
-                            <span class="contest-dday">D-09</span>
-                        </div>
-                        <h2 class="contest-item-title">준수 콜라보 캠페인 공모전</h2>
-                        <p class="contest-organizer">주최자 · 준수 프로젝트</p>
-                        <div class="contest-single-meta">
-                            <div class="contest-meta-item">
-                                <p class="contest-meta-label">지원자</p>
-                                <p class="contest-meta-value">189명</p>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-
-                <article class="contest-item contest-panel">
-                    <div class="contest-item-thumb">
-                        <img src="https://api.linkareer.com/attachments/765159?d=600x600" alt="공모전 대표 이미지">
-                    </div>
-                    <div class="contest-item-body">
-                        <div class="contest-item-top">
-                            <span class="contest-badge">종료</span>
-                            <span class="contest-dday">마감</span>
-                        </div>
-                        <h2 class="contest-item-title">뮤직비디오 승민 공모전</h2>
-                        <p class="contest-organizer">주최자 · 승민 아트랩</p>
-                        <div class="contest-single-meta">
-                            <div class="contest-meta-item">
-                                <p class="contest-meta-label">지원자</p>
-                                <p class="contest-meta-value">142명</p>
-                            </div>
-                        </div>
-                    </div>
-                </article>
+                </div>
             </section>
 
         </div>

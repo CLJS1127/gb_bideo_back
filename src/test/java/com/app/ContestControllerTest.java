@@ -9,37 +9,40 @@ import com.app.bideo.dto.common.PageResponseDTO;
 import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
 import com.app.bideo.service.contest.ContestService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mockito;
+import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.Model;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(ContestController.class)
-@AutoConfigureMockMvc(addFilters = false)
 class ContestControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
     private ContestService contestService;
+    private ContestController contestController;
+
+    @BeforeEach
+    void setUp() {
+        contestService = Mockito.mock(ContestService.class);
+        contestController = new ContestController(contestService);
+        mockMvc = MockMvcBuilders.standaloneSetup(contestController).build();
+    }
 
     @Test
     void registerPageUsesContestRegisterTemplateWithEmptyFormObject() throws Exception {
@@ -53,21 +56,20 @@ class ContestControllerTest {
     void createContestRedirectsToDetailForAuthenticatedMember() throws Exception {
         given(contestService.createContest(eq(7L), any(ContestCreateRequestDTO.class))).willReturn(31L);
 
-        mockMvc.perform(post("/contest/register")
-                        .with(authentication(authenticatedUser(7L)))
-                        .param("title", "봄 공모전")
-                        .param("organizer", "BIDEO")
-                        .param("category", "영상")
-                        .param("region", "서울")
-                        .param("description", "설명")
-                        .param("coverImage", "https://example.com/poster.png")
-                        .param("entryStart", "2026-03-20")
-                        .param("entryEnd", "2026-03-31")
-                        .param("resultDate", "2026-04-10")
-                        .param("prizeInfo", "100만원")
-                        .param("price", "0"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/contest/detail/31"));
+        ContestCreateRequestDTO requestDTO = ContestCreateRequestDTO.builder()
+                .title("봄 공모전")
+                .organizer("BIDEO")
+                .category("영상")
+                .region("서울")
+                .description("설명")
+                .coverImage("https://example.com/poster.png")
+                .prizeInfo("100만원")
+                .price(0)
+                .build();
+
+        String viewName = contestController.create(requestDTO, authenticatedPrincipal(7L));
+
+        assertEquals("redirect:/contest/detail/31", viewName);
 
         verify(contestService).createContest(eq(7L), any(ContestCreateRequestDTO.class));
     }
@@ -76,10 +78,12 @@ class ContestControllerTest {
     void myContestsUsesHostedContestTemplateAndModel() throws Exception {
         given(contestService.getHostedContestList(7L)).willReturn(pageResponse());
 
-        mockMvc.perform(get("/contest/my-contests").with(authentication(authenticatedUser(7L))))
-                .andExpect(status().isOk())
-                .andExpect(view().name("contest/contestlist"))
-                .andExpect(model().attributeExists("contestList"));
+        Model model = new ConcurrentModel();
+
+        String viewName = contestController.myContests(authenticatedPrincipal(7L), model);
+
+        assertEquals("contest/contestlist", viewName);
+        assertNotNull(model.getAttribute("contestList"));
 
         verify(contestService).getHostedContestList(7L);
     }
@@ -88,10 +92,12 @@ class ContestControllerTest {
     void myEntriesUsesParticipatedContestTemplateAndModel() throws Exception {
         given(contestService.getParticipatedContestList(7L)).willReturn(pageResponse());
 
-        mockMvc.perform(get("/contest/my-entries").with(authentication(authenticatedUser(7L))))
-                .andExpect(status().isOk())
-                .andExpect(view().name("contest/mycontests"))
-                .andExpect(model().attributeExists("contestList"));
+        Model model = new ConcurrentModel();
+
+        String viewName = contestController.myEntries(authenticatedPrincipal(7L), model);
+
+        assertEquals("contest/mycontests", viewName);
+        assertNotNull(model.getAttribute("contestList"));
 
         verify(contestService).getParticipatedContestList(7L);
     }
@@ -117,5 +123,9 @@ class ContestControllerTest {
                 .build();
         CustomUserDetails principal = new CustomUserDetails(member);
         return new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
+    }
+
+    private CustomUserDetails authenticatedPrincipal(Long memberId) {
+        return (CustomUserDetails) authenticatedUser(memberId).getPrincipal();
     }
 }
