@@ -9,7 +9,10 @@ window.onload = () => {
         card.style.cursor = "pointer";
 
         card.addEventListener("click", function () {
-            window.location.href = "/contest/detail";
+            var detailUrl = card.getAttribute("href") || card.dataset.detailUrl;
+            if (detailUrl) {
+                window.location.href = detailUrl;
+            }
         });
     });
 };

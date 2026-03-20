@@ -12,8 +12,11 @@ create table tbl_oauth
     created_datetime    timestamp    not null default now(),
     updated_datetime    timestamp    not null default now(),
     deleted_datetime    timestamp    null,
-    constraint fk_oauth_member foreign key (member_id) references tbl_member(id)
+
+    constraint fk_oauth_member foreign key (member_id) references tbl_member(id),
 );
+
+drop table if exists tbl_oauth cascade;
 
 comment on table tbl_oauth is '회원';
 comment on column tbl_oauth.id is '회원 번호 (PK)';

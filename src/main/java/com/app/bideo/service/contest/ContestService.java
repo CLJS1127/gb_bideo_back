@@ -1,10 +1,13 @@
 package com.app.bideo.service.contest;
 
 import com.app.bideo.dto.common.PageResponseDTO;
+import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestDetailResponseDTO;
+import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.dto.contest.ContestEntryResponseDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
 import com.app.bideo.dto.contest.ContestSearchDTO;
+import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.mapper.contest.ContestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,11 @@ import java.util.List;
 public class ContestService {
 
     private final ContestMapper contestMapper;
+
+    public Long createContest(Long memberId, ContestCreateRequestDTO contestCreateRequestDTO) {
+        contestMapper.insertContest(memberId, contestCreateRequestDTO);
+        return contestCreateRequestDTO.getId();
+    }
 
     public PageResponseDTO<ContestListResponseDTO> getContestList(ContestSearchDTO searchDTO) {
         List<ContestListResponseDTO> list = contestMapper.selectContestList(searchDTO);
@@ -38,5 +46,46 @@ public class ContestService {
 
     public List<ContestEntryResponseDTO> getContestEntryList(Long contestId) {
         return contestMapper.selectContestEntryList(contestId);
+    }
+
+    public void submitEntry(Long memberId, ContestEntryRequestDTO requestDTO) {
+        if (!contestMapper.existsContest(requestDTO.getContestId())) {
+            throw new IllegalArgumentException("contest not found");
+        }
+        if (!contestMapper.existsOwnedWork(memberId, requestDTO.getWorkId())) {
+            throw new IllegalArgumentException("work does not belong to member");
+        }
+        if (contestMapper.existsContestEntry(requestDTO.getContestId(), requestDTO.getWorkId())) {
+            throw new IllegalStateException("contest entry already exists");
+        }
+
+        contestMapper.insertContestEntry(memberId, requestDTO);
+        contestMapper.increaseContestEntryCount(requestDTO.getContestId());
+    }
+
+    public PageResponseDTO<ContestListResponseDTO> getHostedContestList(Long memberId) {
+        List<ContestListResponseDTO> list = contestMapper.selectHostedContestList(memberId);
+        return PageResponseDTO.<ContestListResponseDTO>builder()
+                .content(list)
+                .page(1)
+                .size(list.size())
+                .totalElements((long) list.size())
+                .totalPages(list.isEmpty() ? 0 : 1)
+                .build();
+    }
+
+    public PageResponseDTO<ContestListResponseDTO> getParticipatedContestList(Long memberId) {
+        List<ContestListResponseDTO> list = contestMapper.selectParticipatedContestList(memberId);
+        return PageResponseDTO.<ContestListResponseDTO>builder()
+                .content(list)
+                .page(1)
+                .size(list.size())
+                .totalElements((long) list.size())
+                .totalPages(list.isEmpty() ? 0 : 1)
+                .build();
+    }
+
+    public List<ContestWorkOptionDTO> getEntryWorkOptions(Long memberId) {
+        return contestMapper.selectEntryWorkOptions(memberId);
     }
 }

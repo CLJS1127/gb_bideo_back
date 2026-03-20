@@ -101,4 +101,151 @@
         ORDER BY ce.submitted_at DESC
     </select>
 
+    <insert id="insertContest"
+            parameterType="map"
+            useGeneratedKeys="true"
+            keyProperty="contest.id"
+            keyColumn="id">
+        INSERT INTO tbl_contest (
+            member_id,
+            title,
+            organizer,
+            category,
+            region,
+            description,
+            cover_image,
+            entry_start,
+            entry_end,
+            result_date,
+            prize_info,
+            price,
+            status
+        ) VALUES (
+            #{memberId},
+            #{contest.title},
+            #{contest.organizer},
+            #{contest.category},
+            #{contest.region},
+            #{contest.description},
+            #{contest.coverImage},
+            #{contest.entryStart},
+            #{contest.entryEnd},
+            #{contest.resultDate},
+            #{contest.prizeInfo},
+            #{contest.price},
+            'UPCOMING'
+        )
+    </insert>
+
+    <select id="selectHostedContestList" resultType="ContestListResponseDTO">
+        SELECT
+            c.id,
+            c.title,
+            c.organizer,
+            c.category,
+            c.cover_image,
+            c.entry_end,
+            c.status,
+            c.entry_count,
+            c.created_datetime,
+            CASE
+                WHEN c.entry_end &lt; CURRENT_DATE THEN '마감'
+                WHEN c.entry_end = CURRENT_DATE THEN 'D-Day'
+                ELSE 'D-' || (c.entry_end - CURRENT_DATE)
+            END AS d_day
+        FROM tbl_contest c
+        WHERE c.member_id = #{memberId}
+          AND c.deleted_datetime IS NULL
+        ORDER BY c.created_datetime DESC
+    </select>
+
+    <select id="selectParticipatedContestList" resultType="ContestListResponseDTO">
+        SELECT
+            c.id,
+            c.title,
+            c.organizer,
+            c.category,
+            c.cover_image,
+            c.entry_end,
+            c.status,
+            c.entry_count,
+            c.created_datetime,
+            CASE
+                WHEN c.entry_end &lt; CURRENT_DATE THEN '마감'
+                WHEN c.entry_end = CURRENT_DATE THEN 'D-Day'
+                ELSE 'D-' || (c.entry_end - CURRENT_DATE)
+            END AS d_day
+        FROM tbl_contest_entry ce
+        JOIN tbl_contest c ON ce.contest_id = c.id
+        WHERE ce.member_id = #{memberId}
+          AND c.deleted_datetime IS NULL
+        ORDER BY ce.submitted_at DESC
+    </select>
+
+    <select id="existsContest" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM tbl_contest
+            WHERE id = #{contestId}
+              AND deleted_datetime IS NULL
+        )
+    </select>
+
+    <select id="existsOwnedWork" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM tbl_work
+            WHERE id = #{workId}
+              AND member_id = #{memberId}
+              AND deleted_datetime IS NULL
+              AND status != 'DELETED'
+        )
+    </select>
+
+    <select id="existsContestEntry" resultType="boolean">
+        SELECT EXISTS (
+            SELECT 1
+            FROM tbl_contest_entry
+            WHERE contest_id = #{contestId}
+              AND work_id = #{workId}
+        )
+    </select>
+
+    <insert id="insertContestEntry" parameterType="map">
+        INSERT INTO tbl_contest_entry (
+            contest_id,
+            work_id,
+            member_id
+        ) VALUES (
+            #{entry.contestId},
+            #{entry.workId},
+            #{memberId}
+        )
+    </insert>
+
+    <update id="increaseContestEntryCount">
+        UPDATE tbl_contest
+        SET entry_count = entry_count + 1,
+            updated_datetime = now()
+        WHERE id = #{contestId}
+    </update>
+
+    <select id="selectEntryWorkOptions" resultType="ContestWorkOptionDTO">
+        SELECT
+            w.id,
+            w.title,
+            (
+                SELECT wf.file_url
+                FROM tbl_work_file wf
+                WHERE wf.work_id = w.id
+                ORDER BY wf.sort_order ASC, wf.id ASC
+                LIMIT 1
+            ) AS thumbnail_url
+        FROM tbl_work w
+        WHERE w.member_id = #{memberId}
+          AND w.deleted_datetime IS NULL
+          AND w.status != 'DELETED'
+        ORDER BY w.created_datetime DESC
+    </select>
+
 </mapper>
