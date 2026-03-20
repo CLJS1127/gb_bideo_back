@@ -15,7 +15,6 @@ public class CustomUserDetailService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    // 이메일로 로그인 회원 정보를 불러오기
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         MemberVO memberVO = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));

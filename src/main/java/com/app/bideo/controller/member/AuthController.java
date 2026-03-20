@@ -1,23 +1,30 @@
 package com.app.bideo.controller.member;
 
+import com.app.bideo.auth.member.CustomUserDetails;
+import com.app.bideo.auth.member.JwtTokenProvider;
 import com.app.bideo.domain.member.MemberVO;
-import com.app.bideo.dto.member.EmailVerificationConfirmRequestDTO;
-import com.app.bideo.dto.member.EmailVerificationSendRequestDTO;
+import com.app.bideo.dto.member.MemberLoginRequestDTO;
 import com.app.bideo.dto.member.MemberSignupRequestDTO;
 import com.app.bideo.dto.member.PasswordResetRequestDTO;
 import com.app.bideo.dto.member.PhoneVerificationConfirmRequestDTO;
 import com.app.bideo.dto.member.PhoneVerificationSendRequestDTO;
+import com.app.bideo.dto.member.EmailVerificationConfirmRequestDTO;
+import com.app.bideo.dto.member.EmailVerificationSendRequestDTO;
+import com.app.bideo.repository.member.MemberRepository;
 import com.app.bideo.service.member.AuthService;
 import com.app.bideo.service.member.MailService;
 import com.app.bideo.service.member.SmsService;
 import com.app.bideo.service.member.VerificationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,11 +33,13 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberRepository memberRepository;
     private final SmsService smsService;
     private final MailService mailService;
     private final VerificationService verificationService;
 
-    // 회원가입 처리
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody MemberSignupRequestDTO requestDTO) {
         MemberVO memberVO = authService.signup(requestDTO);
@@ -41,7 +50,60 @@ public class AuthController {
         ));
     }
 
-    // 휴대폰 인증번호 전송
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody MemberLoginRequestDTO requestDTO, HttpServletResponse response) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(requestDTO.getEmail(), requestDTO.getPassword())
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        MemberVO memberVO = memberRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        authService.updateLastLogin(memberVO.getId());
+        String accessToken = jwtTokenProvider.createAccessToken(memberVO.getEmail(), "LOCAL", response);
+        jwtTokenProvider.createRefreshToken(memberVO.getEmail(), "LOCAL", response);
+
+        return ResponseEntity.ok(Map.of(
+                "accessToken", accessToken,
+                "email", memberVO.getEmail(),
+                "nickname", memberVO.getNickname()
+        ));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        if (jwtTokenProvider.validateToken(accessToken)) {
+            String email = jwtTokenProvider.getEmail(accessToken);
+            jwtTokenProvider.deleteRefreshToken(email);
+            jwtTokenProvider.addToBlacklist(accessToken);
+        }
+        jwtTokenProvider.clearTokenCookies(response);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(Map.of("message", "로그아웃이 완료되었습니다."));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(HttpServletRequest request) {
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        if (!jwtTokenProvider.validateToken(accessToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "로그인이 필요합니다."));
+        }
+
+        String email = jwtTokenProvider.getEmail(accessToken);
+        return memberRepository.findByEmail(email)
+                .map(member -> ResponseEntity.ok(Map.of(
+                        "id", member.getId(),
+                        "email", member.getEmail(),
+                        "nickname", member.getNickname(),
+                        "profileImage", member.getProfileImage() == null ? "" : member.getProfileImage()
+                )))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "회원이 없습니다.")));
+    }
+
     @PostMapping("/verification/phone/send")
     public ResponseEntity<?> sendPhoneVerificationCode(@RequestBody PhoneVerificationSendRequestDTO requestDTO) {
         try {
@@ -54,7 +116,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "인증번호를 전송했습니다."));
     }
 
-    // 휴대폰 인증번호 확인
     @PostMapping("/verification/phone/confirm")
     public ResponseEntity<?> confirmPhoneVerificationCode(@RequestBody PhoneVerificationConfirmRequestDTO requestDTO) {
         verificationService.verifyPhoneCode(requestDTO.getPhoneNumber(), requestDTO.getVerificationCode());
@@ -65,7 +126,6 @@ public class AuthController {
         ));
     }
 
-    // 이메일 인증번호 전송
     @PostMapping("/verification/email/send")
     public ResponseEntity<?> sendEmailVerificationCode(@RequestBody EmailVerificationSendRequestDTO requestDTO) {
         authService.findActiveMemberByEmail(requestDTO.getEmail());
@@ -79,7 +139,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "인증번호를 전송했습니다."));
     }
 
-    // 이메일 인증번호 확인
     @PostMapping("/verification/email/confirm")
     public ResponseEntity<?> confirmEmailVerificationCode(@RequestBody EmailVerificationConfirmRequestDTO requestDTO) {
         authService.findActiveMemberByEmail(requestDTO.getEmail());
@@ -87,7 +146,6 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "이메일 인증이 완료되었습니다."));
     }
 
-    // 이메일 인증 후 비밀번호 재설정
     @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequestDTO requestDTO) {
         verificationService.verifyEmailCode(requestDTO.getEmail(), requestDTO.getVerificationCode());

@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class MemberVO {
     private Long id;
     private String email;
-    private String loginId;
     private String password;
     private String nickname;
     private String realName;

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
-    // 로그인 상태에 따라 메인 화면을 분기
     @GetMapping("/")
     public String root(Authentication authentication) {
         if (authentication != null
@@ -18,13 +17,11 @@ public class MainController {
         return "main/intro-main";
     }
 
-    // 메인 관련 직접 접근을 루트로 리다이렉트
     @GetMapping({"/main/intro-main", "/main/main"})
     public String redirectMainRoutes() {
         return "redirect:/";
     }
 
-    // 공통 에러 페이지를 반환
     @GetMapping("/error-page")
     public String errorPage() {
         return "error/error";

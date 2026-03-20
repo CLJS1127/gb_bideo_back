@@ -1,4 +1,4 @@
-package com.app.bideo.domain.member;
+package com.app.bideo.dto.member;
 
 import lombok.*;
 import java.time.LocalDateTime;
@@ -8,10 +8,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SocialLoginVO {
+public class OAuthLoginResponseDTO {
     private Long id;
-    private Long memberId;
     private String provider;
-    private String providerId;
     private LocalDateTime connectedAt;
 }

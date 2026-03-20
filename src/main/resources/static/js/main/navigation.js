@@ -1,5 +1,5 @@
 // ─── 공유 유틸리티 (main.js, closeup.js에서도 사용) ──────
-const LOCAL_PROFILE_IMAGE = '../../static/images/BIDEO_LOGO/BIDEO_favicon.png';
+const LOCAL_PROFILE_IMAGE = '/images/BIDEO_LOGO/BIDEO_favicon.png';
 
 const placeholderPalettes = [
   ['#0f172a', '#1d4ed8', '#f59e0b'],

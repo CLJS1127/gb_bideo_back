@@ -1,25 +1,27 @@
 // ─── 회원가입 모달 (signup-modal) ─────────────────────
 // SVG 상수는 modal-shared.js에서 로드 (MODAL_SVG_EYE_OPEN, MODAL_SVG_EYE_CLOSED, MODAL_GOOGLE_ICON_SVG, MODAL_NAVER_ICON_SVG, MODAL_KAKAO_ICON_SVG)
 
+const signupFormState = {
+  email: '',
+  password: '',
+  nickname: '',
+  phoneNumber: '',
+  birthDate: ''
+};
+
 function buildSignupViewHTML() {
   return '' +
     '<div class="signup-modal__content">' +
       '<div class="signup-modal__logo">' +
-        '<img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO" width="40" height="40">' +
+        '<img src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO" width="40" height="40">' +
       '</div>' +
       '<h2 class="signup-modal__title">BIDEO에 오신 것을<br>환영합니다</h2>' +
       '<p class="signup-modal__subtitle">시도해 볼 만한 새로운 아이디어 찾기</p>' +
-      '<form class="signup-modal__form" onsubmit="event.preventDefault(); showSignupStep2View();">' +
+      '<form class="signup-modal__form" onsubmit="handleSignupStep1Submit(event)">' +
         '<div class="signup-modal__form-group">' +
           '<label class="signup-modal__form-label">이메일</label>' +
           '<div class="signup-modal__input-wrapper">' +
-            '<input type="text" class="signup-modal__input" placeholder="이메일" autocomplete="off">' +
-          '</div>' +
-        '</div>' +
-        '<div class="signup-modal__form-group">' +
-          '<label class="signup-modal__form-label">아이디</label>' +
-          '<div class="signup-modal__input-wrapper">' +
-            '<input type="text" class="signup-modal__input" placeholder="아이디를 입력하세요" autocomplete="off">' +
+            '<input type="text" class="signup-modal__input" id="signupEmail" placeholder="이메일" autocomplete="off">' +
           '</div>' +
         '</div>' +
         '<div class="signup-modal__form-group">' +
@@ -49,19 +51,13 @@ function buildSignupViewHTML() {
         '<button type="submit" class="signup-modal__submit-btn">계속하기</button>' +
       '</form>' +
       '<p class="signup-modal__or-text">또는</p>' +
-      '<div class="signup-modal__social-login">' +
-        '<div class="signup-modal__social-login-left">' +
-          '<div class="signup-modal__social-name">Google로 계속</div>' +
-        '</div>' +
-        MODAL_GOOGLE_ICON_SVG +
-      '</div>' +
-      '<div class="signup-modal__social-login signup-modal__social-login--naver">' +
+      '<div class="signup-modal__social-login signup-modal__social-login--naver" onclick="redirectToOAuthProvider(\'naver\')">' +
         '<div class="signup-modal__social-login-left">' +
           '<div class="signup-modal__social-name">Naver로 계속</div>' +
         '</div>' +
         MODAL_NAVER_ICON_SVG +
       '</div>' +
-      '<div class="signup-modal__social-login signup-modal__social-login--kakao">' +
+      '<div class="signup-modal__social-login signup-modal__social-login--kakao" onclick="redirectToOAuthProvider(\'kakao\')">' +
         '<div class="signup-modal__social-login-left">' +
           '<div class="signup-modal__social-name">Kakao로 계속</div>' +
         '</div>' +
@@ -81,21 +77,21 @@ function buildSignupStep2ViewHTML() {
     '<div class="signup-modal__subview">' +
       '<div class="signup-modal__subview-inner">' +
         '<div class="signup-modal__logo">' +
-          '<img src="../../static/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO" width="40" height="40">' +
+          '<img src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="BIDEO" width="40" height="40">' +
         '</div>' +
         '<h2 class="signup-modal__title">추가 정보 입력</h2>' +
         '<p class="signup-modal__subtitle">마지막 단계입니다</p>' +
-        '<form class="signup-modal__form" onsubmit="event.preventDefault();">' +
+        '<form class="signup-modal__form" onsubmit="handleSignupSubmit(event)">' +
           '<div class="signup-modal__form-group">' +
             '<label class="signup-modal__form-label">닉네임</label>' +
             '<div class="signup-modal__input-wrapper">' +
-              '<input type="text" class="signup-modal__input" placeholder="닉네임을 입력하세요" autocomplete="off">' +
+              '<input type="text" class="signup-modal__input" id="signupNickname" placeholder="닉네임을 입력하세요" autocomplete="off">' +
             '</div>' +
           '</div>' +
           '<div class="signup-modal__form-group">' +
             '<label class="signup-modal__form-label">전화번호</label>' +
             '<div class="signup-modal__input-wrapper">' +
-              '<input type="text" class="signup-modal__input" placeholder="전화번호를 입력하세요" autocomplete="off">' +
+              '<input type="text" class="signup-modal__input" id="signupPhoneNumber" placeholder="전화번호를 입력하세요" autocomplete="off">' +
             '</div>' +
           '</div>' +
           '<div class="signup-modal__form-group">' +
@@ -103,7 +99,7 @@ function buildSignupStep2ViewHTML() {
               '<span class="signup-modal__form-label" style="margin-bottom:0">생년월일</span>' +
             '</div>' +
             '<div class="signup-modal__input-wrapper">' +
-              '<input type="date" class="signup-modal__input">' +
+              '<input type="date" class="signup-modal__input" id="signupBirthDate">' +
             '</div>' +
           '</div>' +
           '<button type="submit" class="signup-modal__submit-btn">가입하기</button>' +
@@ -186,5 +182,57 @@ function togglePasswordTip(icon) {
   if (!bubble) return;
   const isOpen = bubble.style.display !== 'none';
   bubble.style.display = isOpen ? 'none' : 'block';
+}
+
+function handleSignupStep1Submit(event) {
+  event.preventDefault();
+
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+
+  if (!email || !password) {
+    alert('이메일과 비밀번호를 입력하세요.');
+    return;
+  }
+
+  signupFormState.email = email;
+  signupFormState.password = password;
+  showSignupStep2View();
+}
+
+async function handleSignupSubmit(event) {
+  event.preventDefault();
+
+  signupFormState.nickname = document.getElementById('signupNickname').value.trim();
+  signupFormState.phoneNumber = document.getElementById('signupPhoneNumber').value.trim();
+  signupFormState.birthDate = document.getElementById('signupBirthDate').value;
+
+  if (!signupFormState.nickname) {
+    alert('닉네임을 입력하세요.');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(signupFormState)
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      alert(data.message || '회원가입에 실패했습니다.');
+      return;
+    }
+
+    alert('회원가입이 완료되었습니다. 로그인해 주세요.');
+    closeSignupModal();
+    showAuthModal();
+  } catch (error) {
+    alert('회원가입 중 오류가 발생했습니다.');
+  }
 }
 

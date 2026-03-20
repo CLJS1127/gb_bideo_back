@@ -25,7 +25,6 @@ public class SmsService {
     private DefaultMessageService messageService;
 
     @PostConstruct
-    // 문자 발송 서비스 설정을 초기화
     private void init() {
         if (StringUtils.hasText(apiKey) && StringUtils.hasText(apiSecret)) {
             this.messageService = SolapiClient.INSTANCE.createInstance(apiKey, apiSecret);
@@ -39,7 +38,6 @@ public class SmsService {
         );
     }
 
-    // 휴대폰으로 인증번호 문자를 발송
     public void sendVerificationCode(String phoneNumber, String verificationCode) {
         if (!StringUtils.hasText(phoneNumber)) {
             throw new IllegalArgumentException("전화번호를 입력하세요.");
@@ -90,7 +88,6 @@ public class SmsService {
         }
     }
 
-    // 로그에 표시할 전화번호를 마스킹
     private String maskPhoneNumber(String value) {
         if (!StringUtils.hasText(value)) {
             return "(empty)";
@@ -106,7 +103,6 @@ public class SmsService {
         return digits.substring(0, 3) + "****" + digits.substring(digits.length() - 4);
     }
 
-    // 로그에 표시할 비밀키 일부를 마스킹
     private String maskSecretPrefix(String value, int visibleLength) {
         if (!StringUtils.hasText(value)) {
             return "(empty)";

@@ -11,7 +11,6 @@ import java.util.List;
 @Builder
 public class MemberSignupRequestDTO {
     private String email;
-    private String loginId;
     private String password;
     private String nickname;
     private String realName;

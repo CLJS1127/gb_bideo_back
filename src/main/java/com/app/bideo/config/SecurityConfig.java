@@ -3,6 +3,8 @@ package com.app.bideo.config;
 import com.app.bideo.auth.member.AuthenticationFilter;
 import com.app.bideo.auth.member.AuthenticationHandler;
 import com.app.bideo.auth.member.AuthorizationHandler;
+import com.app.bideo.auth.member.OAuth2SuccessHandler;
+import com.app.bideo.service.member.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,8 @@ public class SecurityConfig {
     private final AuthenticationHandler authenticationHandler;
     private final AuthorizationHandler authorizationHandler;
     private final AuthenticationFilter authenticationFilter;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -35,6 +39,8 @@ public class SecurityConfig {
                                 "/error-page",
                                 "/main/**",
                                 "/api/auth/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
@@ -47,6 +53,10 @@ public class SecurityConfig {
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(authenticationHandler)
                         .accessDeniedHandler(authorizationHandler)
+                )
+                .oauth2Login(oauth -> oauth
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

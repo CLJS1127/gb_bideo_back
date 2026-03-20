@@ -19,7 +19,6 @@ public class MailService {
     @Value("${app.mail.from-address:no-reply@bideo.local}")
     private String fromAddress;
 
-    // 이메일로 인증번호를 발송
     public void sendVerificationCode(String email, String verificationCode) {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("이메일을 입력하세요.");

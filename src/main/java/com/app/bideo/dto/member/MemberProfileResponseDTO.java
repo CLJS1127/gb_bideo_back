@@ -14,7 +14,6 @@ import java.util.List;
 public class MemberProfileResponseDTO {
     private Long id;
     private String email;
-    private String loginId;
     private String nickname;
     private String realName;
     private LocalDate birthDate;

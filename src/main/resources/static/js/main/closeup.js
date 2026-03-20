@@ -16,7 +16,7 @@ const BADGE_IMAGES = [
   'uploaded_more_than_5_times_badge.png',
   'write_contest_badge.png'
 ];
-const BADGE_BASE_PATH = '../../static/images/badge/';
+const BADGE_BASE_PATH = '/images/badge/';
 const BADGE_LABELS = {
   'art_gallery_views_over_10_million.png': '갤러리 조회수 1,000만 달성',
   'auction_price_of_10_million_won_badge.png': '경매가 1,000만원 달성',
