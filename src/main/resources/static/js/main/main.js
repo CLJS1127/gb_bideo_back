@@ -1,5 +1,31 @@
 // ─── showToast, showEmailInviteModal, createAvatarDataUri, encodeSvg, placeholderPalettes, LOCAL_PROFILE_IMAGE → navigation.js로 이동됨 ───
 
+function inferBideoAuthSnackbarType(message) {
+  const text = String(message || '');
+  return /(실패|오류|입력하세요|다시 진행|연결되지 않았)/.test(text) ? 'error' : 'success';
+}
+
+function showBideoAuthSnackbar(message) {
+  const text = String(message || '');
+  if (!text) return;
+
+  if (typeof BideoSnackbar !== 'undefined') {
+    BideoSnackbar.show(text, inferBideoAuthSnackbarType(text));
+    return;
+  }
+
+  const nativeAlert = window.__bideoNativeAlert;
+  if (typeof nativeAlert === 'function') {
+    nativeAlert(text);
+    return;
+  }
+
+  window.alert(text);
+}
+
+window.inferBideoAuthSnackbarType = inferBideoAuthSnackbarType;
+window.showBideoAuthSnackbar = showBideoAuthSnackbar;
+
 // ─── 로그인 상태 ─────────────────────────────────────
 const IS_LOGGED_IN = false;
 
@@ -415,7 +441,7 @@ function initGuestMode() {
   banner.innerHTML =
     '<div class="guest-bottom-banner__content">' +
       '<div class="guest-bottom-banner__text">' +
-        '<img src="../../static/images/BIDEO_LOGO/favi_bideo_white.png" alt="" width="32" height="32">' +
+        '<img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="" width="32" height="32">' +
         '<span>BIDEO에서 더 많은 아이디어를 발견하세요</span>' +
       '</div>' +
       '<a class="guest-bottom-banner__signup" href="#" onclick="showSignupModal()">무료로 가입하기</a>' +
