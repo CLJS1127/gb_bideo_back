@@ -36,7 +36,20 @@
         <if test="status != null and status != ''">
             AND c.status = #{status}
         </if>
-        ORDER BY c.created_datetime DESC
+        <if test="memberId != null">
+            AND c.member_id = #{memberId}
+        </if>
+        <choose>
+            <when test="sort == 'deadline'">
+                ORDER BY c.entry_end ASC
+            </when>
+            <when test="sort == 'entryStart'">
+                ORDER BY c.entry_start ASC
+            </when>
+            <otherwise>
+                ORDER BY c.created_datetime DESC
+            </otherwise>
+        </choose>
         LIMIT #{size} OFFSET (#{page} - 1) * #{size}
     </select>
 
@@ -57,6 +70,9 @@
         </if>
         <if test="status != null and status != ''">
             AND c.status = #{status}
+        </if>
+        <if test="memberId != null">
+            AND c.member_id = #{memberId}
         </if>
     </select>
 
@@ -217,6 +233,13 @@
           AND c.deleted_datetime IS NULL
           AND c.status != 'DELETED'
         ORDER BY ce.submitted_at DESC
+    </select>
+
+    <select id="selectContestOwnerId" resultType="java.lang.Long">
+        SELECT member_id
+        FROM tbl_contest
+        WHERE id = #{contestId}
+          AND deleted_datetime IS NULL
     </select>
 
     <select id="existsContest" resultType="boolean">

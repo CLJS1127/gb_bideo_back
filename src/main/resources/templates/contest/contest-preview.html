@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="/css/main/contest-preview.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <script th:inline="javascript">
+        window.IS_LOGGED_IN = /*[[${isLoggedIn}]]*/ false;
+    </script>
     <script src="/js/main/modal-shared.js"></script>
     <script src="/js/main/main.js"></script>
     <script src="/js/main/closeup.js"></script>

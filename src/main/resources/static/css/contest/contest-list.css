@@ -9,7 +9,23 @@ body {
     background-color: #f4f4f4;
     color: #333;
     min-height: 100vh;
+}
+
+.cl-page {
     padding: 24px;
+}
+
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.contest-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    font-size: 16px;
 }
 
 /* ── 전체 래퍼 ── */
@@ -253,6 +269,100 @@ body {
     line-height: 1.5;
 }
 
+/* ── 정렬 + 검색 툴바 ── */
+.contest-toolbar {
+    max-width: 1060px;
+    margin: 0 auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.sort-group {
+    display: flex;
+    gap: 8px;
+}
+
+.sort-btn {
+    display: inline-block;
+    padding: 7px 16px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #555;
+    background: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.sort-btn:hover {
+    border-color: #999;
+    color: #333;
+}
+
+.sort-btn--active {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+    font-weight: 600;
+}
+
+.sort-btn--active:hover {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+}
+
+.contest-search-form {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    transition: border-color 0.15s;
+}
+
+.contest-search-form:focus-within {
+    border-color: #1a1a1a;
+}
+
+.contest-search-input {
+    border: none;
+    outline: none;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #333;
+    background: transparent;
+    width: 180px;
+}
+
+.contest-search-input::placeholder {
+    color: #aaa;
+}
+
+.contest-search-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    padding: 6px 12px 6px 0;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.15s;
+}
+
+.contest-search-btn:hover {
+    color: #1a1a1a;
+}
+
 /* ── 공모전 카드 그리드 ── */
 .contest-list-wrap {
     max-width: 1060px;
@@ -408,4 +518,66 @@ body {
 .deadline-label {
     color: #bbb;
     margin-right: 4px;
+}
+
+/* ── 페이지네이션 ── */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 32px auto 60px;
+    max-width: 1060px;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    font-size: 14px;
+    font-family: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.page-btn:hover {
+    background: #f5f5f5;
+    border-color: #ccc;
+    color: #1a1a1a;
+}
+
+.page-btn--active {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+    font-weight: 600;
+    cursor: default;
+}
+
+.page-btn--active:hover {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #fff;
+}
+
+.page-btn--disabled {
+    color: #ccc;
+    border-color: #e8e8e8;
+    background: #fafafa;
+    cursor: default;
+    pointer-events: none;
+}
+
+.page-btn--prev,
+.page-btn--next {
+    min-width: 36px;
+    padding: 0;
 }

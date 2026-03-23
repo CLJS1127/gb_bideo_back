@@ -1,5 +1,5 @@
 window.onload = () => {
-    var contestCards = document.querySelectorAll(".contest-item");
+    const contestCards = document.querySelectorAll(".contest-item");
 
     if (!contestCards.length) {
         return;
@@ -9,7 +9,7 @@ window.onload = () => {
         card.style.cursor = "pointer";
 
         card.addEventListener("click", function () {
-            var detailUrl = card.getAttribute("href") || card.dataset.detailUrl;
+            const detailUrl = card.getAttribute("href") || card.dataset.detailUrl;
             if (detailUrl) {
                 window.location.href = detailUrl;
             }

@@ -31,6 +31,9 @@
         }
     </style>
 
+    <script th:inline="javascript">
+        window.IS_LOGGED_IN = /*[[${isLoggedIn}]]*/ false;
+    </script>
     <script src="/js/main/modal-shared.js"></script>
     <script src="/js/main/main.js"></script>
     <script src="/js/main/closeup.js"></script>

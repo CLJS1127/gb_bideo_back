@@ -201,7 +201,7 @@ window.addEventListener('load', () => {
       default: 'M4.6 22.73A107 107 0 0 0 11 23h2.22c2.43-.04 4.6-.16 6.18-.27A3.9 3.9 0 0 0 23 18.8v-8.46a4 4 0 0 0-1.34-3L14.4.93a3.63 3.63 0 0 0-4.82 0L2.34 7.36A4 4 0 0 0 1 10.35v8.46a3.9 3.9 0 0 0 3.6 3.92M13.08 2.4l7.25 6.44a2 2 0 0 1 .67 1.5v8.46a1.9 1.9 0 0 1-1.74 1.92q-1.39.11-3.26.19V16a4 4 0 0 0-8 0v4.92q-1.87-.08-3.26-.19A1.9 1.9 0 0 1 3 18.81v-8.46a2 2 0 0 1 .67-1.5l7.25-6.44a1.63 1.63 0 0 1 2.16 0M13.12 21h-2.24a1 1 0 0 1-.88-1v-4a2 2 0 1 1 4 0v4a1 1 0 0 1-.88 1',
       active: 'M9.59.92a3.63 3.63 0 0 1 4.82 0l7.25 6.44A4 4 0 0 1 23 10.35v8.46a3.9 3.9 0 0 1-3.6 3.92 106 106 0 0 1-14.8 0A3.9 3.9 0 0 1 1 18.8v-8.46a4 4 0 0 1 1.34-3zM12 16a5 5 0 0 1-3.05-1.04l-1.23 1.58a7 7 0 0 0 8.56 0l-1.23-1.58A5 5 0 0 1 12 16'
     },
-    '내 프로필': {
+    '공모전': {
       default: 'M23 5a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4zm-10 6V3h6a2 2 0 0 1 2 2v6zm8 8a2 2 0 0 1-2 2h-6v-8h8zM5 3h6v18H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2',
       active: 'M11 23H5a4 4 0 0 1-4-4V5a4 4 0 0 1 4-4h6zm12-4a4 4 0 0 1-4 4h-6V13h10zM19 1a4 4 0 0 1 4 4v6H13V1z'
     },
@@ -235,21 +235,25 @@ window.addEventListener('load', () => {
         if (p) p.setAttribute('d', navIconMap[label].default);
       }
     });
-    setHomeNavIconActive();
+    setCurrentNavIconActive();
   }
 
-  function setHomeNavIconActive() {
+  function setCurrentNavIconActive() {
     const nav = document.getElementById('VerticalNavContent');
     if (!nav) return;
 
-    const homeButton = Array.from(nav.querySelectorAll('a[aria-label], button[aria-label]')).find(function (btn) {
-      return btn.getAttribute('aria-label') === '홈' && btn.querySelector('svg path');
+    var activeLabel = '홈';
+    var pathname = window.location.pathname;
+    if (pathname.indexOf('/contest') === 0) activeLabel = '공모전';
+
+    var targetBtn = Array.from(nav.querySelectorAll('a[aria-label], button[aria-label]')).find(function (btn) {
+      return btn.getAttribute('aria-label') === activeLabel && btn.querySelector('svg path');
     });
 
-    if (!homeButton) return;
+    if (!targetBtn) return;
 
-    const path = homeButton.querySelector('svg path');
-    if (path) path.setAttribute('d', navIconMap['홈'].active);
+    var path = targetBtn.querySelector('svg path');
+    if (path && navIconMap[activeLabel]) path.setAttribute('d', navIconMap[activeLabel].active);
   }
 
   // ─── 모든 사이드 패널 제거 헬퍼 ──────────────────────
@@ -363,7 +367,7 @@ window.addEventListener('load', () => {
           '<div class="slot-block">' +
           '<style>.slot-block:hover .create-item-hover{background-color:rgb(228,228,228)}</style>' +
           '<div class="layout-box create-item-hover" style="border-radius:16px">' +
-          '<button type="button" onclick="event.stopPropagation(); showToast(\'작품 등록 기능은 현재 준비 중입니다\')" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block">' +
+          '<a href="/work/work-register" onclick="event.stopPropagation();" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block;text-decoration:none">' +
           '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
           '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5 3h2a1 1 0 0 1 1 1v3.69l-.92.2a5 5 0 0 0-3.97 4.66l-.1 2.4A1 1 0 0 0 4 16h7v2.3q0 2.7.66 5.33l.09.37h.5l.1-.37a22 22 0 0 0 .65-5.34V16h7a1 1 0 0 0 1-1.1l-.24-2.58a5 5 0 0 0-3.9-4.43l-.86-.2V4a1 1 0 0 1 1-1h2V1H5zm5 1a3 3 0 0 0-.17-1h4.34A3 3 0 0 0 14 4v5.3l2.43.54a3 3 0 0 1 2.34 2.66l.13 1.5H5.05l.06-1.36a3 3 0 0 1 2.38-2.8L10 9.31z"></path></svg>' +
@@ -373,29 +377,29 @@ window.addEventListener('load', () => {
           '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">당신의 작품을 게시할 수 있습니다.</div>' +
           '</div>' +
           '</div>' +
-          '</button>' +
+          '</a>' +
           '</div>' +
           '</div>' +
           '<div class="slot-block">' +
           '<style>.slot-block:hover .board-item-hover{background-color:rgb(228,228,228)}</style>' +
           '<div class="layout-box board-item-hover" style="border-radius:16px">' +
-          '<div role="button" tabindex="0" style="cursor:pointer">' +
+          '<a href="/gallery-register" onclick="event.stopPropagation();" style="cursor:pointer;display:block;text-decoration:none;color:inherit">' +
           '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
           '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M23 5a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4zm-10 6V3h6a2 2 0 0 1 2 2v6zm8 8a2 2 0 0 1-2 2h-6v-8h8zM5 3h6v18H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2"></path></svg>' +
           '</div>' +
           '<div class="layout-box u-margin-inline-start-300">' +
-          '<div class="text-dark text-align-start text-break-word text-with-inline-icon text-antialiased text-body-300 text-body-300-regular">컬렉션</div>' +
-          '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">컬렉션을 구성해 작품을 주제별로 소개하세요.</div>' +
+          '<div class="text-dark text-align-start text-break-word text-with-inline-icon text-antialiased text-body-300 text-body-300-regular">예술관</div>' +
+          '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">예술관을 구성해 작품을 주제별로 소개하세요.</div>' +
           '</div>' +
           '</div>' +
-          '</div>' +
+          '</a>' +
           '</div>' +
           '</div>' +
           '<div class="slot-block">' +
           '<style>.slot-block:hover .collage-item-hover{background-color:rgb(228,228,228)}</style>' +
           '<div class="layout-box collage-item-hover" style="border-radius:16px">' +
-          '<button type="button" onclick="event.stopPropagation(); showToast(\'큐레이션 보드 기능은 현재 준비 중입니다\')" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block">' +
+          '<a href="/contest/register" onclick="event.stopPropagation();" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block;text-decoration:none">' +
           '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
           '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.95 1h-4.82a4 4 0 0 0-3.44-.66L3.97 2.4a4 4 0 0 0-2.83 4.9l.25.95a5 5 0 0 1 2-.24l-.32-1.23a2 2 0 0 1 1.41-2.45l7.73-2.07a2 2 0 0 1 2.45 1.41l3.62 13.53a2 2 0 0 1-1.41 2.45l-1.53.4a2 2 0 0 1-.27 1.43L14.13 23h5.82a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4M16.6 3.17 16.54 3h3.41a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-1.3a4 4 0 0 0 1.57-4.31zM4.86 18.64l.48-.33 4.98 2.66q.59.4 1.25.4a2.2 2.2 0 0 0 1.78-.93L7.34 17l6-3.44a2.2 2.2 0 0 0-3.02-.53l-4.98 2.66-.48-.33a3 3 0 1 0-3.48.17L3.6 17l-2.22 1.47a3 3 0 1 0 3.48.17M4 21a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-2-8a1 1 0 1 1 2 0 1 1 0 0 1-2 0"></path></svg>' +
@@ -405,7 +409,7 @@ window.addEventListener('load', () => {
           '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">공모전을 올려 당신이 원하는 것을 얻으세요.</div>' +
           '</div>' +
           '</div>' +
-          '</button>' +
+          '</a>' +
           '</div>' +
           '</div>' +
           '</div>' +
@@ -898,6 +902,7 @@ window.addEventListener('load', () => {
   initMessagePanel();
   initSettingsPanel();
   initSupportButton();
+  resetAllNavIcons();
 
   // ===== [최종 작업] 통일된 상세 페이지 전환 및 복구 로직 (Pinterest 스타일) =====
   (function () {

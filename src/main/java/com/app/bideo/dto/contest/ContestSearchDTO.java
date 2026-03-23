@@ -12,4 +12,5 @@ public class ContestSearchDTO extends PageRequestDTO {
     private String category;
     private String region;
     private String status;
+    private Long memberId;
 }
