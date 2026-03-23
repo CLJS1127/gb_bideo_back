@@ -1,5 +1,6 @@
 package com.app.bideo.mapper.contest;
 
+import com.app.bideo.dto.common.TagResponseDTO;
 import com.app.bideo.dto.contest.ContestDetailResponseDTO;
 import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestEntryResponseDTO;
@@ -7,6 +8,7 @@ import com.app.bideo.dto.contest.ContestListResponseDTO;
 import com.app.bideo.dto.contest.ContestSearchDTO;
 import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.dto.contest.ContestWorkOptionDTO;
+import com.app.bideo.dto.contest.ContestUpdateRequestDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,7 +21,7 @@ public interface ContestMapper {
 
     int selectContestCount(ContestSearchDTO searchDTO);
 
-    ContestDetailResponseDTO selectContestDetail(@Param("id") Long id);
+    ContestDetailResponseDTO selectContestDetail(@Param("id") Long id, @Param("memberId") Long memberId);
 
     List<ContestEntryResponseDTO> selectContestEntryList(@Param("contestId") Long contestId);
 
@@ -40,4 +42,14 @@ public interface ContestMapper {
     void increaseContestEntryCount(@Param("contestId") Long contestId);
 
     List<ContestWorkOptionDTO> selectEntryWorkOptions(@Param("memberId") Long memberId);
+
+    int updateContest(@Param("contestId") Long contestId,
+                      @Param("memberId") Long memberId,
+                      @Param("contest") ContestUpdateRequestDTO contest);
+
+    List<TagResponseDTO> selectContestTagsByContestId(@Param("contestId") Long contestId);
+
+    void insertContestTag(@Param("contestId") Long contestId, @Param("tagId") Long tagId);
+
+    void deleteContestTagsByContestId(@Param("contestId") Long contestId);
 }

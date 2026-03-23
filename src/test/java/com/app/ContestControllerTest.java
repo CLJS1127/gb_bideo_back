@@ -11,6 +11,7 @@ import com.app.bideo.dto.contest.ContestDetailResponseDTO;
 import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.dto.contest.ContestEntryResponseDTO;
 import com.app.bideo.dto.contest.ContestListResponseDTO;
+import com.app.bideo.dto.contest.ContestUpdateRequestDTO;
 import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.service.contest.ContestService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -71,12 +73,29 @@ class ContestControllerTest {
                 .prizeInfo("100만원")
                 .price(0)
                 .build();
+        Model model = new ConcurrentModel();
 
-        String viewName = contestController.create(requestDTO, authenticatedPrincipal(7L));
+        String viewName = contestController.create(requestDTO, authenticatedPrincipal(7L), model);
 
         assertEquals("redirect:/contest/detail/31", viewName);
 
         verify(contestService).createContest(eq(7L), any(ContestCreateRequestDTO.class));
+    }
+
+    @Test
+    void createContestReturnsRegisterTemplateWithErrorMessageWhenValidationFails() {
+        ContestCreateRequestDTO requestDTO = ContestCreateRequestDTO.builder()
+                .title("")
+                .build();
+        Model model = new ConcurrentModel();
+        Mockito.doThrow(new IllegalArgumentException("title is required"))
+                .when(contestService).createContest(7L, requestDTO);
+
+        String viewName = contestController.create(requestDTO, authenticatedPrincipal(7L), model);
+
+        assertEquals("contest/contest-register", viewName);
+        assertEquals("title is required", model.getAttribute("errorMessage"));
+        assertEquals(Boolean.FALSE, model.getAttribute("isEdit"));
     }
 
     @Test
@@ -109,7 +128,7 @@ class ContestControllerTest {
 
     @Test
     void detailUsesContestEntriesAndAvailableWorksModels() {
-        given(contestService.getContestDetail(9L)).willReturn(ContestDetailResponseDTO.builder().id(9L).title("상세").build());
+        given(contestService.getContestDetail(9L, 7L)).willReturn(ContestDetailResponseDTO.builder().id(9L).title("상세").build());
         given(contestService.getContestEntryList(9L)).willReturn(Collections.<ContestEntryResponseDTO>emptyList());
         given(contestService.getEntryWorkOptions(7L))
                 .willReturn(List.of(ContestWorkOptionDTO.builder().id(3L).title("내 작품").build()));
@@ -123,6 +142,7 @@ class ContestControllerTest {
         assertNotNull(model.getAttribute("entries"));
         assertNotNull(model.getAttribute("availableWorks"));
         assertNotNull(model.getAttribute("entryForm"));
+        assertEquals(Boolean.FALSE, model.getAttribute("isOwner"));
     }
 
     @Test
@@ -130,12 +150,81 @@ class ContestControllerTest {
         ContestEntryRequestDTO requestDTO = ContestEntryRequestDTO.builder()
                 .workId(3L)
                 .build();
+        RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
 
-        String viewName = contestController.submitEntry(9L, requestDTO, authenticatedPrincipal(7L));
+        String viewName = contestController.submitEntry(9L, requestDTO, authenticatedPrincipal(7L), redirectAttributes);
 
         assertEquals("redirect:/contest/detail/9", viewName);
         verify(contestService).submitEntry(7L, requestDTO);
         assertEquals(9L, requestDTO.getContestId());
+        assertEquals("출품이 완료되었습니다.", redirectAttributes.getFlashAttributes().get("successMessage"));
+    }
+
+    @Test
+    void submitEntryRedirectsWithErrorMessageWhenServiceRejectsRequest() {
+        ContestEntryRequestDTO requestDTO = ContestEntryRequestDTO.builder()
+                .workId(3L)
+                .build();
+        RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+        Mockito.doThrow(new IllegalStateException("contest entry already exists"))
+                .when(contestService).submitEntry(7L, requestDTO);
+
+        String viewName = contestController.submitEntry(9L, requestDTO, authenticatedPrincipal(7L), redirectAttributes);
+
+        assertEquals("redirect:/contest/detail/9", viewName);
+        assertEquals("이미 참여한 작품입니다.", redirectAttributes.getFlashAttributes().get("errorMessage"));
+    }
+
+    @Test
+    void editPageUsesRegisterTemplateWithExistingContestDataForOwner() {
+        given(contestService.getContestDetail(9L, 7L)).willReturn(ContestDetailResponseDTO.builder()
+                .id(9L)
+                .memberId(7L)
+                .title("기존 공모전")
+                .organizer("BIDEO")
+                .build());
+
+        Model model = new ConcurrentModel();
+
+        String viewName = contestController.edit(9L, authenticatedPrincipal(7L), model);
+
+        assertEquals("contest/contest-register", viewName);
+        assertNotNull(model.getAttribute("contestForm"));
+        assertEquals(Boolean.TRUE, model.getAttribute("isEdit"));
+        assertEquals(9L, model.getAttribute("contestId"));
+    }
+
+    @Test
+    void updateContestRedirectsToDetailForOwner() {
+        ContestUpdateRequestDTO requestDTO = ContestUpdateRequestDTO.builder()
+                .title("수정 제목")
+                .build();
+        RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+        Model model = new ConcurrentModel();
+
+        String viewName = contestController.update(9L, requestDTO, authenticatedPrincipal(7L), redirectAttributes, model);
+
+        assertEquals("redirect:/contest/detail/9", viewName);
+        verify(contestService).updateContest(9L, 7L, requestDTO);
+        assertEquals("공모전이 수정되었습니다.", redirectAttributes.getFlashAttributes().get("successMessage"));
+    }
+
+    @Test
+    void updateContestReturnsRegisterTemplateWithErrorMessageWhenValidationFails() {
+        ContestUpdateRequestDTO requestDTO = ContestUpdateRequestDTO.builder()
+                .title("")
+                .build();
+        RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+        Model model = new ConcurrentModel();
+        Mockito.doThrow(new IllegalArgumentException("title is required"))
+                .when(contestService).updateContest(9L, 7L, requestDTO);
+
+        String viewName = contestController.update(9L, requestDTO, authenticatedPrincipal(7L), redirectAttributes, model);
+
+        assertEquals("contest/contest-register", viewName);
+        assertEquals("title is required", model.getAttribute("errorMessage"));
+        assertEquals(Boolean.TRUE, model.getAttribute("isEdit"));
+        assertEquals(9L, model.getAttribute("contestId"));
     }
 
     private PageResponseDTO<ContestListResponseDTO> pageResponse() {

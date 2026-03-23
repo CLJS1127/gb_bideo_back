@@ -276,7 +276,7 @@
                    th:each="contest : ${contestList}"
                    th:href="@{|/contest/detail/${contest.id}|}">
                     <div class="contest-item-thumb">
-                        <span class="contest-badge" th:text="${contest.status}">접수중</span>
+                        <span class="contest-badge" th:text="${@contestViewHelper.statusLabel(contest.status)}">접수중</span>
                         <img th:src="${contest.coverImage != null and !#strings.isEmpty(contest.coverImage)} ? ${contest.coverImage} : '/images/BIDEO_LOGO/BIDEO_favicon.png'"
                              alt="공모전 대표 이미지">
                     </div>

@@ -44,10 +44,22 @@ class ContestTemplateBindingTest {
         assertTrue(template.contains("th:text=\"${contest.organizer}\""));
         assertTrue(template.contains("th:text=\"${contest.description}\""));
         assertTrue(template.contains("th:text=\"${contest.prizeInfo}\""));
+        assertTrue(template.contains("th:if=\"${isOwner}\""));
+        assertTrue(template.contains("th:if=\"${successMessage != null}\""));
+        assertTrue(template.contains("th:if=\"${errorMessage != null}\""));
         assertTrue(template.contains("th:each=\"entry : ${entries}\""));
         assertTrue(template.contains("th:text=\"${entry.workTitle}\""));
         assertTrue(template.contains("th:text=\"${entry.memberNickname}\""));
         assertTrue(template.contains("th:if=\"${#lists.isEmpty(entries)}\""));
+    }
+
+    @Test
+    void contestRegisterTemplateSupportsEditModeBinding() throws IOException {
+        String template = readResource("templates/contest/contest-register.html");
+
+        assertTrue(template.contains("th:action=\"${isEdit} ? @{|/contest/${contestId}/edit|} : @{/contest/register}\""));
+        assertTrue(template.contains("th:value=\"${isEdit} ? '수정 완료' : '게시'\""));
+        assertTrue(template.contains("th:if=\"${errorMessage != null}\""));
     }
 
     private String readResource(String path) throws IOException {

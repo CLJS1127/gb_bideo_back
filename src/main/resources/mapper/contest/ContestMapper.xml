@@ -21,7 +21,8 @@
                 ELSE 'D-' || (c.entry_end - CURRENT_DATE)
             END AS d_day
         FROM tbl_contest c
-        WHERE c.status != 'DELETED'
+        WHERE c.deleted_datetime IS NULL
+          AND c.status != 'DELETED'
         <if test="keyword != null and keyword != ''">
             AND (c.title ILIKE '%' || #{keyword} || '%'
                  OR c.organizer ILIKE '%' || #{keyword} || '%')
@@ -42,7 +43,8 @@
     <select id="selectContestCount" resultType="int">
         SELECT COUNT(*)
         FROM tbl_contest c
-        WHERE c.status != 'DELETED'
+        WHERE c.deleted_datetime IS NULL
+          AND c.status != 'DELETED'
         <if test="keyword != null and keyword != ''">
             AND (c.title ILIKE '%' || #{keyword} || '%'
                  OR c.organizer ILIKE '%' || #{keyword} || '%')
@@ -58,7 +60,31 @@
         </if>
     </select>
 
-    <select id="selectContestDetail" resultType="ContestDetailResponseDTO">
+    <resultMap id="contestDetailMap" type="ContestDetailResponseDTO">
+        <id property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="memberNickname" column="member_nickname"/>
+        <result property="title" column="title"/>
+        <result property="organizer" column="organizer"/>
+        <result property="category" column="category"/>
+        <result property="region" column="region"/>
+        <result property="description" column="description"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="entryStart" column="entry_start"/>
+        <result property="entryEnd" column="entry_end"/>
+        <result property="resultDate" column="result_date"/>
+        <result property="prizeInfo" column="prize_info"/>
+        <result property="price" column="price"/>
+        <result property="status" column="status"/>
+        <result property="entryCount" column="entry_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="isBookmarked" column="is_bookmarked"/>
+        <result property="createdDatetime" column="created_datetime"/>
+        <collection property="tags" ofType="TagResponseDTO"
+                    select="selectContestTagsByContestId" column="id"/>
+    </resultMap>
+
+    <select id="selectContestDetail" resultMap="contestDetailMap">
         SELECT
             c.id,
             c.member_id,
@@ -77,10 +103,19 @@
             c.status,
             c.entry_count,
             c.view_count,
+            CASE WHEN #{memberId} IS NOT NULL THEN
+                EXISTS(SELECT 1 FROM tbl_bookmark
+                       WHERE member_id = #{memberId}
+                         AND target_type = 'CONTEST'
+                         AND target_id = c.id)
+                ELSE false
+            END AS is_bookmarked,
             c.created_datetime
         FROM tbl_contest c
         LEFT JOIN tbl_member m ON c.member_id = m.id
         WHERE c.id = #{id}
+          AND c.deleted_datetime IS NULL
+          AND c.status != 'DELETED'
     </select>
 
     <select id="selectContestEntryList" resultType="ContestEntryResponseDTO">
@@ -156,6 +191,7 @@
         FROM tbl_contest c
         WHERE c.member_id = #{memberId}
           AND c.deleted_datetime IS NULL
+          AND c.status != 'DELETED'
         ORDER BY c.created_datetime DESC
     </select>
 
@@ -179,6 +215,7 @@
         JOIN tbl_contest c ON ce.contest_id = c.id
         WHERE ce.member_id = #{memberId}
           AND c.deleted_datetime IS NULL
+          AND c.status != 'DELETED'
         ORDER BY ce.submitted_at DESC
     </select>
 
@@ -188,6 +225,7 @@
             FROM tbl_contest
             WHERE id = #{contestId}
               AND deleted_datetime IS NULL
+              AND status != 'DELETED'
         )
     </select>
 
@@ -215,11 +253,13 @@
         INSERT INTO tbl_contest_entry (
             contest_id,
             work_id,
-            member_id
+            member_id,
+            submitted_at
         ) VALUES (
             #{entry.contestId},
             #{entry.workId},
-            #{memberId}
+            #{memberId},
+            now()
         )
     </insert>
 
@@ -247,5 +287,42 @@
           AND w.status != 'DELETED'
         ORDER BY w.created_datetime DESC
     </select>
+
+    <update id="updateContest">
+        UPDATE tbl_contest
+        SET title = #{contest.title},
+            organizer = #{contest.organizer},
+            category = #{contest.category},
+            region = #{contest.region},
+            description = #{contest.description},
+            cover_image = #{contest.coverImage},
+            entry_start = #{contest.entryStart},
+            entry_end = #{contest.entryEnd},
+            result_date = #{contest.resultDate},
+            prize_info = #{contest.prizeInfo},
+            price = #{contest.price},
+            status = COALESCE(#{contest.status}, status),
+            updated_datetime = now()
+        WHERE id = #{contestId}
+          AND member_id = #{memberId}
+          AND deleted_datetime IS NULL
+    </update>
+
+    <select id="selectContestTagsByContestId" resultType="TagResponseDTO">
+        SELECT t.id, t.tag_name
+        FROM tbl_contest_tag ct
+        JOIN tbl_tag t ON ct.tag_id = t.id
+        WHERE ct.contest_id = #{contestId}
+        ORDER BY t.tag_name ASC
+    </select>
+
+    <insert id="insertContestTag">
+        INSERT INTO tbl_contest_tag (contest_id, tag_id)
+        VALUES (#{contestId}, #{tagId})
+    </insert>
+
+    <delete id="deleteContestTagsByContestId">
+        DELETE FROM tbl_contest_tag WHERE contest_id = #{contestId}
+    </delete>
 
 </mapper>

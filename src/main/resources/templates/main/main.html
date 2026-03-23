@@ -1,28 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{/common/layout}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO | 영상 경매 & 거래 플랫폼</title>
-    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="/css/common/font.css">
-    <link rel="stylesheet" href="/css/common/global.css">
     <link rel="stylesheet" href="/css/main/main.css">
-    <link rel="stylesheet" href="/css/main/navigation.css">
-    <link rel="stylesheet" href="/css/main/modal-shared.css">
-    <link rel="stylesheet" href="/css/main/auth-modal.css">
-    <link rel="stylesheet" href="/css/main/signup-modal.css">
-    <style>
-        :root {
-            --gestalt-theme: calico;
-            --gestalt-color-scheme: lightMode;
-            --base-font-family-default-latin: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
-    </style>
+
+    <script th:inline="javascript">
+        window.IS_LOGGED_IN = /*[[${isLoggedIn}]]*/ false;
+    </script>
+    <script defer src="/js/main/main.js"></script>
+    <script defer src="/js/main/closeup.js"></script>
 </head>
 
 <body class="app-root" style="margin:0">
+
+<th:block layout:fragment="content">
     <div id="__PWS_ROOT__" class="app-root__mount">
         <div class="main-page-shell app-shell layout-box">
             <div class="main-page-frame app-shell__frame layout-box">
@@ -119,8 +113,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 좌측 사이드 네비게이션은 navigation.html로 분리됨 -->
 
                 <!-- ===== 메인 콘텐츠 영역 ===== -->
                 <div class="appContent app-content" role="main">
@@ -228,7 +220,7 @@
                                                 </div>
                                             </section>
                                         </section>
-                                        
+
                                         <section class="closeup__below-feed-section" aria-label="추가 게시물">
                                             <div id="closeupBelowPins" class="closeup__below-feed"></div>
                                             <div id="closeupLoader" class="loader loader--hidden closeup__feed-loader">로딩 중...</div>
@@ -247,13 +239,7 @@
             </div>
         </div>
     </div>
+</th:block>
 
 </body>
-<script src="/js/main/modal-shared.js"></script>
-<script src="/js/main/navigation.js"></script>
-<script src="/js/main/main.js"></script>
-<script src="/js/main/closeup.js"></script>
-<script src="/js/main/auth-modal.js"></script>
-<script src="/js/main/signup-modal.js"></script>
 </html>
-

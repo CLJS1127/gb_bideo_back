@@ -1,5 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
-
+window.onload = () => {
     // FAQ 아코디언 토글
     const faqSection = document.querySelector('[data-cy="section-faqs"]');
     if (faqSection) {
@@ -263,8 +262,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (section) observer.observe(section);
         });
     })();
+}
 
-});
 
 
 

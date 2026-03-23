@@ -254,6 +254,13 @@
                 <span class="cl-breadcrumb-label">공모전 상세</span>
             </div>
 
+            <div class="cl-contact-box" th:if="${successMessage != null}" style="margin-bottom:24px;border-color:#d7e9d7;background:#f6fff6;">
+                <div class="cl-contact-text" th:text="${successMessage}">성공 메시지</div>
+            </div>
+            <div class="cl-contact-box" th:if="${errorMessage != null}" style="margin-bottom:24px;border-color:#f1d0d0;background:#fff7f7;">
+                <div class="cl-contact-text" th:text="${errorMessage}">오류 메시지</div>
+            </div>
+
             <!-- ===== 포스터 + 기본 정보 ===== -->
             <div class="cl-hero">
                 <!-- 포스터 이미지 -->
@@ -266,7 +273,7 @@
                 <div class="cl-info">
                     <!-- 상태 배지 -->
                     <div class="cl-status-row">
-                        <span class="cl-status-badge" th:text="${contest.status}">접수중</span>
+                        <span class="cl-status-badge" th:text="${@contestViewHelper.statusLabel(contest.status)}">접수중</span>
                         <span class="cl-dday-badge"
                               th:text="${contest.entryEnd != null ? (contest.entryEnd.isBefore(T(java.time.LocalDate).now()) ? '마감' : (contest.entryEnd.isEqual(T(java.time.LocalDate).now()) ? 'D-Day' : 'D-' + T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), contest.entryEnd))) : '-'}">D-3</span>
                     </div>
@@ -283,7 +290,7 @@
                         <div class="cl-meta-row">
                             <span class="cl-meta-key">접수기간</span>
                             <span class="cl-meta-val"
-                                  th:text="${contest.entryStart != null && contest.entryEnd != null} ? ${contest.entryStart + ' ~ ' + contest.entryEnd} : '-'">접수기간</span>
+                                  th:text="${@contestViewHelper.formatPeriod(contest.entryStart, contest.entryEnd)}">접수기간</span>
                         </div>
                         <div class="cl-meta-row">
                             <span class="cl-meta-key">분야</span>
@@ -315,7 +322,7 @@
                             </select>
                             <button class="cl-btn-apply" type="submit">참여하기</button>
                         </form>
-                        <a href="#" class="cl-btn-apply">
+                        <a href="#" class="cl-btn-apply" th:if="${isOwner}">
                             수정하기
                         </a>
                         <a th:href="@{/contest/list}" class="cl-btn-secondary">목록으로</a>
@@ -354,8 +361,8 @@
                 <div class="cl-body-block">
                     <h3 class="cl-body-heading">기간 및 일정</h3>
                     <ul class="cl-body-list">
-                        <li th:text="${'지원 접수 : ' + contest.entryStart + ' ~ ' + contest.entryEnd}">지원 접수</li>
-                        <li th:text="${'결과 발표 : ' + contest.resultDate}">결과 발표</li>
+                        <li th:text="${'지원 접수 : ' + @contestViewHelper.formatPeriod(contest.entryStart, contest.entryEnd)}">지원 접수</li>
+                        <li th:text="${'결과 발표 : ' + @contestViewHelper.formatDate(contest.resultDate)}">결과 발표</li>
                     </ul>
                 </div>
 

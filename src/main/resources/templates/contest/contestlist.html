@@ -280,7 +280,7 @@
                     </div>
                     <div class="contest-item-body">
                         <div class="contest-item-top">
-                            <span class="contest-badge" th:text="${contest.status}">접수중</span>
+                            <span class="contest-badge" th:text="${@contestViewHelper.statusLabel(contest.status)}">접수중</span>
                             <span class="contest-dday" th:text="${contest.dDay}">D-12</span>
                         </div>
                         <h2 class="contest-item-title" th:text="${contest.title}">공모전 제목</h2>
