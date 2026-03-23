@@ -1,4 +1,4 @@
-package com.app;
+package com.app.bideo.contest;
 
 import com.app.bideo.auth.member.CustomUserDetails;
 import com.app.bideo.common.enumeration.MemberRole;
@@ -17,6 +17,7 @@ import com.app.bideo.service.contest.ContestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SpringBootTest
 class ContestControllerTest {
 
     private MockMvc mockMvc;

@@ -32,37 +32,34 @@ window.addEventListener('load', () => {
 // ─── 인증 모달은 auth-modal.js에서 제공 (showAuthModal, closeAuthModal, toggleAuthPassword) ───
 // ─── 회원가입 모달은 signup-modal.js에서 제공 (showSignupModal, closeSignupModal, toggleSignupPassword) ───
 
-// ─── 데이터 ─────────────────────────────────────────
+// ─── 데이터 (API 기반) ─────────────────────────────────
   const BATCH_SIZE = 30;
-  const titles = [
-    '모던 인테리어 디자인', '가을 패션 코디', '홈메이드 파스타 레시피',
-    '제주도 여행 명소', '수채화 일러스트', '산속 힐링 여행',
-    '미니멀 건축 디자인', '감성 사진 모음', 'DIY 홈데코 아이디어',
-    '브랜드 디자인 영감', '귀여운 캐릭터 일러스트', '심플한 라이프스타일',
-    '카페 인테리어 투어', '빈티지 스타일링', '건강한 브런치 메뉴',
-    '유럽 소도시 여행', '아크릴 페인팅', '숲속 캠핑',
-    '일본 건축 탐방', '필름 카메라 감성', '핸드메이드 악세서리',
-    '타이포그래피 디자인', '동화풍 일러스트', '북유럽 스타일 리빙'
-  ];
-  const authors = [
-    {name: '디자인하는민지', avatar: ''},
-    {name: '여행가수현', avatar: ''},
-    {name: '요리하는지훈', avatar: ''},
-    {name: '포토그래퍼은서', avatar: ''},
-    {name: 'art_studio_kr', avatar: ''},
-    {name: '인테리어소희', avatar: ''},
-    {name: '패션블로거하늘', avatar: ''},
-    {name: 'diy_master', avatar: ''}
-  ];
-  const aspectRatios = [0.7, 0.75, 0.8, 1, 1.2, 1.3, 1.5, 0.65, 0.9, 1.1];
-  const descriptions = [
-    '차가운 블루 톤과 작은 오렌지 포인트가 강하게 대비되는 장면입니다.',
-    '단정한 구도와 깊은 그림자가 함께 만들어내는 무드 중심 레퍼런스입니다.',
-    '도시, 건축, 조명감을 한 장으로 정리할 때 참고하기 좋은 이미지입니다.',
-    '미니멀한 피사체 배치와 넓은 여백이 분위기를 또렷하게 만들어 줍니다.',
-    '색감 중심의 아트워크나 영상 무드보드에 바로 가져가기 좋은 톤입니다.'
-  ];
   const pinStore = new Map();
+  let currentPage = 1;
+  let hasMorePages = true;
+
+  async function fetchWorks(page, size) {
+    const res = await fetch('/api/works?page=' + page + '&size=' + size);
+    if (!res.ok) throw new Error('API error: ' + res.status);
+    return res.json();
+  }
+
+  function mapWorkToPin(work) {
+    return {
+      id: 'work-' + work.id,
+      workId: work.id,
+      imageUrl: work.thumbnailUrl || '/images/BIDEO_LOGO/favi_bideo.png',
+      width: work.thumbnailWidth || 400,
+      height: work.thumbnailHeight || 300,
+      title: work.title || '',
+      description: work.description || '',
+      author: {
+        name: work.memberNickname || '크리에이터',
+        avatar: work.memberProfileImage || ''
+      },
+      saves: work.saveCount || 0
+    };
+  }
 
   function findSearchBoxSurface() {
     return document.querySelector('#searchBoxContainer .search-bar__surface, #searchBoxContainer .search-bar, #searchBoxContainer .rounded-field-surface');
@@ -73,16 +70,7 @@ window.addEventListener('load', () => {
     return element.closest('.slot-block, .profile-summary, .icon-button');
   }
 
-// ─── 핀 데이터 생성 ────────────────────────────────
-  function shuffleArray(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
+// ─── 검색 제안용 SVG 생성 ────────────────────────────
   function createArtworkDataUri(title, index, width, height) {
     const palette = placeholderPalettes[index % placeholderPalettes.length];
     const safeTitle = (title || 'BIDEO').replace(/[&<>"']/g, '');
@@ -95,49 +83,15 @@ window.addEventListener('load', () => {
         '</linearGradient></defs>' +
         '<rect width="' + width + '" height="' + height + '" fill="url(#bg)"/>' +
         '<circle cx="' + Math.round(width * 0.78) + '" cy="' + Math.round(height * 0.22) + '" r="' + Math.round(Math.min(width, height) * 0.12) + '" fill="rgba(255,255,255,0.18)"/>' +
-        '<path d="M0 ' + Math.round(height * 0.82) + ' C ' + Math.round(width * 0.2) + ' ' + Math.round(height * 0.68) + ', ' + Math.round(width * 0.38) + ' ' + Math.round(height * 0.96) + ', ' + Math.round(width * 0.56) + ' ' + Math.round(height * 0.78) + ' S ' + Math.round(width * 0.86) + ' ' + Math.round(height * 0.64) + ', ' + width + ' ' + Math.round(height * 0.8) + ' L ' + width + ' ' + height + ' L 0 ' + height + ' Z" fill="rgba(255,255,255,0.12)"/>' +
-        '<text x="10%" y="18%" fill="rgba(255,255,255,0.78)" font-family="Arial, sans-serif" font-size="' + Math.max(18, Math.round(width * 0.05)) + '" font-weight="700">BIDEO ORIGINAL</text>' +
         '<text x="10%" y="78%" fill="#ffffff" font-family="Arial, sans-serif" font-size="' + Math.max(22, Math.round(width * 0.07)) + '" font-weight="700">' + safeTitle.slice(0, 18) + '</text>' +
         '</svg>'
     );
   }
 
-  authors.forEach(function (author, index) {
-    author.avatar = createAvatarDataUri(author.name, index);
-  });
-
   function createThumbEntries(texts, startIndex) {
     return texts.map(function (text, index) {
       return {text: text, img: createArtworkDataUri(text, startIndex + index, 236, 236)};
     });
-  }
-
-  function generatePins(count, startIndex) {
-    const pins = [];
-    const shuffledTitles = shuffleArray(titles);
-    const shuffledDescs = shuffleArray(descriptions);
-    const shuffledAuthors = shuffleArray(authors);
-    const shuffledRatios = shuffleArray(aspectRatios);
-    for (let i = 0; i < count; i++) {
-      const idx = startIndex + i;
-      const ratio = shuffledRatios[i % shuffledRatios.length];
-      const w = 400;
-      const h = Math.round(w * ratio);
-      const title = shuffledTitles[i % shuffledTitles.length];
-      pins.push({
-        id: 'pin-' + idx,
-        imageUrl: createArtworkDataUri(title, idx, w, h),
-        width: w,
-        height: h,
-        title: title,
-        description: shuffledDescs[i % shuffledDescs.length],
-        author: shuffledAuthors[i % shuffledAuthors.length],
-        hasLink: Math.random() > 0.5,
-        saves: Math.floor(Math.random() * 5000) + 10
-      });
-      pinStore.set('pin-' + idx, pins[pins.length - 1]);
-    }
-    return pins;
   }
 
 // ─── 예술관 카드 HTML 생성 ─────────────────────────
@@ -329,7 +283,6 @@ window.addEventListener('load', () => {
 
 
 // ─── 작품 렌더링 & 무한 스크롤 ───────────────────────
-  let totalPins = 0;
   let isLoading = false;
 
   function getActiveFeedElements() {
@@ -357,23 +310,28 @@ window.addEventListener('load', () => {
     masonryEl.appendChild(fragment);
   }
 
-  function loadMorePins() {
-    if (isLoading) return;
+  async function loadMorePins() {
+    if (isLoading || !hasMorePages) return;
     isLoading = true;
     const activeFeed = getActiveFeedElements();
     const loaderEl = activeFeed.loader;
     loaderEl.classList.remove('loader--hidden');
-    setTimeout(function () {
+    try {
       if (window.isCloseupOpen) {
-        appendCloseupPins(BATCH_SIZE);
+        await appendCloseupPins(BATCH_SIZE);
       } else {
-        const newPins = generatePins(BATCH_SIZE, totalPins);
-        renderPins(newPins);
-        totalPins += BATCH_SIZE;
+        const data = await fetchWorks(currentPage, BATCH_SIZE);
+        var pins = (data.content || []).map(mapWorkToPin);
+        pins.forEach(function (p) { pinStore.set(p.id, p); });
+        renderPins(pins);
+        currentPage++;
+        hasMorePages = currentPage <= (data.totalPages || 1);
       }
-      isLoading = false;
-      loaderEl.classList.add('loader--hidden');
-    }, 300);
+    } catch (e) {
+      console.error('작품 로드 실패:', e);
+    }
+    isLoading = false;
+    loaderEl.classList.add('loader--hidden');
   }
 
 // ─── 전역 클릭으로 메뉴 닫기 ───────────────────────
@@ -461,6 +419,13 @@ window.addEventListener('load', () => {
       });
     }
   }
+
+  // ─── 전역 공유 (closeup.js에서 사용) ─────────────────
+  window.pinStore = pinStore;
+  window.BATCH_SIZE = BATCH_SIZE;
+  window.mapWorkToPin = mapWorkToPin;
+  window.createArtGalleryCardHTML = createArtGalleryCardHTML;
+  window.fetchWorks = fetchWorks;
 
   // ─── 초기화 ─────────────────────────────────────────
   if (!IS_LOGGED_IN) initGuestMode();

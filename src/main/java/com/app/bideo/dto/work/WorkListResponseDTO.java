@@ -17,7 +17,10 @@ public class WorkListResponseDTO {
     private Integer price;
     private String status;
     private String memberNickname;
+    private String memberProfileImage;
     private String thumbnailUrl;
+    private Integer thumbnailWidth;
+    private Integer thumbnailHeight;
     private Integer viewCount;
     private Integer likeCount;
     private Integer saveCount;

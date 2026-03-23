@@ -1,6 +1,6 @@
 // ─── Closeup View (depends on main.js globals) ──────────────
 // Globals used from main.js: IS_LOGGED_IN, pinStore, createAvatarDataUri(),
-//   createArtworkDataUri(), showToast(), LOCAL_PROFILE_IMAGE, generatePins(),
+//   showToast(), LOCAL_PROFILE_IMAGE, fetchWorks(), mapWorkToPin(),
 //   createArtGalleryCardHTML(), BATCH_SIZE
 // Globals used from auth-modal.js: showAuthModal()
 window.addEventListener('load', () => {
@@ -271,9 +271,22 @@ window.addEventListener('load', () => {
   }
 
 // ─── 핀 상세 Closeup 뷰 ──────────────────────────────
-  function openPinDetail(cardEl) {
+  async function openPinDetail(cardEl) {
     const pinId = cardEl.getAttribute('data-id');
-    const pin = pinStore.get(pinId);
+    var pin = pinStore.get(pinId);
+    // API fallback: pinStore에 없으면 상세 조회
+    if (!pin && pinId && pinId.startsWith('work-')) {
+      try {
+        var workId = pinId.replace('work-', '');
+        var res = await fetch('/api/works/' + workId);
+        if (res.ok) {
+          var detail = await res.json();
+          pin = mapWorkToPin(detail);
+          pin.description = detail.description || '';
+          pinStore.set(pinId, pin);
+        }
+      } catch (e) { console.error('작품 상세 조회 실패:', e); }
+    }
     const img = cardEl.querySelector('.art-gallery-card__image');
     const title = cardEl.querySelector('.art-gallery-card__title');
     const closeupView = document.getElementById('closeupView');
@@ -345,31 +358,44 @@ window.addEventListener('load', () => {
     window.scrollTo(0, savedScrollY);
   }
 
+  let closeupPage = 1;
+  let closeupHasMore = true;
+
   function loadRelatedPins(activePinId) {
     document.getElementById('closeupRelatedPins').innerHTML = '';
     document.getElementById('closeupBelowPins').innerHTML = '';
-    closeupSeed = Math.floor(Math.random() * 1000);
+    closeupPage = 1;
+    closeupHasMore = true;
     closeupOffset = 0;
     appendCloseupPins(BATCH_SIZE, activePinId);
   }
 
-  function appendCloseupPins(count, activePinId) {
-    const sideContainer = document.getElementById('closeupRelatedPins');
-    const belowContainer = document.getElementById('closeupBelowPins');
-    const targetPinId = activePinId || activeCloseupPinId;
-    const relatedPins = generatePins(count, closeupSeed + closeupOffset).filter(function(pin) {
-      return pin.id !== targetPinId;
-    });
-    closeupOffset += count;
-    const temp = document.createElement('div');
-    const sideFragment = document.createDocumentFragment();
-    const belowFragment = document.createDocumentFragment();
-    let sideCount = sideContainer.childElementCount;
-    let belowCount = belowContainer.childElementCount;
+  async function appendCloseupPins(count, activePinId) {
+    if (!closeupHasMore) return;
+    var sideContainer = document.getElementById('closeupRelatedPins');
+    var belowContainer = document.getElementById('closeupBelowPins');
+    var targetPinId = activePinId || activeCloseupPinId;
+    try {
+      var data = await fetchWorks(closeupPage, count);
+      var relatedPins = (data.content || []).map(mapWorkToPin).filter(function(pin) {
+        return pin.id !== targetPinId;
+      });
+      relatedPins.forEach(function(p) { pinStore.set(p.id, p); });
+      closeupPage++;
+      closeupHasMore = closeupPage <= (data.totalPages || 1);
+    } catch (e) {
+      console.error('관련 작품 로드 실패:', e);
+      return;
+    }
+    var temp = document.createElement('div');
+    var sideFragment = document.createDocumentFragment();
+    var belowFragment = document.createDocumentFragment();
+    var sideCount = sideContainer.childElementCount;
+    var belowCount = belowContainer.childElementCount;
 
     relatedPins.forEach(function(pin) {
       temp.innerHTML = createArtGalleryCardHTML(pin);
-      const card = temp.firstElementChild;
+      var card = temp.firstElementChild;
       if (sideCount <= belowCount) {
         sideFragment.appendChild(card);
         sideCount += 1;

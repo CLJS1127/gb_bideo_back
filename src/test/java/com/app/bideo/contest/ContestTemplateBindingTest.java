@@ -1,6 +1,7 @@
-package com.app;
+package com.app.bideo.contest;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 class ContestTemplateBindingTest {
 
     @Test

@@ -1,4 +1,4 @@
-package com.app;
+package com.app.bideo.contest;
 
 import com.app.bideo.dto.contest.ContestEntryRequestDTO;
 import com.app.bideo.mapper.contest.ContestMapper;
@@ -6,12 +6,14 @@ import com.app.bideo.service.contest.ContestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.BDDMockito.given;
 
+@SpringBootTest
 class ContestParticipationServiceTest {
 
     private ContestMapper contestMapper;
