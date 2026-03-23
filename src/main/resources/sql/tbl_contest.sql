@@ -11,7 +11,7 @@ create table tbl_contest (
     category    varchar(100)  null,
     region      varchar(100)  null,
     description text          null,
-    cover_image varchar(255)  null,
+    cover_image text          null,
     entry_start date          not null,
     entry_end   date          not null,
     result_date date          null,

@@ -48,7 +48,7 @@ window.addEventListener('load', () => {
     return {
       id: 'work-' + work.id,
       workId: work.id,
-      imageUrl: work.thumbnailUrl || '/images/BIDEO_LOGO/favi_bideo.png',
+      imageUrl: work.thumbnailUrl || '/images/BIDEO_LOGO/BIDEO_favicon.png',
       width: work.thumbnailWidth || 400,
       height: work.thumbnailHeight || 300,
       title: work.title || '',
@@ -97,19 +97,19 @@ window.addEventListener('load', () => {
 // ─── 예술관 카드 HTML 생성 ─────────────────────────
   function createArtGalleryCardHTML(pin) {
     return (
-        '<article class="art-gallery-card" data-id="' + pin.id + '" onclick="openPinDetail(this)">' +
+        '<article class="art-gallery-card" data-id="' + pin.id + '" data-action="open-pin-detail">' +
         '<div class="art-gallery-card__image-wrap" style="aspect-ratio:' + pin.width + '/' + pin.height + '">' +
         '<img class="art-gallery-card__image" src="' + pin.imageUrl + '" alt="' + pin.title + '" width="' + pin.width + '" height="' + pin.height + '" loading="lazy" />' +
         '<div class="art-gallery-card__overlay">' +
         '<div class="art-gallery-card__top-actions">' +
-        '<button class="art-gallery-card__save-btn" onclick="toggleSave(event, this)">찜</button>' +
+        '<button class="art-gallery-card__save-btn" type="button" data-action="toggle-pin-save">찜</button>' +
         '</div>' +
         '<div class="art-gallery-card__bottom-actions">' +
         '<div class="art-gallery-card__action-group">' +
-        '<button class="art-gallery-card__icon-btn" title="공유" onclick="sharePinMenu(event, this)">' +
+        '<button class="art-gallery-card__icon-btn" type="button" title="공유" data-action="share-pin-menu">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>' +
         '</button>' +
-        '<button class="art-gallery-card__icon-btn" title="더보기" onclick="morePinMenu(event, this)">' +
+        '<button class="art-gallery-card__icon-btn" type="button" title="더보기" data-action="more-pin-menu">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>' +
         '</button>' +
         '</div>' +
@@ -163,7 +163,7 @@ window.addEventListener('load', () => {
       html += '<div class="search-suggest__item" data-recent-idx="' + idx + '">' +
           '<img class="search-suggest__thumb" src="' + item.img + '" alt="" />' +
           '<span class="search-suggest__text">' + item.text + '</span>' +
-          '<button class="search-suggest__delete" aria-label="삭제" onclick="event.stopPropagation(); removeRecentSearch(this)">' +
+          '<button class="search-suggest__delete" type="button" data-action="remove-recent-search" aria-label="삭제">' +
           '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="m12 13.41 8.3 8.3 1.4-1.42L13.42 12l8.3-8.3-1.42-1.4-8.3 8.28-8.3-8.3L2.3 3.7l8.28 8.3-8.3 8.3 1.42 1.4z"></path></svg>' +
           '</button>' +
           '</div>';
@@ -315,10 +315,15 @@ window.addEventListener('load', () => {
     isLoading = true;
     const activeFeed = getActiveFeedElements();
     const loaderEl = activeFeed.loader;
-    loaderEl.classList.remove('loader--hidden');
+    if (loaderEl) loaderEl.classList.remove('loader--hidden');
     try {
       if (window.isCloseupOpen) {
-        await appendCloseupPins(BATCH_SIZE);
+        if (typeof window.appendCloseupPins === 'function') {
+          await window.appendCloseupPins(BATCH_SIZE);
+        } else {
+          console.warn('appendCloseupPins hook is not available yet');
+          return;
+        }
       } else {
         const data = await fetchWorks(currentPage, BATCH_SIZE);
         var pins = (data.content || []).map(mapWorkToPin);
@@ -331,12 +336,28 @@ window.addEventListener('load', () => {
       console.error('작품 로드 실패:', e);
     }
     isLoading = false;
-    loaderEl.classList.add('loader--hidden');
+    if (loaderEl) loaderEl.classList.add('loader--hidden');
   }
 
 // ─── 전역 클릭으로 메뉴 닫기 ───────────────────────
-  document.addEventListener('click', function () {
-    closeAllMenus();
+  document.addEventListener('click', function (event) {
+    const actionButton = event.target.closest('[data-action]');
+    if (actionButton) {
+      if (actionButton.dataset.action === 'remove-recent-search') {
+        event.preventDefault();
+        event.stopPropagation();
+        removeRecentSearch(actionButton);
+      }
+      return;
+    }
+
+    if (event.target.closest('.context-menu, .closeup-floating-layer')) {
+      return;
+    }
+
+    if (typeof window.closeAllMenus === 'function') {
+      window.closeAllMenus();
+    }
   });
 
 // ESC로 closeup/검색 닫기
@@ -351,7 +372,9 @@ window.addEventListener('load', () => {
         searchInput.blur();
       }
       hideSearchSuggestions();
-      closeAllMenus();
+      if (typeof window.closeAllMenus === 'function') {
+        window.closeAllMenus();
+      }
     }
   });
 
@@ -360,19 +383,23 @@ window.addEventListener('load', () => {
   function initGuestMode() {
     document.body.classList.add('guest-mode');
 
-    // 사이드바 숨기기
-    const sidebar = document.getElementById('VerticalNavContent');
-    if (sidebar) sidebar.style.display = 'none';
+    // 메인 페이지('/')에서만 사이드바 숨기기 및 레이아웃 조정
+    const isMainPage = window.location.pathname === '/';
+    if (isMainPage) {
+      // 사이드바 숨기기
+      const sidebar = document.getElementById('VerticalNavContent');
+      if (sidebar) sidebar.style.display = 'none';
 
-    // 헤더 left 조정
-    const header = document.getElementById('HeaderContent');
-    if (header) header.style.left = '0';
+      // 헤더 left 조정
+      const header = document.getElementById('HeaderContent');
+      if (header) header.style.left = '0';
 
-    // appViewport 패딩 조정 (사이드바 없음)
-    const viewport = document.querySelector('.appViewport');
-    if (viewport) {
-      viewport.style.paddingLeft = '24px';
-      viewport.style.paddingRight = '24px';
+      // appViewport 패딩 조정 (사이드바 없음)
+      const viewport = document.querySelector('.appViewport');
+      if (viewport) {
+        viewport.style.paddingLeft = '24px';
+        viewport.style.paddingRight = '24px';
+      }
     }
 
     // 프로필 + 계정 드롭다운 숨기고 로그인 버튼 삽입
@@ -394,18 +421,20 @@ window.addEventListener('load', () => {
       btnContainer.appendChild(authBtns);
     }
 
-    // 하단 배너
-    const banner = document.createElement('div');
-    banner.className = 'guest-bottom-banner';
-    banner.innerHTML =
-        '<div class="guest-bottom-banner__content">' +
-        '<div class="guest-bottom-banner__text">' +
-        '<img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="" width="32" height="32">' +
-        '<span>BIDEO에서 더 많은 아이디어를 발견하세요</span>' +
-        '</div>' +
-        '<a class="guest-bottom-banner__signup" href="#" onclick="showSignupModal()">무료로 가입하기</a>' +
-        '</div>';
-    document.body.appendChild(banner);
+    // 하단 배너 (메인 페이지에서만)
+    if (isMainPage) {
+      const banner = document.createElement('div');
+      banner.className = 'guest-bottom-banner';
+      banner.innerHTML =
+          '<div class="guest-bottom-banner__content">' +
+          '<div class="guest-bottom-banner__text">' +
+          '<img src="/images/BIDEO_LOGO/favi_bideo_white.png" alt="" width="32" height="32">' +
+          '<span>BIDEO에서 더 많은 아이디어를 발견하세요</span>' +
+          '</div>' +
+          '<a class="guest-bottom-banner__signup" href="#" onclick="showSignupModal()">무료로 가입하기</a>' +
+          '</div>';
+      document.body.appendChild(banner);
+    }
 
     // 댓글 입력창 비 로그인 안내
     const commentInput = document.querySelector('.closeup__comment-input');
@@ -433,32 +462,35 @@ window.addEventListener('load', () => {
   initSearch();
 
   // 첫 배치 로드
-  loadMorePins();
-
-  // 무한 스크롤: IntersectionObserver + scroll 이벤트 백업
   const loaderEl = document.getElementById('loader');
   const closeupLoaderEl = document.getElementById('closeupLoader');
-  const observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            loadMorePins();
-          }
-        });
-      },
-      {rootMargin: '600px'}
-  );
-  observer.observe(loaderEl);
-  observer.observe(closeupLoaderEl);
 
-  // scroll 이벤트 백업 (IntersectionObserver가 안 될 경우 대비)
-  window.addEventListener('scroll', function () {
-    if (isLoading) return;
-    const scrollBottom = window.innerHeight + window.scrollY;
-    const docHeight = document.documentElement.scrollHeight;
-    if (scrollBottom >= docHeight - 800) {
-      loadMorePins();
-    }
-  });
+  if (loaderEl) {
+    loadMorePins();
+
+    // 무한 스크롤: IntersectionObserver + scroll 이벤트 백업
+    const observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              loadMorePins();
+            }
+          });
+        },
+        {rootMargin: '600px'}
+    );
+    observer.observe(loaderEl);
+    if (closeupLoaderEl) observer.observe(closeupLoaderEl);
+
+    // scroll 이벤트 백업 (IntersectionObserver가 안 될 경우 대비)
+    window.addEventListener('scroll', function () {
+      if (isLoading) return;
+      const scrollBottom = window.innerHeight + window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      if (scrollBottom >= docHeight - 800) {
+        loadMorePins();
+      }
+    });
+  }
 });
 

@@ -24,10 +24,6 @@ spring:
       file-size-threshold: 10MB
       max-file-size: 20MB
       max-request-size: 25MB
-  session:
-    redis:
-      repository-type: indexed
-      flush-mode: immediate
   data:
     redis:
       host: localhost

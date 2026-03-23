@@ -91,15 +91,15 @@ window.addEventListener('load', () => {
         '<div class="closeup-share-sheet__header"><h2 class="closeup-share-sheet__title">공유</h2></div>' +
         '<div class="closeup-share-sheet__body">' +
         '<div class="closeup-share-sheet__socials">' +
-        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button" onclick="event.stopPropagation(); copyCloseupLink(this)">링크</button><span>링크 복사</span></div>' +
-        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn closeup-share-sheet__social-btn--dark" type="button" onclick="event.stopPropagation()">W</button><span>WhatsApp</span></div>' +
-        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button" onclick="event.stopPropagation()">M</button><span>메신저</span></div>' +
-        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button" onclick="event.stopPropagation()">f</button><span>Facebook</span></div>' +
-        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn closeup-share-sheet__social-btn--dark" type="button" onclick="event.stopPropagation()">X</button><span>X</span></div>' +
+        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button" data-action="copy-closeup-link">링크</button><span>링크 복사</span></div>' +
+        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn closeup-share-sheet__social-btn--dark" type="button">W</button><span>WhatsApp</span></div>' +
+        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button">M</button><span>메신저</span></div>' +
+        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn" type="button">f</button><span>Facebook</span></div>' +
+        '<div class="closeup-share-sheet__social"><button class="closeup-share-sheet__social-btn closeup-share-sheet__social-btn--dark" type="button">X</button><span>X</span></div>' +
         '</div>' +
         '<input class="closeup-share-sheet__search" id="contactSearch" type="search" placeholder="이름 또는 이메일 검색" aria-label="검색 필드">' +
         '<div class="closeup-share-sheet__contacts">' +
-        '<div class="closeup-share-sheet__contact"><img src="' + createAvatarDataUri('정찬호', 20) + '" alt="정찬호"><div class="closeup-share-sheet__contact-copy"><span class="closeup-share-sheet__contact-name">정찬호</span><span class="closeup-share-sheet__contact-handle">@chanho8629</span></div><button class="closeup-share-sheet__send" type="button" onclick="toggleSend(this)">보내기</button></div>' +
+        '<div class="closeup-share-sheet__contact"><img src="' + createAvatarDataUri('정찬호', 20) + '" alt="정찬호"><div class="closeup-share-sheet__contact-copy"><span class="closeup-share-sheet__contact-name">정찬호</span><span class="closeup-share-sheet__contact-handle">@chanho8629</span></div><button class="closeup-share-sheet__send" type="button" data-action="toggle-send">보내기</button></div>' +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -305,10 +305,15 @@ window.addEventListener('load', () => {
     closeupImage.alt = img.alt;
     closeupTitle.textContent = title.textContent;
     closeupDescription.textContent = pin ? pin.description : '작품 설명이 여기에 표시됩니다.';
-    creatorAvatar.src = pin ? pin.author.avatar : '';
-    creatorAvatar.alt = pin ? pin.author.name : '';
-    creatorName.textContent = pin ? pin.author.name : '크리에이터';
-    creatorHandle.textContent = pin ? '@' + pin.author.name : '';
+    const creatorAvatarMeta = resolveCreatorAvatar(pin);
+    creatorAvatar.onerror = function() {
+      this.onerror = null;
+      this.src = creatorAvatarMeta.fallback;
+    };
+    creatorAvatar.src = creatorAvatarMeta.src;
+    creatorAvatar.alt = creatorAvatarMeta.alt;
+    creatorName.textContent = creatorAvatarMeta.alt;
+    creatorHandle.textContent = pin && pin.author && pin.author.name ? '@' + pin.author.name : '';
     statCount.textContent = pin ? String(pin.saves) : '112';
     imageWrap.style.aspectRatio = '1920 / 1080';
 
@@ -462,7 +467,7 @@ window.addEventListener('load', () => {
         '<p class="closeup__comment-text">' + text.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' +
         '<div class="closeup__comment-actions">' +
         '<span class="closeup__comment-like-count">0</span>' +
-        '<button class="closeup__comment-like-btn" onclick="toggleCommentLike(this)">좋아요</button>' +
+        '<button class="closeup__comment-like-btn" type="button" data-action="toggle-comment-like">좋아요</button>' +
         '</div>' +
         '</div>';
     content.appendChild(comment);
@@ -524,6 +529,18 @@ window.addEventListener('load', () => {
     }
   }
 
+  function resolveCreatorAvatar(pin) {
+    const authorName = pin && pin.author && pin.author.name ? pin.author.name : '크리에이터';
+    const avatarFallback = createAvatarDataUri(authorName, pin && pin.workId ? pin.workId : 0);
+    const avatarSrc = pin && pin.author && pin.author.avatar ? pin.author.avatar : avatarFallback;
+
+    return {
+      src: avatarSrc,
+      fallback: avatarFallback,
+      alt: authorName
+    };
+  }
+
 // ─── 스크롤 기반 back 버튼 그림자 ──────────────────
   function setupCloseupScrollShadow() {
     const backBtn = document.querySelector('.closeup__back-btn');
@@ -571,10 +588,10 @@ window.addEventListener('load', () => {
     menu.className = 'context-menu';
     menu.innerHTML =
         '<div class="context-menu__title">공유</div>' +
-        '<button class="context-menu__item" onclick="event.stopPropagation(); copyPinLink(this)">링크 복사</button>' +
-        '<button class="context-menu__item" onclick="event.stopPropagation()">Facebook</button>' +
-        '<button class="context-menu__item" onclick="event.stopPropagation()">X (Twitter)</button>' +
-        '<button class="context-menu__item" onclick="event.stopPropagation()">WhatsApp</button>';
+        '<button class="context-menu__item" type="button" data-action="copy-pin-link">링크 복사</button>' +
+        '<button class="context-menu__item" type="button">Facebook</button>' +
+        '<button class="context-menu__item" type="button">X (Twitter)</button>' +
+        '<button class="context-menu__item" type="button">WhatsApp</button>';
     btn.closest('.art-gallery-card__action-group').appendChild(menu);
   }
 
@@ -597,8 +614,8 @@ window.addEventListener('load', () => {
     const menu = document.createElement('div');
     menu.className = 'context-menu';
     menu.innerHTML =
-        '<button class="context-menu__item" onclick="event.stopPropagation()">작품 신고</button>' +
-        '<button class="context-menu__item" onclick="event.stopPropagation(); hidePinCard(this)">이 작품 숨기기</button>'
+        '<button class="context-menu__item" type="button">작품 신고</button>' +
+        '<button class="context-menu__item" type="button" data-action="hide-pin-card">이 작품 숨기기</button>'
     btn.closest('.art-gallery-card__action-group').appendChild(menu);
   }
 
@@ -610,10 +627,79 @@ window.addEventListener('load', () => {
     setTimeout(function() { card.remove(); }, 300);
   }
 
+  document.addEventListener('click', function(event) {
+    const actionTarget = event.target.closest('[data-action]');
+    if (!actionTarget) return;
+
+    switch (actionTarget.dataset.action) {
+      case 'open-pin-detail':
+        if (typeof window.closeAllMenus === 'function') {
+          window.closeAllMenus();
+        }
+        openPinDetail(actionTarget.closest('.art-gallery-card') || actionTarget);
+        break;
+      case 'toggle-pin-save':
+      case 'toggle-closeup-save':
+        toggleSave(event, actionTarget);
+        break;
+      case 'share-pin-menu':
+        sharePinMenu(event, actionTarget);
+        break;
+      case 'more-pin-menu':
+        morePinMenu(event, actionTarget);
+        break;
+      case 'close-closeup':
+        closeCloseupView();
+        break;
+      case 'open-image-lightbox':
+        openImageLightbox();
+        break;
+      case 'toggle-closeup-like':
+        toggleCloseupLike(actionTarget);
+        break;
+      case 'toggle-closeup-share':
+        toggleCloseupShareMenu(event, actionTarget);
+        break;
+      case 'toggle-closeup-more':
+        toggleCloseupMoreMenu(event, actionTarget);
+        break;
+      case 'focus-closeup-details':
+        focusCloseupDetails();
+        break;
+      case 'toggle-follow':
+        toggleFollow(actionTarget);
+        break;
+      case 'toggle-closeup-collapsible':
+        toggleCloseupCollapsible(actionTarget);
+        break;
+      case 'copy-closeup-link':
+        event.stopPropagation();
+        copyCloseupLink(actionTarget);
+        break;
+      case 'toggle-send':
+        toggleSend(actionTarget);
+        break;
+      case 'toggle-comment-like':
+        toggleCommentLike(actionTarget);
+        break;
+      case 'copy-pin-link':
+        event.stopPropagation();
+        copyPinLink(actionTarget);
+        break;
+      case 'hide-pin-card':
+        event.stopPropagation();
+        hidePinCard(actionTarget);
+        break;
+      default:
+        break;
+    }
+  });
+
   window.closeAllMenus = function() {
     document.querySelectorAll('.context-menu').forEach(function(m) { m.remove(); });
     closeCloseupFloatingLayers();
   };
+  window.appendCloseupPins = appendCloseupPins;
   window.closeCloseupView = closeCloseupView;
 });
 

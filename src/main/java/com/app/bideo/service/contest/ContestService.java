@@ -13,7 +13,10 @@ import com.app.bideo.mapper.contest.ContestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -29,6 +32,14 @@ public class ContestService {
         Long contestId = contestCreateRequestDTO.getId();
         saveTags(contestId, contestCreateRequestDTO.getTagIds());
         return contestId;
+    }
+
+    public Long createContest(Long memberId, ContestCreateRequestDTO dto, MultipartFile coverFile) {
+        if (coverFile != null && !coverFile.isEmpty()) {
+            String coverUrl = saveCoverImage(coverFile);
+            dto.setCoverImage(coverUrl);
+        }
+        return createContest(memberId, dto);
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +78,10 @@ public class ContestService {
         }
         if (!contestMapper.existsContest(requestDTO.getContestId())) {
             throw new IllegalArgumentException("contest not found");
+        }
+        Long ownerId = contestMapper.selectContestOwnerId(requestDTO.getContestId());
+        if (ownerId != null && ownerId.equals(memberId)) {
+            throw new IllegalArgumentException("자신의 공모전에는 참여할 수 없습니다");
         }
         if (!contestMapper.existsOwnedWork(memberId, requestDTO.getWorkId())) {
             throw new IllegalArgumentException("work does not belong to member");
@@ -116,6 +131,24 @@ public class ContestService {
         }
         contestMapper.deleteContestTagsByContestId(contestId);
         saveTags(contestId, requestDTO.getTagIds());
+    }
+
+    public void updateContest(Long contestId, Long memberId, ContestUpdateRequestDTO requestDTO, MultipartFile coverFile) {
+        if (coverFile != null && !coverFile.isEmpty()) {
+            String coverUrl = saveCoverImage(coverFile);
+            requestDTO.setCoverImage(coverUrl);
+        }
+        updateContest(contestId, memberId, requestDTO);
+    }
+
+    private String saveCoverImage(MultipartFile coverFile) {
+        try {
+            String contentType = coverFile.getContentType() != null ? coverFile.getContentType() : "image/png";
+            String base64 = Base64.getEncoder().encodeToString(coverFile.getBytes());
+            return "data:" + contentType + ";base64," + base64;
+        } catch (IOException e) {
+            throw new RuntimeException("contest cover image upload failed", e);
+        }
     }
 
     private void validateContestCreateRequest(ContestCreateRequestDTO requestDTO) {

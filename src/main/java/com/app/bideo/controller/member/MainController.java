@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
     @GetMapping("/")
-    public String root(Authentication authentication, Model model) {
+    public String root(Authentication authentication) {
         boolean isLoggedIn = authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
-        model.addAttribute("isLoggedIn", isLoggedIn);
         if (isLoggedIn) {
             return "main/main";
         }

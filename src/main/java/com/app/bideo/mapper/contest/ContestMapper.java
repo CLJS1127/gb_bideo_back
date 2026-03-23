@@ -33,6 +33,8 @@ public interface ContestMapper {
 
     boolean existsContest(@Param("contestId") Long contestId);
 
+    Long selectContestOwnerId(@Param("contestId") Long contestId);
+
     boolean existsOwnedWork(@Param("memberId") Long memberId, @Param("workId") Long workId);
 
     boolean existsContestEntry(@Param("contestId") Long contestId, @Param("workId") Long workId);

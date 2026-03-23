@@ -59,7 +59,7 @@
                                                         <div class="profile-menu__control layout-box">
                                                             <a aria-label="내 프로필"
                                                                 class="profile-summary profile-menu__link link-reset text-color-inherit text-no-underline interactive-scale rounded-400 focus-outline-none display-block-link width-full cursor-pointer"
-                                                                href="#" tabindex="0">
+                                                                href="/profile" tabindex="0">
                                                                 <div aria-hidden="true" class="profile-menu__avatar-shell layout-box rounded-400">
                                                                     <div class="profile-menu__avatar-outer layout-box rounded-circle justify-center items-center flex-row-container">
                                                                         <div class="profile-menu__avatar-inner layout-box rounded-circle justify-center items-center flex-row-container">
@@ -126,7 +126,7 @@
                         <div id="closeupView" class="closeup" style="display:none">
                             <div class="closeup__shell">
                                 <div class="closeup__back-float">
-                                    <button class="closeup__back-btn" onclick="closeCloseupView()" aria-label="뒤로가기">
+                                    <button class="closeup__back-btn" type="button" data-action="close-closeup" aria-label="뒤로가기">
                                         <svg aria-hidden="true" height="24" role="img" viewBox="0 0 24 24" width="24">
                                             <path d="m4.41 13 6.3 6.3-1.42 1.4L.6 12l8.7-8.7 1.42 1.4L4.4 11H24v2z"></path>
                                         </svg>
@@ -145,7 +145,7 @@
                                                                     <span>탐색</span>
                                                                     <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19.64.62a5 5 0 0 0 3.74 3.74l.62.14v1l-.62.14a5 5 0 0 0-3.74 3.74l-.14.62h-1l-.14-.62a5 5 0 0 0-3.74-3.74L14 5.5v-1l.62-.14A5 5 0 0 0 18.36.62L18.5 0h1zM11 19a8 8 0 0 0 7.94-7h2.01c-.2 2.01-1 3.85-2.2 5.33l4.46 4.47-1.41 1.41-4.47-4.47a10 10 0 1 1-2.25-16.88l-3 1.21Q11.53 3 11 3a8 8 0 1 0 0 16"></path></svg>
                                                                 </button>
-                                                                <button class="closeup__overlay-pill closeup__overlay-pill--icon-only" aria-label="더 크게 보기" onclick="openImageLightbox()">
+                                                                <button class="closeup__overlay-pill closeup__overlay-pill--icon-only" type="button" data-action="open-image-lightbox" aria-label="더 크게 보기">
                                                                     <span>더 크게 보기</span>
                                                                     <svg viewBox="0 0 24 24" width="20" height="20"><path d="M23 1v9h-2V4.41l-6.3 6.3-1.4-1.42L19.58 3H14V1zM1 23v-9h2v5.59l6.3-6.3 1.4 1.42L4.42 21H10v2z"></path></svg>
                                                                 </button>
@@ -159,20 +159,20 @@
                                                     <div class="closeup__hero-sticky-bar">
                                                         <div class="closeup__action-bar">
                                                             <div class="closeup__action-left">
-                                                                <button class="closeup__icon-btn" aria-label="좋아요" onclick="toggleCloseupLike(this)">
+                                                                <button class="closeup__icon-btn" type="button" data-action="toggle-closeup-like" aria-label="좋아요">
                                                                     <svg viewBox="0 0 24 24" width="24" height="24"><path d="M14.1 5.6A4.47 4.47 0 0 1 22 8.48V9c0 2.18-1.65 4.56-4.1 6.78a35 35 0 0 1-5.9 4.21 35 35 0 0 1-5.9-4.21C3.64 13.56 2 11.18 2 9v-.53a4.47 4.47 0 0 1 7.9-2.86L12 8.12zm-3.47-2.08A6.47 6.47 0 0 0 0 8.47V9c0 6.18 8.97 11.59 11.07 12.76q.43.24.93.24t.93-.24C15.03 20.6 24 15.18 24 9v-.53a6.47 6.47 0 0 0-11.44-4.14L12 5l-.56-.67q-.38-.45-.8-.81"></path></svg>
                                                                 </button>
                                                                 <span class="closeup__stat-count">112</span>
-                                                                <button class="closeup__icon-btn" aria-label="공유" onclick="toggleCloseupShareMenu(event, this)">
+                                                                <button class="closeup__icon-btn" type="button" data-action="toggle-closeup-share" aria-label="공유">
                                                                     <svg viewBox="0 0 24 24" width="24" height="24"><path d="M17.7 5.8 12 .08l-5.7 5.7L7.7 7.2 11 3.9V15h2V3.91l3.3 3.3zM2 18v-5H0v5a4 4 0 0 0 4 4h16a4 4 0 0 0 4-4v-5h-2v5a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2"></path></svg>
                                                                 </button>
-                                                                <button class="closeup__icon-btn" aria-label="더보기" onclick="toggleCloseupMoreMenu(event, this)">
+                                                                <button class="closeup__icon-btn" type="button" data-action="toggle-closeup-more" aria-label="더보기">
                                                                     <svg viewBox="0 0 24 24" width="24" height="24"><path d="M2.5 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5m9.5 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5m9.5 0a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5"></path></svg>
                                                                 </button>
                                                             </div>
                                                             <div class="closeup__action-right">
-                                                                <button class="closeup__visit-btn" type="button" onclick="focusCloseupDetails()">상세 보기</button>
-                                                                <button class="closeup__save-btn" onclick="toggleSave(event, this)">찜</button>
+                                                                <button class="closeup__visit-btn" type="button" data-action="focus-closeup-details">상세 보기</button>
+                                                                <button class="closeup__save-btn" type="button" data-action="toggle-closeup-save">찜</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -191,12 +191,12 @@
                                                             </div>
                                                             <p class="closeup__creator-handle"></p>
                                                         </div>
-                                                        <button class="closeup__creator-follow" type="button" onclick="toggleFollow(this)">팔로우</button>
+                                                        <button class="closeup__creator-follow" type="button" data-action="toggle-follow">팔로우</button>
                                                     </div>
                                                 </div>
                                                 <div class="closeup__divider"></div>
                                                 <div class="closeup__comments">
-                                                    <button class="closeup__collapsible-header" onclick="toggleCloseupCollapsible(this)">
+                                                    <button class="closeup__collapsible-header" type="button" data-action="toggle-closeup-collapsible">
                                                         아직 댓글이 없습니다
                                                         <svg class="closeup__collapsible-arrow" viewBox="0 0 24 24" width="16" height="16"><path d="M23.7 8.7 12 20.42.3 8.71l1.4-1.42L12 17.6 22.3 7.3z"></path></svg>
                                                     </button>

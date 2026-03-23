@@ -20,9 +20,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/contest")
@@ -40,18 +45,31 @@ public class ContestController {
         return "contest/contest-list";
     }
 
+    @GetMapping("/api/list")
+    @ResponseBody
+    public PageResponseDTO<ContestListResponseDTO> apiList(
+            @ModelAttribute ContestSearchDTO searchDTO,
+            @RequestParam(defaultValue = "false") boolean mine,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (mine && userDetails != null) {
+            searchDTO.setMemberId(userDetails.getId());
+        }
+        return contestService.getContestList(searchDTO);
+    }
+
     @GetMapping("/detail/{id}")
     public String detail(@PathVariable Long id,
                          @AuthenticationPrincipal CustomUserDetails userDetails,
                          Model model) {
         Long memberId = userDetails != null ? userDetails.getId() : null;
         ContestDetailResponseDTO contest = contestService.getContestDetail(id, memberId);
-        List<ContestEntryResponseDTO> entries = contestService.getContestEntryList(id);
+        boolean isOwner = userDetails != null && contest.getMemberId() != null && contest.getMemberId().equals(userDetails.getId());
+        List<ContestEntryResponseDTO> entries = isOwner ? contestService.getContestEntryList(id) : Collections.emptyList();
         model.addAttribute("contest", contest);
         model.addAttribute("entries", entries);
         model.addAttribute("entryForm", ContestEntryRequestDTO.builder().contestId(id).build());
-        model.addAttribute("isOwner", userDetails != null && contest.getMemberId() != null && contest.getMemberId().equals(userDetails.getId()));
-        if (userDetails != null) {
+        model.addAttribute("isOwner", isOwner);
+        if (userDetails != null && !isOwner) {
             List<ContestWorkOptionDTO> availableWorks = contestService.getEntryWorkOptions(userDetails.getId());
             model.addAttribute("availableWorks", availableWorks);
         }
@@ -63,6 +81,27 @@ public class ContestController {
         model.addAttribute("contestForm", new ContestCreateRequestDTO());
         model.addAttribute("isEdit", false);
         return "contest/contest-register";
+    }
+
+    @PostMapping("/api/register")
+    @ResponseBody
+    public Map<String, Object> apiCreate(
+            @ModelAttribute ContestCreateRequestDTO contestForm,
+            @RequestParam(value = "coverFile", required = false) MultipartFile coverFile,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long contestId = contestService.createContest(userDetails.getId(), contestForm, coverFile);
+        return Map.of("contestId", contestId);
+    }
+
+    @PostMapping("/api/{id}/edit")
+    @ResponseBody
+    public Map<String, Object> apiUpdate(
+            @PathVariable Long id,
+            @ModelAttribute ContestUpdateRequestDTO contestForm,
+            @RequestParam(value = "coverFile", required = false) MultipartFile coverFile,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        contestService.updateContest(id, userDetails.getId(), contestForm, coverFile);
+        return Map.of("contestId", id);
     }
 
     @PostMapping("/register")
@@ -139,7 +178,7 @@ public class ContestController {
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "이미 참여한 작품입니다.");
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "내 작품만 출품할 수 있습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/contest/detail/" + id;
     }
