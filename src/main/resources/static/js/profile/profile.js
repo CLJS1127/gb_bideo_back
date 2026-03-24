@@ -5,9 +5,12 @@ const RING_RADIUS = 40.5;
 const RING_ACTIVE = '#c4a84d';
 const RING_GREY = 'rgb(219, 223, 228)';
 let currentWorkDetail = null;
+let currentGalleryDetail = null;
 let workEditTags = [];
 let workEditSelectedFile = null;
 let workEditExistingMediaUrl = null;
+let galleryEditSelectedFile = null;
+let galleryEditExistingCoverUrl = null;
 const workEditGallerySelect = document.getElementById('workEditGallerySelect');
 const workEditGallerySelectWrap = document.getElementById('workEditGallerySelectWrap');
 const workEditGallerySelectTrigger = document.getElementById('workEditGallerySelectTrigger');
@@ -737,6 +740,206 @@ function openFollowModalTab(e, tab) {
   modal.classList.add('active');
 }
 
+function openGalleryListModal() {
+  if (!IS_OWNER) return;
+  document.getElementById('galleryListModal')?.classList.add('active');
+}
+
+function openGalleryCloseupModal(trigger) {
+  if (!trigger) return;
+
+  const galleryId = Number(trigger.dataset.galleryId || 0);
+  const title = trigger.dataset.galleryTitle || '예술관';
+  const description = trigger.dataset.galleryDescription || '';
+  const cover = trigger.dataset.galleryCover || '';
+  const owner = trigger.dataset.galleryOwner || 'bideo';
+  const workCount = Number(trigger.dataset.galleryWorkCount || 0);
+  const likeCount = Number(trigger.dataset.galleryLikeCount || 0);
+  const viewCount = Number(trigger.dataset.galleryViewCount || 0);
+
+  const image = document.getElementById('galleryCloseupImage');
+  const fallback = document.getElementById('galleryCloseupFallback');
+  const titleElement = document.getElementById('galleryCloseupTitle');
+  const ownerElement = document.getElementById('galleryCloseupOwner');
+  const workCountElement = document.getElementById('galleryCloseupWorkCount');
+  const likeCountElement = document.getElementById('galleryCloseupLikeCount');
+  const viewCountElement = document.getElementById('galleryCloseupViewCount');
+  const descriptionElement = document.getElementById('galleryCloseupDescription');
+  const commentAuthorElement = document.getElementById('galleryCloseupCommentAuthor');
+  const commentTextElement = document.getElementById('galleryCloseupCommentText');
+
+  currentGalleryDetail = {
+    id: galleryId,
+    title,
+    description,
+    owner,
+    workCount,
+    likeCount,
+    viewCount,
+    cover
+  };
+
+  if (titleElement) titleElement.textContent = title;
+  if (ownerElement) ownerElement.textContent = owner;
+  if (workCountElement) workCountElement.textContent = workCount.toLocaleString('ko-KR');
+  if (likeCountElement) likeCountElement.textContent = likeCount.toLocaleString('ko-KR');
+  if (viewCountElement) viewCountElement.textContent = viewCount.toLocaleString('ko-KR');
+  if (descriptionElement) {
+    descriptionElement.textContent = description || `${owner}님의 예술관입니다. 작품 ${workCount.toLocaleString('ko-KR')}개, 좋아요 ${likeCount.toLocaleString('ko-KR')}개, 조회수 ${viewCount.toLocaleString('ko-KR')}회를 기록했습니다.`;
+  }
+  if (commentAuthorElement) commentAuthorElement.textContent = owner;
+  if (commentTextElement) {
+    commentTextElement.textContent = `${title} 예술관의 대표 반응을 확인해보세요.`;
+  }
+
+  if (image && fallback) {
+    if (cover) {
+      image.src = cover;
+      image.style.display = 'block';
+      fallback.style.display = 'none';
+    } else {
+      image.removeAttribute('src');
+      image.style.display = 'none';
+      fallback.textContent = title.length > 2 ? title.slice(0, 2) : title;
+      fallback.style.display = 'flex';
+    }
+  }
+
+  closeModal('galleryListModal');
+  document.getElementById('galleryCloseupModal')?.classList.add('active');
+}
+
+function openGalleryActionModal(event) {
+  event?.stopPropagation();
+  document.getElementById('galleryActionModal')?.classList.add('active');
+}
+
+function editCurrentGallery() {
+  closeModal('galleryActionModal');
+  if (!currentGalleryDetail?.id) return;
+  populateGalleryEditModal(currentGalleryDetail);
+  document.getElementById('galleryEditModal')?.classList.add('active');
+}
+
+function getGalleryEditUploadArea() {
+  return document.getElementById('galleryEditUploadArea');
+}
+
+function resetGalleryEditPreview() {
+  const previewImage = document.getElementById('galleryEditPreviewImage');
+  const placeholder = document.getElementById('galleryEditPlaceholder');
+  const uploadArea = getGalleryEditUploadArea();
+  if (!previewImage || !placeholder) return;
+
+  previewImage.removeAttribute('src');
+  previewImage.style.display = 'none';
+  placeholder.style.display = 'block';
+  uploadArea?.classList.remove('has-image');
+}
+
+function showGalleryEditPreviewFromUrl(url) {
+  const previewImage = document.getElementById('galleryEditPreviewImage');
+  const placeholder = document.getElementById('galleryEditPlaceholder');
+  const uploadArea = getGalleryEditUploadArea();
+  if (!previewImage || !placeholder) return;
+
+  previewImage.src = url;
+  previewImage.style.display = 'block';
+  placeholder.style.display = 'none';
+  uploadArea?.classList.add('has-image');
+}
+
+function showGalleryEditPreviewFile(file) {
+  if (!file.type.startsWith('image/')) {
+    alert('사진 파일만 업로드할 수 있습니다.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    showGalleryEditPreviewFromUrl(event.target?.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function populateGalleryEditModal(gallery) {
+  const titleInput = document.getElementById('galleryEditTitleInput');
+  const descriptionInput = document.getElementById('galleryEditDescriptionInput');
+  const fileInput = document.getElementById('galleryEditFileInput');
+
+  if (titleInput) titleInput.value = gallery.title || '';
+  if (descriptionInput) descriptionInput.value = gallery.description || '';
+  if (fileInput) fileInput.value = '';
+
+  galleryEditSelectedFile = null;
+  galleryEditExistingCoverUrl = gallery.cover || null;
+
+  if (galleryEditExistingCoverUrl) {
+    showGalleryEditPreviewFromUrl(galleryEditExistingCoverUrl);
+  } else {
+    resetGalleryEditPreview();
+  }
+}
+
+async function submitGalleryEdit() {
+  if (!currentGalleryDetail?.id) return;
+
+  const titleInput = document.getElementById('galleryEditTitleInput');
+  const descriptionInput = document.getElementById('galleryEditDescriptionInput');
+  const title = titleInput?.value.trim() || '';
+  const description = descriptionInput?.value.trim() || '';
+
+  if (!title) {
+    alert('예술관 제목을 입력해주세요.');
+    titleInput?.focus();
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', description);
+  if (galleryEditSelectedFile) {
+    formData.append('coverFile', galleryEditSelectedFile);
+  }
+
+  try {
+    const response = await fetch(`/api/galleries/${currentGalleryDetail.id}/edit`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || '예술관 수정에 실패했습니다.');
+    }
+
+    closeModal('galleryEditModal');
+    closeModal('galleryCloseupModal');
+    window.location.reload();
+  } catch (error) {
+    alert(error.message || '예술관 수정에 실패했습니다.');
+  }
+}
+
+function deleteCurrentGallery() {
+  closeModal('galleryActionModal');
+  if (!currentGalleryDetail?.id) return;
+  if (!window.confirm('이 예술관을 삭제하시겠습니까?')) return;
+
+  fetch(`/api/galleries/${currentGalleryDetail.id}`, {
+    method: 'DELETE'
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('예술관 삭제에 실패했습니다.');
+      }
+      window.location.reload();
+    })
+    .catch((error) => {
+      alert(error.message || '예술관 삭제에 실패했습니다.');
+    });
+}
+
 // ─── Viewer 전용: 팔로우 토글 ─────────────────────
 let isFollowing = false;
 
@@ -1073,6 +1276,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const workEditMoreContent = document.getElementById('workEditMoreContent');
   const workDetailCommentInput = document.getElementById('workDetailCommentInput');
   const workDetailCommentSubmit = document.getElementById('workDetailCommentSubmit');
+  const galleryEditUploadArea = document.getElementById('galleryEditUploadArea');
+  const galleryEditFileInput = document.getElementById('galleryEditFileInput');
 
   if (workEditUploadArea && workEditFileInput) {
     workEditUploadArea.addEventListener('click', (event) => {
@@ -1191,13 +1396,58 @@ document.addEventListener('DOMContentLoaded', () => {
       submitWorkComment();
     }
   });
+
+  if (galleryEditUploadArea && galleryEditFileInput) {
+    galleryEditUploadArea.addEventListener('click', () => {
+      galleryEditFileInput.click();
+    });
+
+    galleryEditUploadArea.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      galleryEditUploadArea.classList.add('dragover');
+    });
+
+    galleryEditUploadArea.addEventListener('dragleave', () => {
+      galleryEditUploadArea.classList.remove('dragover');
+    });
+
+    galleryEditUploadArea.addEventListener('drop', (event) => {
+      event.preventDefault();
+      galleryEditUploadArea.classList.remove('dragover');
+      const file = event.dataTransfer.files[0];
+      if (!file) return;
+      galleryEditFileInput.files = event.dataTransfer.files;
+      galleryEditFileInput.dispatchEvent(new Event('change'));
+    });
+
+    galleryEditFileInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        if (galleryEditExistingCoverUrl) {
+          showGalleryEditPreviewFromUrl(galleryEditExistingCoverUrl);
+        } else {
+          resetGalleryEditPreview();
+        }
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        alert('사진 파일만 업로드할 수 있습니다.');
+        galleryEditFileInput.value = '';
+        return;
+      }
+
+      galleryEditSelectedFile = file;
+      showGalleryEditPreviewFile(file);
+    });
+  }
 });
 
 // ─── ESC 키 핸들러 (통합) ─────────────────────────
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
 
-  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal', 'workDetailModal'];
+  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal', 'workDetailModal', 'galleryListModal', 'galleryCloseupModal', 'galleryActionModal', 'galleryEditModal'];
   for (const id of upperModals) {
     const el = document.getElementById(id);
     if (el && el.classList.contains('active')) {

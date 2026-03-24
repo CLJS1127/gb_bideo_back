@@ -16,6 +16,7 @@
         select
             g.id,
             g.title,
+            g.description,
             g.cover_image,
             m.nickname as member_nickname,
             g.work_count,
@@ -29,6 +30,38 @@
           and g.status != 'DELETED'
         order by g.created_datetime desc, g.id desc
     </select>
+
+    <select id="selectGalleryMemberId" resultType="long">
+        select member_id
+        from tbl_gallery
+        where id = #{id}
+          and deleted_datetime is null
+          and status != 'DELETED'
+    </select>
+
+    <update id="updateGallery">
+        update tbl_gallery
+        set
+            title = #{gallery.title},
+            description = #{gallery.description},
+            cover_image = coalesce(#{gallery.coverImage}, cover_image),
+            allow_comment = coalesce(#{gallery.allowComment}, allow_comment),
+            show_similar = coalesce(#{gallery.showSimilar}, show_similar),
+            updated_datetime = now()
+        where id = #{id}
+          and deleted_datetime is null
+          and status != 'DELETED'
+    </update>
+
+    <update id="softDeleteGallery">
+        update tbl_gallery
+        set
+            status = 'DELETED',
+            deleted_datetime = now(),
+            updated_datetime = now()
+        where id = #{id}
+          and deleted_datetime is null
+    </update>
 
     <insert id="insertGalleryWork">
         insert into tbl_gallery_work (

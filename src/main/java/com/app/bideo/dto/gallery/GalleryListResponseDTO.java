@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 public class GalleryListResponseDTO {
     private Long id;
     private String title;
+    private String description;
     private String coverImage;
     private String memberNickname;
     private Integer workCount;

@@ -90,19 +90,19 @@
     <li class="video-gallery-li owner-only" tabindex="-1">
       <div class="video-gallery-outer">
         <div class="video-gallery-padder">
-          <div class="video-gallery-button" role="button" tabindex="0" onclick="window.location.href='/gallery/gallery-register'">
+          <div class="video-gallery-button" role="button" tabindex="0" onclick="openGalleryListModal()">
             <div class="canvas-parent">
               <canvas class="ring-canvas" width="87" height="87"></canvas>
               <div class="icon-container">
-                <svg aria-label="+ 아이콘" class="plus-icon" fill="currentColor"
+                <svg aria-label="리스트 아이콘" class="plus-icon" fill="currentColor"
                      height="44" width="44" role="img" viewBox="0 0 24 24">
-                  <title>+ 아이콘</title>
-                  <path d="M21 11h-8V3a1 1 0 1 0-2 0v8H3a1 1 0 1 0 0 2h8v8a1 1 0 1 0 2 0v-8h8a1 1 0 1 0 0-2Z"></path>
+                  <title>리스트 아이콘</title>
+                  <path d="M5 7.5A1.5 1.5 0 1 1 3.5 6 1.5 1.5 0 0 1 5 7.5Zm0 4.5A1.5 1.5 0 1 1 3.5 10.5 1.5 1.5 0 0 1 5 12Zm0 4.5A1.5 1.5 0 1 1 3.5 15 1.5 1.5 0 0 1 5 16.5ZM8 6h12a1 1 0 1 1 0 2H8a1 1 0 0 1 0-2Zm0 4.5h12a1 1 0 1 1 0 2H8a1 1 0 0 1 0-2Zm0 4.5h12a1 1 0 1 1 0 2H8a1 1 0 0 1 0-2Z"></path>
                 </svg>
               </div>
             </div>
             <div class="video-gallery-button__label">
-              <span class="video-gallery-button__label-text" dir="auto"><span>신규</span></span>
+              <span class="video-gallery-button__label-text" dir="auto"><span>리스트</span></span>
             </div>
           </div>
         </div>
@@ -554,6 +554,191 @@
       <input class="follow-modal__search-input" type="text" placeholder="검색" oninput="filterFollowList(this.value)">
     </div>
     <div class="follow-modal__list" id="followList"></div>
+  </div>
+</div>
+
+<div class="modal-overlay modal-overlay--upper owner-only" id="galleryListModal" onclick="closeModal('galleryListModal', event)">
+  <div class="gallery-list-modal">
+    <div class="gallery-list-modal__top">
+      <h3 class="gallery-list-modal__title">예술관 리스트</h3>
+      <span></span>
+      <button class="btn-close btn-close--ghost" type="button" onclick="closeModal('galleryListModal')">
+        <svg viewBox="0 0 24 24" width="14" height="14">
+          <path d="M15.18 12l7.16-7.16a2.25 2.25 0 10-3.18-3.18L12 8.82 4.84 1.66a2.25 2.25 0 10-3.18 3.18L8.82 12l-7.16 7.16a2.25 2.25 0 103.18 3.18L12 15.18l7.16 7.16a2.25 2.25 0 103.18-3.18z" fill="#111"/>
+        </svg>
+      </button>
+    </div>
+    <div class="gallery-list-modal__body">
+      <button class="gallery-list-modal__item"
+              type="button"
+              th:each="gallery : ${galleries}"
+              th:attr="data-gallery-id=${gallery.id},
+                       data-gallery-title=${gallery.title},
+                       data-gallery-description=${gallery.description},
+                       data-gallery-cover=${gallery.coverImage},
+                       data-gallery-owner=${gallery.memberNickname},
+                       data-gallery-work-count=${gallery.workCount},
+                       data-gallery-like-count=${gallery.likeCount},
+                       data-gallery-view-count=${gallery.viewCount}"
+              onclick="openGalleryCloseupModal(this)">
+        <div class="gallery-list-modal__thumb">
+          <img th:if="${gallery.coverImage != null and !#strings.isEmpty(gallery.coverImage)}"
+               th:src="${gallery.coverImage}"
+               alt="예술관 커버">
+          <span th:if="${gallery.coverImage == null or #strings.isEmpty(gallery.coverImage)}"
+                th:text="${#strings.length(gallery.title) > 2 ? #strings.substring(gallery.title, 0, 2) : gallery.title}">예술관</span>
+        </div>
+        <div class="gallery-list-modal__copy">
+          <strong th:text="${gallery.title}">예술관</strong>
+          <span th:text="|작품 ${gallery.workCount != null ? gallery.workCount : 0}개|">작품 0개</span>
+        </div>
+      </button>
+      <div class="gallery-list-modal__empty" th:if="${#lists.isEmpty(galleries)}">
+        등록된 예술관이 없습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay modal-overlay--upper owner-only" id="galleryCloseupModal" onclick="closeModal('galleryCloseupModal', event)">
+  <div class="closeup__primary-column gallery-closeup-modal-panel">
+    <button class="gallery-closeup__close" type="button" onclick="closeModal('galleryCloseupModal')">&times;</button>
+    <section class="closeup__hero-card gallery-closeup-hero-card">
+      <div class="closeup__media-column">
+        <div class="closeup__image-stage">
+          <div class="closeup__image-wrap gallery-closeup__media-wrap">
+            <img id="galleryCloseupImage" class="closeup__image gallery-closeup__image" src="" alt="예술관 커버">
+            <div id="galleryCloseupFallback" class="gallery-closeup__fallback" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <section class="closeup__discussion-section gallery-closeup__discussion" aria-label="예술관 상세와 댓글">
+        <div class="closeup__info-column">
+          <div class="gallery-closeup__eyebrow">예술관 미리보기</div>
+          <div class="closeup__title-section gallery-closeup__title-section">
+            <h3 id="galleryCloseupTitle" class="closeup__title gallery-closeup__title">예술관</h3>
+            <p id="galleryCloseupDescription" class="closeup__description-text gallery-closeup__description">등록된 예술관 정보입니다.</p>
+          </div>
+            <div class="closeup__creator gallery-closeup__creator">
+              <img class="closeup__creator-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="creator">
+              <div class="closeup__creator-copy">
+                <div class="closeup__creator-name-row">
+                  <span id="galleryCloseupOwner" class="closeup__creator-name">creator</span>
+                  <div class="work-detail-option-wrap owner-only">
+                    <button class="work-detail-option-btn" type="button" aria-label="예술관 옵션 더 보기" onclick="openGalleryActionModal(event)">
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="1.5"></circle>
+                        <circle cx="6" cy="12" r="1.5"></circle>
+                        <circle cx="18" cy="12" r="1.5"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <p class="closeup__creator-handle">BIDEO gallery</p>
+              </div>
+            </div>
+          <div class="gallery-closeup__stats">
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupWorkCount">0</strong>
+              <span>작품</span>
+            </div>
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupLikeCount">0</strong>
+              <span>좋아요</span>
+            </div>
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupViewCount">0</strong>
+              <span>조회수</span>
+            </div>
+          </div>
+        </div>
+        <div class="closeup__divider"></div>
+        <div class="closeup__comments closeup__comments--open gallery-closeup__comments">
+          <button class="closeup__collapsible-header" type="button">
+            댓글
+          </button>
+          <div class="closeup__collapsible-content gallery-closeup__collapsible-content">
+            <div class="closeup__comment-item">
+              <img class="closeup__comment-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="comment">
+              <div class="closeup__comment-body">
+                <div class="closeup__comment-meta">
+                  <span class="closeup__comment-author" id="galleryCloseupCommentAuthor">BIDEO</span>
+                  <span class="closeup__comment-time">방금</span>
+                </div>
+                <p class="closeup__comment-text" id="galleryCloseupCommentText">예술관에 대한 설명과 반응이 이 영역에 표시됩니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="closeup__comment-composer gallery-closeup__composer">
+          <div class="closeup__comment-box">
+            <div class="closeup__comment-input" contenteditable="true" role="textbox" aria-label="댓글 입력" data-placeholder="댓글을 추가하고 대화를 시작하세요."></div>
+            <div class="closeup__comment-toolbar">
+              <div class="closeup__toolbar-right">
+                <button class="closeup__submit-btn closeup__submit-btn--visible" type="button" aria-label="게시">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M4.07 1.37a2.1 2.1 0 0 0-2.8 2.59L3.94 12l-2.69 8.04a2.1 2.1 0 0 0 2.81 2.6l18.1-7.7A3 3 0 0 0 24 12.18v-.36a3 3 0 0 0-1.83-2.76zm-.89 1.86a.1.1 0 0 1 .1-.02l18.11 7.7a1 1 0 0 1 .61.91v.36a1 1 0 0 1-.6.92L3.28 20.8a.1.1 0 0 1-.13-.12L5.72 13H14v-2H5.72L3.16 3.33a.1.1 0 0 1 .02-.1"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+</div>
+
+<div class="modal-overlay work-action-modal-overlay" id="galleryActionModal" onclick="closeModal('galleryActionModal', event)">
+  <div class="work-action-sheet">
+    <button class="danger" type="button" onclick="editCurrentGallery()">수정하기</button>
+    <button class="danger" type="button" onclick="deleteCurrentGallery()">삭제하기</button>
+    <button class="cancel" type="button" onclick="closeModal('galleryActionModal')">취소</button>
+  </div>
+</div>
+
+<div class="modal-overlay work-edit-modal-overlay" id="galleryEditModal" onclick="closeModal('galleryEditModal', event)">
+  <div class="work-edit-modal gallery-edit-modal">
+    <div class="pin-builder work-edit-builder gallery-edit-builder">
+      <div class="builder-header">
+        <div class="builder-header-left"></div>
+        <div class="work-form-header-actions">
+          <button class="publish-btn work-form-primary-btn work-edit-close-btn" type="button" onclick="closeModal('galleryEditModal')">취소</button>
+          <button class="publish-btn work-form-primary-btn" type="button" onclick="submitGalleryEdit()">수정</button>
+        </div>
+      </div>
+      <div class="builder-body">
+        <div class="upload-section">
+          <div class="upload-area" id="galleryEditUploadArea">
+            <div class="upload-placeholder" id="galleryEditPlaceholder">
+              <div class="upload-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" transform="rotate(-90 12 12)"/></svg>
+              </div>
+              <p class="upload-text">사진을 선택하거나 여기로<br>드래그 앤 드롭하세요</p>
+              <p class="upload-subtext">이미지 파일만 업로드할 수 있습니다.</p>
+            </div>
+            <img class="preview-image" id="galleryEditPreviewImage" alt="예술관 미리보기" style="display:none;">
+            <input type="file" id="galleryEditFileInput" accept="image/*">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-group">
+            <label for="galleryEditTitleInput">제목</label>
+            <input type="text" id="galleryEditTitleInput" placeholder="제목을 추가하세요." maxlength="100">
+          </div>
+
+          <div class="form-group">
+            <label for="galleryEditDescriptionInput">설명</label>
+            <textarea id="galleryEditDescriptionInput" placeholder="예술관에 대한 설명을 추가하세요." maxlength="500"></textarea>
+          </div>
+
+          <div class="legal-notice">
+            불법 촬영 콘텐츠 등을 게시하는 경우 Bideo는 한국 전기통신사업법 제22-5(1)조에 미리 해당 콘텐츠의 액세스를 삭제하거나 차단할 수 있으며, 사용자는 관련 법률 및 <a href="#">규정</a>에 따라 처벌을 받을 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
