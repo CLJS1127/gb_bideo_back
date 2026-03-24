@@ -50,9 +50,13 @@ public class ContestController {
     public PageResponseDTO<ContestListResponseDTO> apiList(
             @ModelAttribute ContestSearchDTO searchDTO,
             @RequestParam(defaultValue = "false") boolean mine,
+            @RequestParam(defaultValue = "false") boolean participated,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (mine && userDetails != null) {
             searchDTO.setMemberId(userDetails.getId());
+        }
+        if (participated && userDetails != null) {
+            searchDTO.setParticipatedMemberId(userDetails.getId());
         }
         return contestService.getContestList(searchDTO);
     }
@@ -149,7 +153,6 @@ public class ContestController {
                 .title(contest.getTitle())
                 .organizer(contest.getOrganizer())
                 .category(contest.getCategory())
-                .region(contest.getRegion())
                 .description(contest.getDescription())
                 .coverImage(contest.getCoverImage())
                 .entryStart(contest.getEntryStart())

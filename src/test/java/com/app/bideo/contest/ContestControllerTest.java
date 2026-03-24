@@ -69,7 +69,6 @@ class ContestControllerTest {
                 .title("봄 공모전")
                 .organizer("BIDEO")
                 .category("영상")
-                .region("서울")
                 .description("설명")
                 .coverImage("https://example.com/poster.png")
                 .prizeInfo("100만원")

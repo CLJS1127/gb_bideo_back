@@ -74,7 +74,6 @@ window.addEventListener('load', function () {
         var title = document.getElementById('title');
         var organizer = document.getElementById('organizer');
         var category = document.getElementById('category');
-        var region = document.getElementById('region');
         var entryStart = document.getElementById('startDate') || document.getElementById('entryStart');
         var entryEnd = document.getElementById('endDate') || document.getElementById('entryEnd');
         var resultDate = document.getElementById('resultDate');
@@ -101,7 +100,6 @@ window.addEventListener('load', function () {
         formData.append('title', title.value.trim());
         formData.append('organizer', organizer.value.trim());
         if (category && category.value.trim()) formData.append('category', category.value.trim());
-        if (region && region.value.trim()) formData.append('region', region.value.trim());
         formData.append('entryStart', entryStart.value);
         formData.append('entryEnd', entryEnd.value);
         if (resultDate && resultDate.value) formData.append('resultDate', resultDate.value);

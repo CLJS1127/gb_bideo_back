@@ -10,7 +10,7 @@ import lombok.*;
 public class ContestSearchDTO extends PageRequestDTO {
     private String keyword;
     private String category;
-    private String region;
     private String status;
     private Long memberId;
+    private Long participatedMemberId;
 }

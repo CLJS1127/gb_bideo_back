@@ -30,7 +30,7 @@ class SqlSchemaConsistencyTest {
         assertTrue(gallery.contains("description   text"));
         assertTrue(contest.contains("description text"));
         assertTrue(contest.contains("category"));
-        assertTrue(contest.contains("region"));
+        assertFalse(contest.contains("region"));
     }
 
     @Test

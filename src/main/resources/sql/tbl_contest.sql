@@ -9,7 +9,6 @@ create table tbl_contest (
     title       varchar(255)  not null,
     organizer   varchar(255)  not null,
     category    varchar(100)  null,
-    region      varchar(100)  null,
     description text          null,
     cover_image text          null,
     entry_start date          not null,
@@ -34,7 +33,6 @@ comment on column tbl_contest.member_id is '등록자 FK';
 comment on column tbl_contest.title is '제목';
 comment on column tbl_contest.organizer is '주최/주관 기관';
 comment on column tbl_contest.category is '분야';
-comment on column tbl_contest.region is '지역';
 comment on column tbl_contest.description is '목적 및 내용';
 comment on column tbl_contest.cover_image is '대표 이미지 URL';
 comment on column tbl_contest.entry_start is '접수 시작일';

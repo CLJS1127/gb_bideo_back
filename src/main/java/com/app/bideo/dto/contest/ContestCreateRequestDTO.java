@@ -14,7 +14,6 @@ public class ContestCreateRequestDTO {
     private String title;
     private String organizer;
     private String category;
-    private String region;
     private String description;
     private String coverImage;
     private LocalDate entryStart;

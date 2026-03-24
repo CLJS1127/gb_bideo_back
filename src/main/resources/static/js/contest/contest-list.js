@@ -6,10 +6,12 @@ window.addEventListener('load', function () {
     const searchBtn = document.getElementById('contestSearchBtn');
     const sortBtns = document.querySelectorAll('.sort-btn[data-sort]');
     const myContestBtn = document.getElementById('myContestBtn');
+    const myEntryBtn = document.getElementById('myEntryBtn');
 
     let currentSort = '';
     let currentKeyword = '';
     let currentMine = false;
+    let currentParticipated = false;
     let currentPage = 1;
     const pageSize = 20;
 
@@ -33,8 +35,26 @@ window.addEventListener('load', function () {
     if (myContestBtn) {
         myContestBtn.addEventListener('click', function () {
             currentMine = !currentMine;
+            if (currentMine) {
+                currentParticipated = false;
+                if (myEntryBtn) myEntryBtn.classList.remove('sort-btn--active');
+            }
             currentPage = 1;
             this.classList.toggle('sort-btn--active', currentMine);
+            fetchContests();
+        });
+    }
+
+    // ── 참여한 공모전 토글 ──
+    if (myEntryBtn) {
+        myEntryBtn.addEventListener('click', function () {
+            currentParticipated = !currentParticipated;
+            if (currentParticipated) {
+                currentMine = false;
+                if (myContestBtn) myContestBtn.classList.remove('sort-btn--active');
+            }
+            currentPage = 1;
+            this.classList.toggle('sort-btn--active', currentParticipated);
             fetchContests();
         });
     }
@@ -68,6 +88,7 @@ window.addEventListener('load', function () {
         if (currentSort) params.set('sort', currentSort);
         if (currentKeyword) params.set('keyword', currentKeyword);
         if (currentMine) params.set('mine', 'true');
+        if (currentParticipated) params.set('participated', 'true');
 
         fetch('/contest/api/list?' + params.toString())
             .then(function (res) { return res.json(); })

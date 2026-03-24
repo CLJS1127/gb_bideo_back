@@ -30,14 +30,14 @@
         <if test="category != null and category != ''">
             AND c.category = #{category}
         </if>
-        <if test="region != null and region != ''">
-            AND c.region = #{region}
-        </if>
         <if test="status != null and status != ''">
             AND c.status = #{status}
         </if>
         <if test="memberId != null">
             AND c.member_id = #{memberId}
+        </if>
+        <if test="participatedMemberId != null">
+            AND c.id IN (SELECT ce.contest_id FROM tbl_contest_entry ce WHERE ce.member_id = #{participatedMemberId})
         </if>
         <choose>
             <when test="sort == 'deadline'">
@@ -65,14 +65,14 @@
         <if test="category != null and category != ''">
             AND c.category = #{category}
         </if>
-        <if test="region != null and region != ''">
-            AND c.region = #{region}
-        </if>
         <if test="status != null and status != ''">
             AND c.status = #{status}
         </if>
         <if test="memberId != null">
             AND c.member_id = #{memberId}
+        </if>
+        <if test="participatedMemberId != null">
+            AND c.id IN (SELECT ce.contest_id FROM tbl_contest_entry ce WHERE ce.member_id = #{participatedMemberId})
         </if>
     </select>
 
@@ -83,7 +83,6 @@
         <result property="title" column="title"/>
         <result property="organizer" column="organizer"/>
         <result property="category" column="category"/>
-        <result property="region" column="region"/>
         <result property="description" column="description"/>
         <result property="coverImage" column="cover_image"/>
         <result property="entryStart" column="entry_start"/>
@@ -108,7 +107,6 @@
             c.title,
             c.organizer,
             c.category,
-            c.region,
             c.description,
             c.cover_image,
             c.entry_start,
@@ -162,7 +160,6 @@
             title,
             organizer,
             category,
-            region,
             description,
             cover_image,
             entry_start,
@@ -176,7 +173,6 @@
             #{contest.title},
             #{contest.organizer},
             #{contest.category},
-            #{contest.region},
             #{contest.description},
             #{contest.coverImage},
             #{contest.entryStart},
@@ -316,7 +312,6 @@
         SET title = #{contest.title},
             organizer = #{contest.organizer},
             category = #{contest.category},
-            region = #{contest.region},
             description = #{contest.description},
             cover_image = #{contest.coverImage},
             entry_start = #{contest.entryStart},

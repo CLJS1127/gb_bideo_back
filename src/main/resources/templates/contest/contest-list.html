@@ -129,6 +129,7 @@
                                         <button class="sort-btn" data-sort="deadline" type="button">마감일순</button>
                                         <button class="sort-btn" data-sort="entryStart" type="button">접수일순</button>
                                         <button class="sort-btn" id="myContestBtn" type="button" th:if="${isLoggedIn}">내 공모전</button>
+                                        <button class="sort-btn" id="myEntryBtn" type="button" th:if="${isLoggedIn}">참여한 공모전</button>
                                     </div>
                                     <div class="contest-search-form">
                                         <input type="text" id="contestKeyword" placeholder="공모전 검색" class="contest-search-input">
