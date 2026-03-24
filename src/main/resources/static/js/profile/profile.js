@@ -9,12 +9,70 @@ let workEditTags = [];
 let workEditSelectedFile = null;
 let workEditExistingMediaUrl = null;
 const workEditGallerySelect = document.getElementById('workEditGallerySelect');
+const workEditGallerySelectWrap = document.getElementById('workEditGallerySelectWrap');
+const workEditGallerySelectTrigger = document.getElementById('workEditGallerySelectTrigger');
+const workEditGallerySelectTriggerText = workEditGallerySelectTrigger?.querySelector('.gallery-select-trigger-text');
+const workEditGallerySelectList = document.getElementById('workEditGallerySelectList');
 const workEditPreviewModal = document.getElementById('workEditPreviewModal');
 const workEditPreviewMediaModal = document.getElementById('workEditPreviewMediaModal');
 const workEditPreviewTitleModal = document.getElementById('workEditPreviewTitleModal');
 const workEditPreviewDescriptionModal = document.getElementById('workEditPreviewDescriptionModal');
 const workEditPreviewTagsModal = document.getElementById('workEditPreviewTagsModal');
 const workEditPreviewPriceModal = document.getElementById('workEditPreviewPriceModal');
+
+function syncWorkEditGallerySelectUI() {
+  if (!workEditGallerySelect || !workEditGallerySelectTriggerText || !workEditGallerySelectList) return;
+
+  const selectedOption = workEditGallerySelect.options[workEditGallerySelect.selectedIndex];
+  workEditGallerySelectTriggerText.textContent = selectedOption?.textContent?.trim() || '선택 안 함';
+
+  workEditGallerySelectList.querySelectorAll('.gallery-select-option').forEach((optionElement) => {
+    const isSelected = optionElement.dataset.value === workEditGallerySelect.value;
+    optionElement.classList.toggle('is-selected', isSelected);
+    optionElement.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+  });
+}
+
+function closeWorkEditGallerySelect() {
+  if (!workEditGallerySelectWrap || !workEditGallerySelectTrigger) return;
+  workEditGallerySelectWrap.classList.remove('open');
+  workEditGallerySelectTrigger.setAttribute('aria-expanded', 'false');
+}
+
+function initializeWorkEditGallerySelect() {
+  if (!workEditGallerySelect || !workEditGallerySelectWrap || !workEditGallerySelectTrigger || !workEditGallerySelectList) return;
+
+  syncWorkEditGallerySelectUI();
+
+  workEditGallerySelectTrigger.addEventListener('click', () => {
+    const shouldOpen = !workEditGallerySelectWrap.classList.contains('open');
+    closeWorkEditGallerySelect();
+    if (shouldOpen) {
+      workEditGallerySelectWrap.classList.add('open');
+      workEditGallerySelectTrigger.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  workEditGallerySelectList.querySelectorAll('.gallery-select-option').forEach((optionElement) => {
+    optionElement.addEventListener('click', () => {
+      workEditGallerySelect.value = optionElement.dataset.value || '';
+      syncWorkEditGallerySelectUI();
+      closeWorkEditGallerySelect();
+    });
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!workEditGallerySelectWrap.contains(event.target)) {
+      closeWorkEditGallerySelect();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeWorkEditGallerySelect();
+    }
+  });
+}
 
 function getWorkEditUploadArea() {
   return document.getElementById('workEditUploadArea');
@@ -400,6 +458,7 @@ function populateWorkEditModal(work) {
   if (workEditGallerySelect) {
     workEditGallerySelect.value = work.galleryId ? String(work.galleryId) : '';
   }
+  syncWorkEditGallerySelectUI();
 
   workEditSelectedFile = null;
   document.getElementById('workEditFileInput').value = '';
@@ -431,6 +490,12 @@ async function submitWorkEdit() {
 
   if (!workEditSelectedFile && !workEditExistingMediaUrl) {
     alert('사진 또는 영상을 먼저 업로드해주세요.');
+    return;
+  }
+
+  if (!workEditGallerySelect?.value) {
+    alert('예술관을 선택해주세요.');
+    workEditGallerySelectTrigger?.focus();
     return;
   }
 
@@ -887,6 +952,7 @@ function renderProfileBadges() {
 
 // ─── DOMContentLoaded (통합) ─────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  initializeWorkEditGallerySelect();
   // 하이라이트 링 렌더링
   const highlights = document.querySelectorAll('.video-gallery-li');
   highlights.forEach(li => {

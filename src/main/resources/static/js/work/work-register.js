@@ -14,6 +14,10 @@ const workPreviewDescription = document.getElementById("workPreviewDescription")
 const workPreviewTags = document.getElementById("workPreviewTags");
 const workPreviewPrice = document.getElementById("workPreviewPrice");
 const gallerySelect = document.getElementById("gallerySelect");
+const gallerySelectWrap = document.getElementById("gallerySelectWrap");
+const gallerySelectTrigger = document.getElementById("gallerySelectTrigger");
+const gallerySelectTriggerText = gallerySelectTrigger?.querySelector(".gallery-select-trigger-text");
+const gallerySelectList = document.getElementById("gallerySelectList");
 const formMode = window.workFormMode || { editMode: false, work: null };
 let selectedMediaFile = null;
 let selectedMediaType = null;
@@ -320,6 +324,73 @@ moreToggle.addEventListener("click", () => {
     moreContent.classList.toggle("visible");
 });
 
+function syncGallerySelectUI() {
+    if (!gallerySelect || !gallerySelectTriggerText || !gallerySelectList) {
+        return;
+    }
+
+    const selectedOption = gallerySelect.options[gallerySelect.selectedIndex];
+    gallerySelectTriggerText.textContent = selectedOption?.textContent?.trim() || "선택 안 함";
+
+    gallerySelectList.querySelectorAll(".gallery-select-option").forEach((optionElement) => {
+        const isSelected = optionElement.dataset.value === gallerySelect.value;
+        optionElement.classList.toggle("is-selected", isSelected);
+        optionElement.setAttribute("aria-selected", isSelected ? "true" : "false");
+    });
+}
+
+function closeGallerySelect() {
+    if (!gallerySelectWrap || !gallerySelectTrigger) {
+        return;
+    }
+    gallerySelectWrap.classList.remove("open");
+    gallerySelectTrigger.setAttribute("aria-expanded", "false");
+}
+
+function openGallerySelect() {
+    if (!gallerySelectWrap || !gallerySelectTrigger) {
+        return;
+    }
+    gallerySelectWrap.classList.add("open");
+    gallerySelectTrigger.setAttribute("aria-expanded", "true");
+}
+
+function initializeGallerySelect() {
+    if (!gallerySelect || !gallerySelectWrap || !gallerySelectTrigger || !gallerySelectList) {
+        return;
+    }
+
+    syncGallerySelectUI();
+
+    gallerySelectTrigger.addEventListener("click", () => {
+        if (gallerySelectWrap.classList.contains("open")) {
+            closeGallerySelect();
+            return;
+        }
+        openGallerySelect();
+    });
+
+    gallerySelectList.querySelectorAll(".gallery-select-option").forEach((optionElement) => {
+        optionElement.addEventListener("click", () => {
+            gallerySelect.value = optionElement.dataset.value || "";
+            syncGallerySelectUI();
+            closeGallerySelect();
+        });
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!gallerySelectWrap.contains(event.target)) {
+            closeGallerySelect();
+        }
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            closeGallerySelect();
+        }
+    });
+}
+
 // Publish
 const publishBtn = document.getElementById("publishBtn");
 const titleInput = document.getElementById("titleInput");
@@ -327,6 +398,7 @@ const descriptionInput = document.getElementById("descriptionInput");
 
 function initializeEditForm() {
     if (!formMode.editMode || !formMode.work) {
+        syncGallerySelectUI();
         return;
     }
 
@@ -344,6 +416,7 @@ function initializeEditForm() {
     if (gallerySelect && work.galleryId) {
         gallerySelect.value = String(work.galleryId);
     }
+    syncGallerySelectUI();
 
     const file = work.files?.[0];
     existingMediaUrl = file?.fileUrl || work.thumbnailUrl || null;
@@ -353,6 +426,7 @@ function initializeEditForm() {
     }
 }
 
+initializeGallerySelect();
 initializeEditForm();
 
 publishBtn?.addEventListener("click", async () => {
@@ -368,6 +442,12 @@ publishBtn?.addEventListener("click", async () => {
 
     if (!selectedMediaFile && !existingMediaUrl) {
         alert("사진 또는 영상을 먼저 업로드해주세요.");
+        return;
+    }
+
+    if (!gallerySelect?.value) {
+        alert("예술관을 선택해주세요.");
+        gallerySelectTrigger?.focus();
         return;
     }
 

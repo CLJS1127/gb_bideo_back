@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -17,9 +18,10 @@ public class ProfileController {
     private final GalleryService galleryService;
 
     @GetMapping("/profile")
-    public String profile(Model model) {
-        model.addAttribute("works", workService.getProfileWorks());
+    public String profile(@RequestParam(required = false) Long galleryId, Model model) {
+        model.addAttribute("works", workService.getProfileWorks(galleryId));
         model.addAttribute("galleries", galleryService.getProfileGalleries());
+        model.addAttribute("selectedGalleryId", galleryId);
         return "profile/profile";
     }
 }

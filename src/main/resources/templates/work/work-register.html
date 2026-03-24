@@ -104,13 +104,29 @@
 
                     <div class="product-tag-section">
                         <label>예술관</label>
-                        <select class="gallery-select" id="gallerySelect">
-                            <option value="">선택 안 함</option>
-                            <option th:each="gallery : ${galleries}"
-                                    th:value="${gallery.id}"
-                                    th:text="${gallery.title}"
-                                    th:selected="${editMode and work != null and work.galleryId == gallery.id}">예술관</option>
-                        </select>
+                        <div class="gallery-select-wrap" id="gallerySelectWrap">
+                            <select class="gallery-select" id="gallerySelect">
+                                <option value="">선택 안 함</option>
+                                <option th:each="gallery : ${galleries}"
+                                        th:value="${gallery.id}"
+                                        th:text="${gallery.title}"
+                                        th:selected="${editMode and work != null and work.galleryId == gallery.id}">예술관</option>
+                            </select>
+                            <button class="gallery-select-trigger" id="gallerySelectTrigger" type="button" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="gallery-select-trigger-text">선택 안 함</span>
+                                <svg class="gallery-select-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <ul class="gallery-select-list" id="gallerySelectList" role="listbox">
+                                <li class="gallery-select-option" data-value="" role="option">선택 안 함</li>
+                                <li class="gallery-select-option"
+                                    th:each="gallery : ${galleries}"
+                                    th:attr="data-value=${gallery.id},data-selected=${editMode and work != null and work.galleryId == gallery.id}"
+                                    role="option"
+                                    th:text="${gallery.title}">예술관</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="more-options">

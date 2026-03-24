@@ -188,6 +188,14 @@
         left join tbl_member m on w.member_id = m.id
         where w.deleted_datetime is null
           and w.status != 'DELETED'
+        <if test="galleryId != null">
+            and exists (
+                select 1
+                from tbl_gallery_work gw
+                where gw.work_id = w.id
+                  and gw.gallery_id = #{galleryId}
+            )
+        </if>
         <if test="keyword != null and keyword != ''">
             and (
                 w.title ilike '%' || #{keyword} || '%'
@@ -224,6 +232,14 @@
         from tbl_work w
         where w.deleted_datetime is null
           and w.status != 'DELETED'
+        <if test="galleryId != null">
+            and exists (
+                select 1
+                from tbl_gallery_work gw
+                where gw.work_id = w.id
+                  and gw.gallery_id = #{galleryId}
+            )
+        </if>
         <if test="keyword != null and keyword != ''">
             and (
                 w.title ilike '%' || #{keyword} || '%'

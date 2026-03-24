@@ -44,6 +44,7 @@ public class WorkService {
     // 작품 등록 후 파일/태그까지 함께 저장한다.
     public WorkDetailResponseDTO write(Long memberId, WorkCreateRequestDTO requestDTO, MultipartFile mediaFile) {
         Long resolvedMemberId = resolveMemberId(memberId);
+        Long galleryId = requireGalleryId(requestDTO.getGalleryId());
         String category = resolveCategory(requestDTO.getCategory(), mediaFile);
 
         WorkDTO workDTO = WorkDTO.builder()
@@ -64,7 +65,7 @@ public class WorkService {
         workDAO.save(workDTO);
         saveMediaFile(workDTO.getId(), mediaFile);
         saveTags(workDTO.getId(), requestDTO.getTagIds(), requestDTO.getTagNames());
-        saveGalleryLink(requestDTO.getGalleryId(), workDTO.getId());
+        saveGalleryLink(galleryId, workDTO.getId());
 
         return getWorkDetail(workDTO.getId());
     }
@@ -99,10 +100,11 @@ public class WorkService {
 
     // 프로필 화면에 표시할 작성자 작품 목록 조회
     @Transactional(readOnly = true)
-    public List<WorkListResponseDTO> getProfileWorks() {
+    public List<WorkListResponseDTO> getProfileWorks(Long galleryId) {
         Long memberId = resolveMemberId(null);
         WorkSearchDTO searchDTO = new WorkSearchDTO();
         searchDTO.setMemberId(memberId);
+        searchDTO.setGalleryId(galleryId);
         searchDTO.setPage(1);
         searchDTO.setSize(50);
         return workDAO.findAll(searchDTO);
@@ -117,6 +119,7 @@ public class WorkService {
     public WorkDetailResponseDTO update(Long id, Long memberId, WorkUpdateRequestDTO requestDTO, MultipartFile mediaFile) {
         workDAO.findById(id).orElseThrow(() -> new IllegalArgumentException("work not found"));
         Long resolvedMemberId = resolveMemberId(memberId);
+        Long galleryId = requireGalleryId(requestDTO.getGalleryId());
         Long previousGalleryId = galleryDAO.findGalleryIdByWorkId(id).orElse(null);
 
         WorkDTO workDTO = WorkDTO.builder()
@@ -150,7 +153,7 @@ public class WorkService {
             saveTags(id, requestDTO.getTagIds(), requestDTO.getTagNames());
         }
 
-        updateGalleryLink(previousGalleryId, requestDTO.getGalleryId(), id);
+        updateGalleryLink(previousGalleryId, galleryId, id);
 
         return getWorkDetail(id);
     }
@@ -245,6 +248,13 @@ public class WorkService {
         }
 
         return normalized.isBlank() ? null : normalized;
+    }
+
+    private Long requireGalleryId(Long galleryId) {
+        if (galleryId == null) {
+            throw new IllegalArgumentException("예술관을 선택해주세요.");
+        }
+        return galleryId;
     }
 
     private Long findOrCreateTagId(String tagName) {
