@@ -742,6 +742,57 @@ function openGalleryListModal() {
   document.getElementById('galleryListModal')?.classList.add('active');
 }
 
+function openGalleryCloseupModal(trigger) {
+  if (!trigger) return;
+
+  const title = trigger.dataset.galleryTitle || '예술관';
+  const cover = trigger.dataset.galleryCover || '';
+  const owner = trigger.dataset.galleryOwner || 'bideo';
+  const workCount = Number(trigger.dataset.galleryWorkCount || 0);
+  const likeCount = Number(trigger.dataset.galleryLikeCount || 0);
+  const viewCount = Number(trigger.dataset.galleryViewCount || 0);
+
+  const image = document.getElementById('galleryCloseupImage');
+  const fallback = document.getElementById('galleryCloseupFallback');
+  const titleElement = document.getElementById('galleryCloseupTitle');
+  const ownerElement = document.getElementById('galleryCloseupOwner');
+  const workCountElement = document.getElementById('galleryCloseupWorkCount');
+  const likeCountElement = document.getElementById('galleryCloseupLikeCount');
+  const viewCountElement = document.getElementById('galleryCloseupViewCount');
+  const descriptionElement = document.getElementById('galleryCloseupDescription');
+  const commentAuthorElement = document.getElementById('galleryCloseupCommentAuthor');
+  const commentTextElement = document.getElementById('galleryCloseupCommentText');
+
+  if (titleElement) titleElement.textContent = title;
+  if (ownerElement) ownerElement.textContent = owner;
+  if (workCountElement) workCountElement.textContent = workCount.toLocaleString('ko-KR');
+  if (likeCountElement) likeCountElement.textContent = likeCount.toLocaleString('ko-KR');
+  if (viewCountElement) viewCountElement.textContent = viewCount.toLocaleString('ko-KR');
+  if (descriptionElement) {
+    descriptionElement.textContent = `${owner}님의 예술관입니다. 작품 ${workCount.toLocaleString('ko-KR')}개, 좋아요 ${likeCount.toLocaleString('ko-KR')}개, 조회수 ${viewCount.toLocaleString('ko-KR')}회를 기록했습니다.`;
+  }
+  if (commentAuthorElement) commentAuthorElement.textContent = owner;
+  if (commentTextElement) {
+    commentTextElement.textContent = `${title} 예술관의 대표 반응을 확인해보세요.`;
+  }
+
+  if (image && fallback) {
+    if (cover) {
+      image.src = cover;
+      image.style.display = 'block';
+      fallback.style.display = 'none';
+    } else {
+      image.removeAttribute('src');
+      image.style.display = 'none';
+      fallback.textContent = title.length > 2 ? title.slice(0, 2) : title;
+      fallback.style.display = 'flex';
+    }
+  }
+
+  closeModal('galleryListModal');
+  document.getElementById('galleryCloseupModal')?.classList.add('active');
+}
+
 // ─── Viewer 전용: 팔로우 토글 ─────────────────────
 let isFollowing = false;
 
@@ -1202,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
 
-  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal', 'workDetailModal', 'galleryListModal'];
+  const upperModals = ['badgeModal', 'nicknameModal', 'followModal', 'passwordModal', 'workDetailModal', 'galleryListModal', 'galleryCloseupModal'];
   for (const id of upperModals) {
     const el = document.getElementById(id);
     if (el && el.classList.contains('active')) {

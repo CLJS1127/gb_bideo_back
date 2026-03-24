@@ -22,7 +22,7 @@ import java.util.UUID;
 @Transactional(rollbackFor = Exception.class)
 public class GalleryService {
 
-    private static final Path GALLERY_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "images", "uploads", "gallery");
+    private static final Path GALLERY_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "uploads", "gallery");
 
     private final GalleryDAO galleryDAO;
     private final WorkDAO workDAO;

@@ -36,7 +36,7 @@ import java.util.UUID;
 @Transactional(rollbackFor = Exception.class)
 public class WorkService {
 
-    private static final Path WORK_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "images", "uploads", "work");
+    private static final Path WORK_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "uploads", "work");
 
     private final WorkDAO workDAO;
     private final GalleryDAO galleryDAO;

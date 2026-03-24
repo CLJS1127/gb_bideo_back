@@ -4,12 +4,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    private static final Path STATIC_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "uploads");
+    private static final Path LEGACY_STATIC_IMAGE_UPLOAD_DIR = Paths.get("src", "main", "resources", "static", "images", "uploads");
+    private static final Path LEGACY_UPLOAD_DIR = Paths.get("uploads");
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:///C:/Users/chanh/Desktop/gb_jch/spring/workspace/bideo/uploads/");
+                .addResourceLocations(
+                        STATIC_UPLOAD_DIR.toUri().toString(),
+                        LEGACY_STATIC_IMAGE_UPLOAD_DIR.toUri().toString(),
+                        LEGACY_UPLOAD_DIR.toUri().toString()
+                );
     }
 }

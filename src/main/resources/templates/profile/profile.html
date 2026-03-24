@@ -569,9 +569,17 @@
       </button>
     </div>
     <div class="gallery-list-modal__body">
-      <a class="gallery-list-modal__item"
-         th:each="gallery : ${galleries}"
-         th:href="@{/profile/profile(galleryId=${gallery.id})}">
+      <button class="gallery-list-modal__item"
+              type="button"
+              th:each="gallery : ${galleries}"
+              th:attr="data-gallery-id=${gallery.id},
+                       data-gallery-title=${gallery.title},
+                       data-gallery-cover=${gallery.coverImage},
+                       data-gallery-owner=${gallery.memberNickname},
+                       data-gallery-work-count=${gallery.workCount},
+                       data-gallery-like-count=${gallery.likeCount},
+                       data-gallery-view-count=${gallery.viewCount}"
+              onclick="openGalleryCloseupModal(this)">
         <div class="gallery-list-modal__thumb">
           <img th:if="${gallery.coverImage != null and !#strings.isEmpty(gallery.coverImage)}"
                th:src="${gallery.coverImage}"
@@ -583,11 +591,91 @@
           <strong th:text="${gallery.title}">예술관</strong>
           <span th:text="|작품 ${gallery.workCount != null ? gallery.workCount : 0}개|">작품 0개</span>
         </div>
-      </a>
+      </button>
       <div class="gallery-list-modal__empty" th:if="${#lists.isEmpty(galleries)}">
         등록된 예술관이 없습니다.
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal-overlay modal-overlay--upper owner-only" id="galleryCloseupModal" onclick="closeModal('galleryCloseupModal', event)">
+  <div class="closeup__primary-column gallery-closeup-modal-panel">
+    <button class="gallery-closeup__close" type="button" onclick="closeModal('galleryCloseupModal')">&times;</button>
+    <section class="closeup__hero-card gallery-closeup-hero-card">
+      <div class="closeup__media-column">
+        <div class="closeup__image-stage">
+          <div class="closeup__image-wrap gallery-closeup__media-wrap">
+            <img id="galleryCloseupImage" class="closeup__image gallery-closeup__image" src="" alt="예술관 커버">
+            <div id="galleryCloseupFallback" class="gallery-closeup__fallback" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <section class="closeup__discussion-section gallery-closeup__discussion" aria-label="예술관 상세와 댓글">
+        <div class="closeup__info-column">
+          <div class="gallery-closeup__eyebrow">예술관 미리보기</div>
+          <div class="closeup__title-section gallery-closeup__title-section">
+            <h3 id="galleryCloseupTitle" class="closeup__title gallery-closeup__title">예술관</h3>
+            <p id="galleryCloseupDescription" class="closeup__description-text gallery-closeup__description">등록된 예술관 정보입니다.</p>
+          </div>
+          <div class="closeup__creator gallery-closeup__creator">
+            <img class="closeup__creator-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="creator">
+            <div class="closeup__creator-copy">
+              <div class="closeup__creator-name-row">
+                <span id="galleryCloseupOwner" class="closeup__creator-name">creator</span>
+              </div>
+              <p class="closeup__creator-handle">BIDEO gallery</p>
+            </div>
+          </div>
+          <div class="gallery-closeup__stats">
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupWorkCount">0</strong>
+              <span>작품</span>
+            </div>
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupLikeCount">0</strong>
+              <span>좋아요</span>
+            </div>
+            <div class="gallery-closeup__stat">
+              <strong id="galleryCloseupViewCount">0</strong>
+              <span>조회수</span>
+            </div>
+          </div>
+        </div>
+        <div class="closeup__divider"></div>
+        <div class="closeup__comments closeup__comments--open gallery-closeup__comments">
+          <button class="closeup__collapsible-header" type="button">
+            댓글
+          </button>
+          <div class="closeup__collapsible-content gallery-closeup__collapsible-content">
+            <div class="closeup__comment-item">
+              <img class="closeup__comment-avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="comment">
+              <div class="closeup__comment-body">
+                <div class="closeup__comment-meta">
+                  <span class="closeup__comment-author" id="galleryCloseupCommentAuthor">BIDEO</span>
+                  <span class="closeup__comment-time">방금</span>
+                </div>
+                <p class="closeup__comment-text" id="galleryCloseupCommentText">예술관에 대한 설명과 반응이 이 영역에 표시됩니다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="closeup__comment-composer gallery-closeup__composer">
+          <div class="closeup__comment-box">
+            <div class="closeup__comment-input" contenteditable="true" role="textbox" aria-label="댓글 입력" data-placeholder="댓글을 추가하고 대화를 시작하세요."></div>
+            <div class="closeup__comment-toolbar">
+              <div class="closeup__toolbar-right">
+                <button class="closeup__submit-btn closeup__submit-btn--visible" type="button" aria-label="게시">
+                  <svg viewBox="0 0 24 24" width="16" height="16">
+                    <path d="M4.07 1.37a2.1 2.1 0 0 0-2.8 2.59L3.94 12l-2.69 8.04a2.1 2.1 0 0 0 2.81 2.6l18.1-7.7A3 3 0 0 0 24 12.18v-.36a3 3 0 0 0-1.83-2.76zm-.89 1.86a.1.1 0 0 1 .1-.02l18.11 7.7a1 1 0 0 1 .61.91v.36a1 1 0 0 1-.6.92L3.28 20.8a.1.1 0 0 1-.13-.12L5.72 13H14v-2H5.72L3.16 3.33a.1.1 0 0 1 .02-.1"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
   </div>
 </div>
 
