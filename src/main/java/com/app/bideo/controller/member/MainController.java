@@ -9,19 +9,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainController {
     @GetMapping("/")
-    public String root(Authentication authentication) {
+    public String root(Authentication authentication, Model model) {
         boolean isLoggedIn = authentication != null
                 && authentication.isAuthenticated()
                 && !(authentication instanceof AnonymousAuthenticationToken);
+        model.addAttribute("isLoggedIn", isLoggedIn);
         if (isLoggedIn) {
             return "main/main";
         }
         return "main/intro-main";
     }
 
-    @GetMapping({"/main/intro-main", "/main/main"})
-    public String redirectMainRoutes() {
-        return "redirect:/";
+    @GetMapping("/main")
+    public String main(Model model) {
+        model.addAttribute("isLoggedIn", false);
+        return "main/main";
     }
 
     @GetMapping("/error-page")
