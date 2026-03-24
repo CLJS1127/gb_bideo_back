@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대시보드</title>
-    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/dashboard/dashboard.css">
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/dashboard/dashboard.css">
 </head>
 
-<body data-creator-name="">
+<body th:attr="data-creator-name=${dashboard.creatorName}">
     <div class="dashboard-page">
         <div class="my-page-content">
             <div class="content_title">
                 <div class="title">
-                    <h3><span id="dashboardCreatorName">크리에이터</span>님의 대시보드</h3>
-                    <p class="sub_title"><span id="dashboardCreatorSummary">크리에이터</span>님의 작품, 경매, 공모전, 결제, 정산 현황을 한 화면에서 확인할 수 있습니다.</p>
+                    <h3><span id="dashboardCreatorName" th:text="${dashboard.creatorName}">크리에이터</span>님의 대시보드</h3>
+                    <p class="sub_title"><span id="dashboardCreatorSummary" th:text="${dashboard.creatorName}">크리에이터</span>님의 작품, 경매, 공모전, 결제, 정산 현황을 한 화면에서 확인할 수 있습니다.</p>
                 </div>
                 <div class="title_actions">
                     <button class="dashboard-btn dashboard-btn--ghost" type="button">이번 주</button>
-                    <button class="dashboard-btn dashboard-btn--dark" type="button">작품 업로드</button>
+                    <button class="dashboard-btn dashboard-btn--dark" type="button" onclick="location.href='/work/work-register'">작품 업로드</button>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
                     <a class="tab_link" href="#" data-summary-target=".dashboard-chart" data-summary-label="총 조회수">
                         <dl class="tab_box">
                             <dt class="title">총 조회수</dt>
-                            <dd class="count">128.4K</dd>
+                            <dd class="count" th:text="${dashboard.totalViewsText}">128.4K</dd>
                         </dl>
                     </a>
                 </div>
@@ -38,7 +38,7 @@
                     <a class="tab_link" href="#" data-summary-target=".dashboard-panel--auction" data-summary-label="진행 중 경매">
                         <dl class="tab_box">
                             <dt class="title">진행 중 경매</dt>
-                            <dd class="count">06</dd>
+                            <dd class="count" th:text="${dashboard.activeAuctionsText}">06</dd>
                         </dl>
                     </a>
                 </div>
@@ -46,7 +46,7 @@
                     <a class="tab_link" href="#" data-summary-target=".dashboard-panel--contest" data-summary-label="참여중 공모전">
                         <dl class="tab_box">
                             <dt class="title">참여중 공모전</dt>
-                            <dd class="count">03</dd>
+                            <dd class="count" th:text="${dashboard.participatingContestsText}">03</dd>
                         </dl>
                     </a>
                 </div>
@@ -54,7 +54,7 @@
                     <a class="tab_link" href="#" data-summary-target=".dashboard-panel--payment" data-summary-label="결제 예정">
                         <dl class="tab_box">
                             <dt class="title">결제 예정</dt>
-                            <dd class="count">₩48.2만</dd>
+                            <dd class="count" th:text="${dashboard.pendingPaymentsText}">₩48.2만</dd>
                         </dl>
                     </a>
                 </div>
@@ -68,12 +68,12 @@
                 </div>
                 <div class="dashboard-highlight">
                     <div class="dashboard-highlight__main">
-                        <strong>오늘의 운영 현황을 한 화면에서 확인하세요.</strong>
-                        <p>작품 반응, 경매 진행 상태, 공모전 일정, 결제 예정 내역과 정산 현황을 대시보드에서 바로 확인할 수 있습니다.</p>
+                        <strong th:text="${dashboard.overviewTitle}">오늘의 운영 현황을 한 화면에서 확인하세요.</strong>
+                        <p th:text="${dashboard.overviewDescription}">작품 반응, 경매 진행 상태, 공모전 일정, 결제 예정 내역과 정산 현황을 대시보드에서 바로 확인할 수 있습니다.</p>
                     </div>
                     <div class="dashboard-highlight__side">
                         <span class="dashboard-highlight__label">현재 확인 필요</span>
-                        <strong>9건</strong>
+                        <strong th:text="${dashboard.attentionCountText}">9건</strong>
                     </div>
                 </div>
             </div>
@@ -99,28 +99,22 @@
                                 <line x1="36" y1="108" x2="604" y2="108" class="chart-grid"></line>
                                 <line x1="36" y1="148" x2="604" y2="148" class="chart-grid"></line>
 
-                                <polyline points="60,92 145,68 230,118 315,52 400,82 485,106 570,60" class="chart-line chart-line--view is-active" data-chart-line="view"></polyline>
-                                <polyline points="60,132 145,118 230,148 315,102 400,126 485,142 570,110" class="chart-line chart-line--like" data-chart-line="like"></polyline>
-                                <polyline points="60,154 145,142 230,162 315,128 400,148 485,160 570,134" class="chart-line chart-line--save" data-chart-line="save"></polyline>
+                                <polyline th:attr="points=${dashboard.reactionChart.viewPolylinePoints}" class="chart-line chart-line--view is-active" data-chart-line="view"></polyline>
+                                <polyline th:attr="points=${dashboard.reactionChart.likePolylinePoints}" class="chart-line chart-line--like" data-chart-line="like"></polyline>
+                                <polyline th:attr="points=${dashboard.reactionChart.savePolylinePoints}" class="chart-line chart-line--save" data-chart-line="save"></polyline>
 
                                 <g class="chart-points chart-points--view is-active" data-chart-points="view">
-                                    <circle cx="60" cy="92" r="4"></circle><circle cx="145" cy="68" r="4"></circle><circle cx="230" cy="118" r="4"></circle><circle cx="315" cy="52" r="4"></circle><circle cx="400" cy="82" r="4"></circle><circle cx="485" cy="106" r="4"></circle><circle cx="570" cy="60" r="4"></circle>
+                                    <circle th:each="point : ${dashboard.reactionChart.viewPoints}" th:attr="cx=${point.x},cy=${point.y}" r="4"></circle>
                                 </g>
                                 <g class="chart-points chart-points--like" data-chart-points="like">
-                                    <circle cx="60" cy="132" r="4"></circle><circle cx="145" cy="118" r="4"></circle><circle cx="230" cy="148" r="4"></circle><circle cx="315" cy="102" r="4"></circle><circle cx="400" cy="126" r="4"></circle><circle cx="485" cy="142" r="4"></circle><circle cx="570" cy="110" r="4"></circle>
+                                    <circle th:each="point : ${dashboard.reactionChart.likePoints}" th:attr="cx=${point.x},cy=${point.y}" r="4"></circle>
                                 </g>
                                 <g class="chart-points chart-points--save" data-chart-points="save">
-                                    <circle cx="60" cy="154" r="4"></circle><circle cx="145" cy="142" r="4"></circle><circle cx="230" cy="162" r="4"></circle><circle cx="315" cy="128" r="4"></circle><circle cx="400" cy="148" r="4"></circle><circle cx="485" cy="160" r="4"></circle><circle cx="570" cy="134" r="4"></circle>
+                                    <circle th:each="point : ${dashboard.reactionChart.savePoints}" th:attr="cx=${point.x},cy=${point.y}" r="4"></circle>
                                 </g>
 
                                 <g class="chart-labels">
-                                    <text x="60" y="214">월</text>
-                                    <text x="145" y="214">화</text>
-                                    <text x="230" y="214">수</text>
-                                    <text x="315" y="214">목</text>
-                                    <text x="400" y="214">금</text>
-                                    <text x="485" y="214">토</text>
-                                    <text x="570" y="214">일</text>
+                                    <text th:each="label : ${dashboard.reactionChart.labels}" th:attr="x=${label.x}" y="214" th:text="${label.label}">월</text>
                                 </g>
                             </svg>
                         </div>
@@ -137,15 +131,19 @@
                         <div class="dashboard-dual-list__section">
                             <span class="dashboard-dual-list__label">내가 올린 경매 품목</span>
                             <ul class="dashboard-simple-list">
-                                <li><strong>Blue Motion #03</strong><p>입찰 12건 · 현재 최고가 ₩1,250,000</p></li>
-                                <li><strong>Night Archive</strong><p>경매 등록 완료 · 오늘 21:00 시작</p></li>
+                                <li th:each="item : ${dashboard.myAuctions}">
+                                    <strong th:text="${item.title}">경매 제목</strong>
+                                    <p th:text="${item.description}">설명</p>
+                                </li>
                             </ul>
                         </div>
                         <div class="dashboard-dual-list__section">
                             <span class="dashboard-dual-list__label">참여중인 경매 품목</span>
                             <ul class="dashboard-simple-list">
-                                <li><strong>Morning Dust Poster</strong><p>현재 2위 · 마감까지 3시간</p></li>
-                                <li><strong>Silent Window Edition</strong><p>입찰 참여 완료 · 현재 최고가 추적중</p></li>
+                                <li th:each="item : ${dashboard.participatingAuctions}">
+                                    <strong th:text="${item.title}">경매 제목</strong>
+                                    <p th:text="${item.description}">설명</p>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -158,9 +156,13 @@
                         </div>
                     </div>
                     <ul class="dashboard-simple-list dashboard-simple-list--tagged">
-                        <li><span class="dashboard-tag">모음집</span><div><strong>Blue Archive Collection</strong><p>작품 12개 · 최근 저장 48회</p></div></li>
-                        <li><span class="dashboard-tag">작품</span><div><strong>Quiet Frame #07</strong><p>조회수 8.2K · 좋아요 214</p></div></li>
-                        <li><span class="dashboard-tag">작품</span><div><strong>Shadow Typography</strong><p>조회수 5.7K · 저장 93</p></div></li>
+                        <li th:each="item : ${dashboard.ownedWorks}">
+                            <span class="dashboard-tag" th:text="${item.tag}">작품</span>
+                            <div>
+                                <strong th:text="${item.title}">제목</strong>
+                                <p th:text="${item.description}">설명</p>
+                            </div>
+                        </li>
                     </ul>
                 </section>
 
@@ -174,16 +176,19 @@
                         <div class="dashboard-dual-list__section">
                             <span class="dashboard-dual-list__label">내가 주최한 공모전</span>
                             <ul class="dashboard-simple-list">
-                                <li><strong>2026 BIDEO Motion Award</strong><p>참여작 48개 · 접수 마감까지 5일</p></li>
-                                <li><strong>Spring Poster Open Call</strong><p>심사 진행중 · 결과 발표 03.21</p></li>
+                                <li th:each="item : ${dashboard.hostedContests}">
+                                    <strong th:text="${item.title}">공모전 제목</strong>
+                                    <p th:text="${item.description}">설명</p>
+                                </li>
                             </ul>
                         </div>
                         <div class="dashboard-dual-list__section">
                             <span class="dashboard-dual-list__label">참여중인 공모전</span>
                             <ul class="dashboard-simple-list">
-                                <li><strong>Seoul Visual Challenge</strong><p>출품 완료 · 현재 조회수 1.2K</p></li>
-                                <li><strong>Brand Film Contest 2026</strong><p>예선 심사중 · 결과 대기</p></li>
-                                <li><strong>Minimal Poster Invitational</strong><p>제출 완료 · 접수 확인됨</p></li>
+                                <li th:each="item : ${dashboard.participatingContests}">
+                                    <strong th:text="${item.title}">공모전 제목</strong>
+                                    <p th:text="${item.description}">설명</p>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -196,12 +201,15 @@
                         </div>
                     </div>
                     <ul class="dashboard-simple-list dashboard-simple-list--tagged">
-                        <li><span class="dashboard-tag dashboard-tag--gold">작품</span><div><strong>Morning Dust Poster</strong><p>전시중 · 북마크 122</p></div></li>
-                        <li><span class="dashboard-tag dashboard-tag--gold">작품</span><div><strong>Blue Motion #03</strong><p>전시중 · 입찰 연동중</p></div></li>
-                        <li><span class="dashboard-tag dashboard-tag--gold">작품</span><div><strong>Night Archive</strong><p>전시 예정 · 03.16 오픈</p></div></li>
+                        <li th:each="item : ${dashboard.galleries}">
+                            <span class="dashboard-tag" th:classappend="${item.goldTag} ? ' dashboard-tag--gold' : ''" th:text="${item.tag}">작품</span>
+                            <div>
+                                <strong th:text="${item.title}">예술관 제목</strong>
+                                <p th:text="${item.description}">설명</p>
+                            </div>
+                        </li>
                     </ul>
                 </section>
-
             </div>
 
             <div class="dashboard-grid dashboard-grid--double">
@@ -212,37 +220,13 @@
                         </div>
                     </div>
                     <ul class="dashboard-history-list">
-                        <li>
-                            <span class="dashboard-tag">구매내역</span>
+                        <li th:each="item : ${dashboard.paymentHistory}">
+                            <span class="dashboard-tag" th:classappend="${item.goldTag} ? ' dashboard-tag--gold' : ''" th:text="${item.tag}">구매내역</span>
                             <div class="dashboard-history-list__content">
-                                <strong>Quiet Frame #07 구매 완료</strong>
-                                <p>2026.03.12 · 일반 결제 · 카드 승인 완료</p>
+                                <strong th:text="${item.title}">결제 제목</strong>
+                                <p th:text="${item.description}">결제 설명</p>
                             </div>
-                            <strong class="dashboard-history-list__amount">₩152,000</strong>
-                        </li>
-                        <li>
-                            <span class="dashboard-tag dashboard-tag--gold">입찰내역</span>
-                            <div class="dashboard-history-list__content">
-                                <strong>Blue Motion #03 최고 입찰 참여중</strong>
-                                <p>2026.03.12 · 현재 최고 입찰가 기준</p>
-                            </div>
-                            <strong class="dashboard-history-list__amount">₩1,250,000</strong>
-                        </li>
-                        <li>
-                            <span class="dashboard-tag">결제대기</span>
-                            <div class="dashboard-history-list__content">
-                                <strong>Morning Dust Poster 결제 예정</strong>
-                                <p>2026.03.13 · 자동 결제 시도 예정</p>
-                            </div>
-                            <strong class="dashboard-history-list__amount">₩330,000</strong>
-                        </li>
-                        <li>
-                            <span class="dashboard-tag dashboard-tag--gold">입찰결제</span>
-                            <div class="dashboard-history-list__content">
-                                <strong>Silent Window Edition 낙찰 결제 대기</strong>
-                                <p>2026.03.13 · 낙찰 후 24시간 이내 결제 필요</p>
-                            </div>
-                            <strong class="dashboard-history-list__amount">₩870,000</strong>
+                            <strong class="dashboard-history-list__amount" th:text="${item.amount}">₩0</strong>
                         </li>
                     </ul>
                 </section>
@@ -254,9 +238,10 @@
                         </div>
                     </div>
                     <ul class="dashboard-simple-list">
-                        <li><strong>3월 1주차 정산</strong><p>판매 4건 · 승인 대기 · 예상 정산금 ₩3,420,000</p></li>
-                        <li><strong>2월 마지막 정산</strong><p>정산 완료 · 입금 예정일 03.14</p></li>
-                        <li><strong>서류 확인 필요</strong><p>사업자 정보 재확인 후 다음 정산에 반영됩니다.</p></li>
+                        <li th:each="item : ${dashboard.settlements}">
+                            <strong th:text="${item.title}">정산 제목</strong>
+                            <p th:text="${item.description}">정산 설명</p>
+                        </li>
                     </ul>
                 </section>
 
@@ -267,16 +252,17 @@
                         </div>
                     </div>
                     <ul class="dashboard-simple-list">
-                        <li><strong>찜한 작품 반응 증가</strong><p>위시리스트 저장 작품 4개에서 오늘 조회수 18% 상승</p></li>
-                        <li><strong>새 알림 6건</strong><p>입찰 갱신 2건 · 결제 알림 1건 · 작품 반응 3건</p></li>
-                        <li><strong>예술관 저장 유입</strong><p>예술관에서 바로 찜한 사용자가 지난주 대비 +12명</p></li>
+                        <li th:each="item : ${dashboard.wishlistNotifications}">
+                            <strong th:text="${item.title}">요약 제목</strong>
+                            <p th:text="${item.description}">요약 설명</p>
+                        </li>
                     </ul>
                 </section>
             </div>
         </div>
     </div>
 
-    <script src="../../static/js/dashboard/dashboard.js"></script>
+    <script src="/js/dashboard/dashboard.js"></script>
 </body>
 
 </html>
