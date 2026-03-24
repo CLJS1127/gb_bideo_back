@@ -24,6 +24,8 @@ create table tbl_gallery (
         references tbl_member (id)
 );
 
+-- alter table tbl_gallery alter column  cover_image type text;
+
 comment on table tbl_gallery is '예술관';
 comment on column tbl_gallery.id is '예술관 번호 (PK)';
 comment on column tbl_gallery.member_id is '소유자 FK';
