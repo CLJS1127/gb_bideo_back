@@ -1,6 +1,7 @@
 package com.app.bideo.mapper.gallery;
 
 import com.app.bideo.domain.interaction.CommentVO;
+import com.app.bideo.dto.common.TagResponseDTO;
 import com.app.bideo.dto.gallery.GalleryCreateRequestDTO;
 import com.app.bideo.dto.gallery.GalleryDetailResponseDTO;
 import com.app.bideo.dto.gallery.GalleryListResponseDTO;
@@ -28,9 +29,17 @@ public interface GalleryMapper {
 
     void insertGalleryWork(@Param("galleryId") Long galleryId, @Param("workId") Long workId);
 
+    void insertGalleryTag(@Param("galleryId") Long galleryId, @Param("tagId") Long tagId);
+
     int deleteGalleryWorkByWorkId(@Param("workId") Long workId);
 
+    int deleteGalleryWorkByGalleryId(@Param("galleryId") Long galleryId);
+
+    int deleteGalleryTagByGalleryId(@Param("galleryId") Long galleryId);
+
     Long selectGalleryIdByWorkId(@Param("workId") Long workId);
+
+    List<Long> selectWorkIdsByGalleryId(@Param("galleryId") Long galleryId);
 
     void refreshGalleryWorkCount(@Param("galleryId") Long galleryId);
 
@@ -40,5 +49,24 @@ public interface GalleryMapper {
 
     List<CommentResponseDTO> selectGalleryCommentsByGalleryId(@Param("galleryId") Long galleryId);
 
+    List<TagResponseDTO> selectGalleryTagsByGalleryId(@Param("galleryId") Long galleryId);
+
+    Long selectTagIdByName(@Param("tagName") String tagName);
+
+    void insertTag(@Param("tagName") String tagName);
+
+    boolean existsGalleryLike(@Param("memberId") Long memberId, @Param("galleryId") Long galleryId);
+
+    void insertGalleryLike(@Param("memberId") Long memberId, @Param("galleryId") Long galleryId);
+
+    int deleteGalleryLike(@Param("memberId") Long memberId, @Param("galleryId") Long galleryId);
+
+    int increaseGalleryLikeCount(@Param("galleryId") Long galleryId);
+
+    int decreaseGalleryLikeCount(@Param("galleryId") Long galleryId);
+
+    Integer selectGalleryLikeCount(@Param("galleryId") Long galleryId);
+
     List<GalleryListResponseDTO> selectRecommendedGalleries();
+
 }
