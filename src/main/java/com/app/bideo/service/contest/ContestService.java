@@ -10,6 +10,7 @@ import com.app.bideo.dto.contest.ContestSearchDTO;
 import com.app.bideo.dto.contest.ContestWorkOptionDTO;
 import com.app.bideo.dto.contest.ContestUpdateRequestDTO;
 import com.app.bideo.mapper.contest.ContestMapper;
+import com.app.bideo.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ContestService {
 
     private final ContestMapper contestMapper;
+    private final NotificationService notificationService;
 
     public Long createContest(Long memberId, ContestCreateRequestDTO contestCreateRequestDTO) {
         validateContestCreateRequest(contestCreateRequestDTO);
@@ -92,6 +94,13 @@ public class ContestService {
 
         contestMapper.insertContestEntry(memberId, requestDTO);
         contestMapper.increaseContestEntryCount(requestDTO.getContestId());
+
+        if (ownerId != null) {
+            notificationService.createNotification(
+                    ownerId, memberId, "CONTEST_ENTRY", "CONTEST",
+                    requestDTO.getContestId(), "공모전에 새로운 참가 작품이 등록되었습니다."
+            );
+        }
     }
 
     @Transactional(readOnly = true)

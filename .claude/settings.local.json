@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew compileJava)",
+      "Bash(find C:gb_0900_ljsspringworkspacebideosrcmainjavacomappbideo -type f -name *Order*)"
+    ]
+  }
+}

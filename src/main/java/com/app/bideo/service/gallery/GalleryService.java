@@ -12,6 +12,7 @@ import com.app.bideo.dto.interaction.CommentResponseDTO;
 import com.app.bideo.repository.gallery.GalleryDAO;
 import com.app.bideo.repository.work.WorkDAO;
 import com.app.bideo.service.interaction.CommentService;
+import com.app.bideo.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,7 @@ public class GalleryService {
     private final GalleryDAO galleryDAO;
     private final WorkDAO workDAO;
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     // 예술관 등록
     public void write(Long memberId, GalleryCreateRequestDTO requestDTO, MultipartFile coverFile) {
@@ -122,7 +124,7 @@ public class GalleryService {
 
     public List<CommentResponseDTO> writeComment(Long galleryId, Long memberId, String content) {
         Long resolvedMemberId = resolveMemberId(memberId);
-        galleryDAO.findMemberIdById(galleryId)
+        Long galleryOwnerId = galleryDAO.findMemberIdById(galleryId)
                 .orElseThrow(() -> new IllegalArgumentException("gallery not found"));
 
         String normalizedContent = content == null ? "" : content.trim();
@@ -141,12 +143,20 @@ public class GalleryService {
                         .build()
         );
         galleryDAO.increaseCommentCount(galleryId);
+
+        notificationService.createNotification(
+                galleryOwnerId, resolvedMemberId, "COMMENT", "GALLERY", galleryId,
+                normalizedContent.length() > 50
+                        ? normalizedContent.substring(0, 50) + "..."
+                        : normalizedContent
+        );
+
         return getComments(galleryId);
     }
 
     public LikeToggleResponseDTO toggleLike(Long galleryId, Long memberId) {
         Long resolvedMemberId = resolveMemberId(memberId);
-        galleryDAO.findMemberIdById(galleryId)
+        Long galleryOwnerId = galleryDAO.findMemberIdById(galleryId)
                 .orElseThrow(() -> new IllegalArgumentException("gallery not found"));
 
         boolean liked = galleryDAO.existsLike(resolvedMemberId, galleryId);
@@ -156,6 +166,10 @@ public class GalleryService {
         } else {
             galleryDAO.saveLike(resolvedMemberId, galleryId);
             galleryDAO.increaseLikeCount(galleryId);
+            notificationService.createNotification(
+                    galleryOwnerId, resolvedMemberId, "LIKE", "GALLERY", galleryId,
+                    "예술관에 좋아요를 눌렀습니다."
+            );
         }
 
         return LikeToggleResponseDTO.builder()

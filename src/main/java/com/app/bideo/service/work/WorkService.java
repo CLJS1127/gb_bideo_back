@@ -16,7 +16,9 @@ import com.app.bideo.dto.work.WorkListResponseDTO;
 import com.app.bideo.dto.work.WorkSearchDTO;
 import com.app.bideo.dto.work.WorkUpdateRequestDTO;
 import com.app.bideo.repository.auction.AuctionDAO;
+import com.app.bideo.repository.interaction.BookmarkDAO;
 import com.app.bideo.service.interaction.CommentService;
+import com.app.bideo.service.notification.NotificationService;
 import com.app.bideo.repository.gallery.GalleryDAO;
 import com.app.bideo.repository.work.WorkDAO;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,9 @@ public class WorkService {
     private final WorkDAO workDAO;
     private final AuctionDAO auctionDAO;
     private final GalleryDAO galleryDAO;
+    private final BookmarkDAO bookmarkDAO;
     private final CommentService commentService;
+    private final NotificationService notificationService;
 
     // 작품 등록 후 파일/태그까지 함께 저장한다.
     public WorkDetailResponseDTO write(Long memberId, WorkCreateRequestDTO requestDTO, MultipartFile mediaFile) {
@@ -103,6 +107,7 @@ public class WorkService {
                 .orElseThrow(() -> new IllegalArgumentException("work not found"));
         Long memberId = resolveAuthenticatedMemberId();
         detail.setIsLiked(memberId != null && workDAO.existsLike(memberId, id));
+        detail.setIsBookmarked(memberId != null && bookmarkDAO.exists(memberId, "WORK", id));
         detail.setHasActiveAuction(workDAO.existsActiveAuctionByWorkId(id));
         if (detail.getComments() != null) {
             detail.getComments().forEach(comment ->
@@ -196,12 +201,20 @@ public class WorkService {
                         .build()
         );
         workDAO.increaseCommentCount(workId);
+
+        notificationService.createNotification(
+                workDetail.getMemberId(), resolvedMemberId, "COMMENT", "WORK", workId,
+                normalizedContent.length() > 50
+                        ? normalizedContent.substring(0, 50) + "..."
+                        : normalizedContent
+        );
+
         return getWorkDetail(workId);
     }
 
     public LikeToggleResponseDTO toggleLike(Long workId, Long memberId) {
         Long resolvedMemberId = resolveMemberId(memberId);
-        getWorkDetail(workId);
+        WorkDetailResponseDTO workDetail = getWorkDetail(workId);
 
         boolean liked = workDAO.existsLike(resolvedMemberId, workId);
         if (liked) {
@@ -210,6 +223,10 @@ public class WorkService {
         } else {
             workDAO.saveLike(resolvedMemberId, workId);
             workDAO.increaseLikeCount(workId);
+            notificationService.createNotification(
+                    workDetail.getMemberId(), resolvedMemberId, "LIKE", "WORK", workId,
+                    "작품에 좋아요를 눌렀습니다."
+            );
         }
 
         return LikeToggleResponseDTO.builder()
