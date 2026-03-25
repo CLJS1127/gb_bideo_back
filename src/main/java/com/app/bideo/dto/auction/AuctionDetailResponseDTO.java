@@ -19,6 +19,9 @@ public class AuctionDetailResponseDTO {
     private Integer startingPrice;
     private Integer currentPrice;
     private Integer bidCount;
+    private Integer bidIncrement;
+    private Integer estimateLow;
+    private Integer estimateHigh;
     private Double feeRate;
     private Integer deadlineHours;
     private LocalDateTime startedAt;

@@ -332,6 +332,11 @@ function submitWorkShare() {
 function requestWorkAuction() {
   if (!currentWorkDetail?.id) return;
 
+  if (currentWorkDetail.hasActiveAuction) {
+    window.location.href = `/auction/auction-detail/${currentWorkDetail.id}`;
+    return;
+  }
+
   alert(`"${currentWorkDetail.title || '작품'}" 경매요청을 보냈습니다.`);
 }
 
@@ -434,8 +439,9 @@ async function renderWorkDetailModal(work) {
 
   const priceEl = document.getElementById('workDetailPrice');
   const formattedPrice = formatWorkPrice(work.price);
-  priceEl.textContent = formattedPrice;
-  priceEl.style.display = formattedPrice ? 'block' : 'none';
+  const shouldShowPrice = !work.hasActiveAuction && !!formattedPrice;
+  priceEl.textContent = shouldShowPrice ? formattedPrice : '';
+  priceEl.style.display = shouldShowPrice ? 'block' : 'none';
 
   const tagsEl = document.getElementById('workDetailTags');
   const tags = (work.tags || []).map((tag) => `#${tag.tagName}`).join(' ');
@@ -472,13 +478,15 @@ async function renderWorkDetailModal(work) {
     auctionWrap.style.display = 'flex';
   }
   if (auctionButton) {
-    auctionButton.disabled = !isViewerWork;
-    auctionButton.classList.toggle('is-disabled', !isViewerWork);
-    auctionButton.title = isViewerWork ? '경매요청하기' : '경매하기';
-    auctionButton.setAttribute('aria-label', isViewerWork ? '경매요청하기' : '경매하기');
+    const canOpenAuctionDetail = Boolean(work.hasActiveAuction);
+    auctionButton.disabled = !canOpenAuctionDetail && !isViewerWork;
+    auctionButton.classList.toggle('is-disabled', !canOpenAuctionDetail && !isViewerWork);
+    const auctionText = work.hasActiveAuction ? '경매중' : (isViewerWork ? '경매요청하기' : '경매하기');
+    auctionButton.title = auctionText;
+    auctionButton.setAttribute('aria-label', auctionText);
   }
   if (auctionLabel) {
-    auctionLabel.textContent = isViewerWork ? '경매요청하기' : '경매하기';
+    auctionLabel.textContent = work.hasActiveAuction ? '경매중' : (isViewerWork ? '경매요청하기' : '경매하기');
   }
 
   syncLikeButtonIcon(document.getElementById('workDetailLikeButton'), Boolean(work.isLiked), 24);
@@ -1013,7 +1021,7 @@ function openGalleryListModal() {
   document.getElementById('galleryListModal')?.classList.add('active');
 }
 
-function openGalleryCloseupModal(trigger) {
+async function openGalleryCloseupModal(trigger) {
   if (!trigger) return;
 
   const galleryId = Number(trigger.dataset.galleryId || 0);
@@ -1034,6 +1042,7 @@ function openGalleryCloseupModal(trigger) {
   const likeCountElement = document.getElementById('galleryCloseupLikeCount');
   const viewCountElement = document.getElementById('galleryCloseupViewCount');
   const descriptionElement = document.getElementById('galleryCloseupDescription');
+  const tagsElement = document.getElementById('galleryCloseupTags');
 
   currentGalleryDetail = {
     id: galleryId,
@@ -1047,6 +1056,28 @@ function openGalleryCloseupModal(trigger) {
     isLiked
   };
 
+  let detail = null;
+  if (galleryId) {
+    try {
+      const response = await fetch(`/api/galleries/${galleryId}`);
+      if (response.ok) {
+        detail = await response.json();
+      }
+    } catch (error) {
+      detail = null;
+    }
+  }
+
+  const normalizedTags = Array.isArray(detail?.tags)
+    ? detail.tags
+      .map((tag) => String(tag?.tagName || '').trim())
+      .filter(Boolean)
+    : [];
+  const fallbackProfileTags = Array.from(document.querySelectorAll('.profile-tag'))
+    .map((element) => String(element.textContent || '').trim())
+    .filter(Boolean);
+  const visibleTags = normalizedTags.length ? normalizedTags : fallbackProfileTags;
+
   if (titleElement) titleElement.textContent = title;
   if (ownerElement) ownerElement.textContent = owner;
   if (workCountElement) workCountElement.textContent = workCount.toLocaleString('ko-KR');
@@ -1055,6 +1086,12 @@ function openGalleryCloseupModal(trigger) {
   syncGalleryLikeButtonState(isLiked);
   if (descriptionElement) {
     descriptionElement.textContent = description || `${owner}님의 예술관입니다. 작품 ${workCount.toLocaleString('ko-KR')}개, 좋아요 ${likeCount.toLocaleString('ko-KR')}개, 조회수 ${viewCount.toLocaleString('ko-KR')}회를 기록했습니다.`;
+  }
+  if (tagsElement) {
+    tagsElement.innerHTML = visibleTags
+      .map((tagName) => `<span class="gallery-closeup__tag">#${escapeHtml(tagName.replace(/^#/, ''))}</span>`)
+      .join('');
+    tagsElement.style.display = visibleTags.length ? 'flex' : 'none';
   }
   if (image && fallback) {
     if (cover) {
@@ -1297,6 +1334,7 @@ async function submitGalleryComment() {
   if (!currentGalleryDetail?.id) return;
 
   const input = document.getElementById('galleryCloseupCommentInput');
+  const submitButton = document.getElementById('galleryCloseupCommentSubmit');
   if (!input) return;
 
   const content = input.textContent?.trim() || '';
@@ -1326,6 +1364,7 @@ async function submitGalleryComment() {
 
     const comments = await response.json();
     input.textContent = '';
+    submitButton?.classList.remove('closeup__submit-btn--visible');
     renderGalleryComments(comments);
     scrollToLatestComment('galleryCloseupCommentsContainer', '.closeup__comment-item');
   } catch (error) {
@@ -1819,6 +1858,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   galleryCloseupCommentSubmit?.addEventListener('click', submitGalleryComment);
+  galleryCloseupCommentInput?.addEventListener('input', () => {
+    const hasContent = (galleryCloseupCommentInput.textContent || '').trim().length > 0;
+    galleryCloseupCommentSubmit?.classList.toggle('closeup__submit-btn--visible', hasContent);
+  });
   galleryCloseupCommentInput?.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -1905,6 +1948,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('workDetailAuctionButton')?.addEventListener('click', () => {
+    if (currentWorkDetail?.hasActiveAuction) {
+      requestWorkAuction();
+      return;
+    }
+
     const isViewerWork = currentWorkDetail && currentMemberId !== null
       ? currentWorkDetail.memberId !== currentMemberId
       : !IS_OWNER;

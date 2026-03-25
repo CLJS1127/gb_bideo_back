@@ -97,6 +97,10 @@ public class WorkDAO {
         return workMapper.selectWorkCommentsByWorkId(workId);
     }
 
+    public boolean existsActiveAuctionByWorkId(Long workId) {
+        return workMapper.existsActiveAuctionByWorkId(workId);
+    }
+
     public boolean existsLike(Long memberId, Long workId) {
         return workMapper.existsWorkLike(memberId, workId);
     }

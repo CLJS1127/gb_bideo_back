@@ -18,6 +18,8 @@ const gallerySelectWrap = document.getElementById("gallerySelectWrap");
 const gallerySelectTrigger = document.getElementById("gallerySelectTrigger");
 const gallerySelectTriggerText = gallerySelectTrigger?.querySelector(".gallery-select-trigger-text");
 const gallerySelectList = document.getElementById("gallerySelectList");
+const auctionStartingPriceInput = document.getElementById("auctionBidPriceInput");
+const auctionDeadlineHoursInput = document.getElementById("auctionDeadlineHoursInput");
 const formMode = window.workFormMode || { editMode: false, work: null };
 let selectedMediaFile = null;
 let selectedMediaType = null;
@@ -291,10 +293,11 @@ const tradeToggle = document.getElementById("tradeToggle");
 const priceInput = document.getElementById("priceInput");
 
 function updatePriceInput() {
-    priceInput.disabled = !tradeToggle.checked;
-    priceInput.style.opacity = tradeToggle.checked ? "1" : "0.5";
-    priceInput.style.cursor = tradeToggle.checked ? "text" : "not-allowed";
-    if (!tradeToggle.checked) priceInput.value = "";
+    const isPriceEnabled = tradeToggle.checked || auctionToggle.checked;
+    priceInput.disabled = !isPriceEnabled;
+    priceInput.style.opacity = isPriceEnabled ? "1" : "0.5";
+    priceInput.style.cursor = isPriceEnabled ? "text" : "not-allowed";
+    if (!isPriceEnabled) priceInput.value = "";
 }
 
 const auctionToggle = document.getElementById("auctionToggle");
@@ -451,6 +454,12 @@ publishBtn?.addEventListener("click", async () => {
         return;
     }
 
+    if (tradeToggle.checked && !rawPrice) {
+        alert("가격을 입력해주세요.");
+        priceInput.focus();
+        return;
+    }
+
     const formData = new FormData();
     const workId = formMode.work?.id;
     const resolvedMediaType = selectedMediaType || formMode.work?.category || "VIDEO";
@@ -468,6 +477,35 @@ publishBtn?.addEventListener("click", async () => {
     formData.append("linkUrl", "");
     if (gallerySelect?.value) {
         formData.append("galleryId", gallerySelect.value);
+    }
+    if (auctionToggle.checked) {
+        const rawAuctionStartingPrice = auctionStartingPriceInput?.value.replace(/,/g, "").trim();
+        const rawAuctionDeadlineHours = auctionDeadlineHoursInput?.value.trim();
+        const resolvedAskingPrice = rawPrice ? Number(rawPrice) : Number(rawAuctionStartingPrice);
+
+        if (!rawAuctionStartingPrice) {
+            alert("입찰가를 입력해주세요.");
+            auctionStartingPriceInput?.focus();
+            return;
+        }
+
+        if (!rawAuctionDeadlineHours || Number(rawAuctionDeadlineHours) <= 0) {
+            alert("입찰 마감기한을 선택해주세요.");
+            return;
+        }
+
+        if (rawPrice && Number(rawAuctionStartingPrice) > Number(rawPrice)) {
+            alert("입찰가는 작품 가격보다 클 수 없습니다.");
+            auctionStartingPriceInput?.focus();
+            return;
+        }
+
+        formData.append("auctionEnabled", "true");
+        if (!rawPrice) {
+            formData.append("price", resolvedAskingPrice);
+        }
+        formData.append("auctionStartingPrice", Number(rawAuctionStartingPrice));
+        formData.append("auctionDeadlineHours", Number(rawAuctionDeadlineHours));
     }
     if (selectedMediaFile) {
         formData.append("mediaFile", selectedMediaFile);

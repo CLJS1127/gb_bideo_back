@@ -15,4 +15,5 @@ public class GalleryUpdateRequestDTO {
     private Boolean allowComment;
     private Boolean showSimilar;
     private List<Long> tagIds;
+    private List<String> tagNames;
 }

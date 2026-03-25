@@ -17,5 +17,6 @@ public class GalleryCreateRequestDTO {
     private Boolean allowComment;
     private Boolean showSimilar;
     private List<Long> tagIds;
+    private List<String> tagNames;
     private List<Long> workIds;
 }

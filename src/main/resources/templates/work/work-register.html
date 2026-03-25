@@ -145,6 +145,35 @@
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
+                            <div class="work-auction-config" id="auctionConfig">
+                                <div class="work-auction-config__section">
+                                    <div class="work-auction-config__row">
+                                        <span class="work-auction-config__label">입찰가</span>
+                                        <div class="work-auction-config__price-wrap">
+                                            <input class="work-auction-config__price-input" type="text" id="auctionBidPriceInput" placeholder="입력해주세요">
+                                            <span class="work-auction-config__price-unit">원</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="work-auction-config__section work-auction-config__section--deadline">
+                                    <div class="work-auction-config__header">
+                                        <span class="work-auction-config__title">입찰 마감기한</span>
+                                        <div class="work-auction-config__selected-wrap">
+                                            <span class="work-auction-config__selected" id="auctionDeadlineSelected">0시간</span>
+                                            <button class="work-auction-config__reset" type="button" id="auctionDeadlineReset">초기화</button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="auctionDeadlineHoursInput" value="0">
+                                    <div class="work-auction-config__deadline-btns">
+                                        <button class="work-auction-config__deadline-btn" type="button" data-hours="1">1시간</button>
+                                        <button class="work-auction-config__deadline-btn" type="button" data-hours="3">3시간</button>
+                                        <button class="work-auction-config__deadline-btn" type="button" data-hours="6">6시간</button>
+                                        <button class="work-auction-config__deadline-btn" type="button" data-hours="12">12시간</button>
+                                        <button class="work-auction-config__deadline-btn" type="button" data-hours="24">1일</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -180,6 +209,13 @@
     const workRegisterTradeToggle = document.getElementById("tradeToggle");
     const workRegisterAuctionToggle = document.getElementById("auctionToggle");
     const workRegisterPriceInput = document.getElementById("priceInput");
+    const workRegisterAuctionConfig = document.getElementById("auctionConfig");
+    const workRegisterAuctionBidPriceInput = document.getElementById("auctionBidPriceInput");
+    const workRegisterAuctionDeadlineSelected = document.getElementById("auctionDeadlineSelected");
+    const workRegisterAuctionDeadlineReset = document.getElementById("auctionDeadlineReset");
+    const workRegisterAuctionDeadlineHoursInput = document.getElementById("auctionDeadlineHoursInput");
+    const workRegisterAuctionDeadlineButtons = document.querySelectorAll("#auctionConfig .work-auction-config__deadline-btn");
+    let workRegisterAuctionTotalHours = 0;
 
     function syncWorkRegisterPriceInput() {
         const isPriceEnabled =
@@ -194,6 +230,31 @@
         }
     }
 
+    function syncWorkRegisterAuctionConfig() {
+        const isAuctionEnabled = workRegisterAuctionToggle.checked;
+        workRegisterAuctionConfig.style.display = isAuctionEnabled ? "flex" : "none";
+
+        if (!isAuctionEnabled) {
+            workRegisterAuctionBidPriceInput.value = "";
+            workRegisterAuctionTotalHours = 0;
+            workRegisterAuctionDeadlineSelected.textContent = "0시간";
+            workRegisterAuctionDeadlineHoursInput.value = "0";
+        }
+    }
+
+    function formatWorkRegisterDeadline(hours) {
+        if (hours <= 0) return "0시간";
+        const months = Math.floor(hours / 720);
+        const days = Math.floor((hours % 720) / 24);
+        const remainHours = hours % 24;
+
+        return [
+            months > 0 ? `${months}달` : "",
+            days > 0 ? `${days}일` : "",
+            remainHours > 0 ? `${remainHours}시간` : ""
+        ].filter(Boolean).join(" ");
+    }
+
     function formatWorkRegisterPrice(value) {
         const numbersOnly = value.replace(/,/g, "").replace(/\D/g, "");
         return numbersOnly ? Number(numbersOnly).toLocaleString("ko-KR") : "";
@@ -201,6 +262,7 @@
 
     function queueWorkRegisterPriceSync() {
         window.setTimeout(syncWorkRegisterPriceInput, 0);
+        window.setTimeout(syncWorkRegisterAuctionConfig, 0);
     }
 
     workRegisterTradeToggle.addEventListener("change", queueWorkRegisterPriceSync);
@@ -208,6 +270,25 @@
 
     workRegisterPriceInput.addEventListener("input", (event) => {
         event.target.value = formatWorkRegisterPrice(event.target.value);
+    });
+    workRegisterAuctionBidPriceInput.addEventListener("input", (event) => {
+        event.target.value = formatWorkRegisterPrice(event.target.value);
+    });
+    workRegisterAuctionDeadlineButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            workRegisterAuctionTotalHours += Number(button.dataset.hours || 0);
+            workRegisterAuctionDeadlineSelected.textContent =
+                formatWorkRegisterDeadline(workRegisterAuctionTotalHours);
+            workRegisterAuctionDeadlineHoursInput.value = String(workRegisterAuctionTotalHours);
+
+            button.classList.add("work-auction-config__deadline-btn--active");
+            window.setTimeout(() => button.classList.remove("work-auction-config__deadline-btn--active"), 300);
+        });
+    });
+    workRegisterAuctionDeadlineReset.addEventListener("click", () => {
+        workRegisterAuctionTotalHours = 0;
+        workRegisterAuctionDeadlineSelected.textContent = "0시간";
+        workRegisterAuctionDeadlineHoursInput.value = "0";
     });
 
     queueWorkRegisterPriceSync();

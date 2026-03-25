@@ -1,6 +1,7 @@
 package com.app.bideo.service.work;
 
 import com.app.bideo.auth.member.CustomUserDetails;
+import com.app.bideo.domain.auction.AuctionVO;
 import com.app.bideo.domain.interaction.CommentVO;
 import com.app.bideo.domain.work.WorkFileVO;
 import com.app.bideo.domain.work.WorkTagVO;
@@ -14,6 +15,7 @@ import com.app.bideo.dto.work.WorkFileRequestDTO;
 import com.app.bideo.dto.work.WorkListResponseDTO;
 import com.app.bideo.dto.work.WorkSearchDTO;
 import com.app.bideo.dto.work.WorkUpdateRequestDTO;
+import com.app.bideo.repository.auction.AuctionDAO;
 import com.app.bideo.service.interaction.CommentService;
 import com.app.bideo.repository.gallery.GalleryDAO;
 import com.app.bideo.repository.work.WorkDAO;
@@ -31,6 +33,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +41,7 @@ import java.util.Objects;
 public class WorkService {
 
     private final WorkDAO workDAO;
+    private final AuctionDAO auctionDAO;
     private final GalleryDAO galleryDAO;
     private final CommentService commentService;
 
@@ -66,6 +70,7 @@ public class WorkService {
         saveMediaFile(workDTO.getId(), mediaFile);
         saveTags(workDTO.getId(), requestDTO.getTagIds(), requestDTO.getTagNames());
         saveGalleryLink(galleryId, workDTO.getId());
+        saveAuctionIfRequested(workDTO.getId(), resolvedMemberId, requestDTO.getPrice(), requestDTO.getAuctionEnabled(), requestDTO.getAuctionStartingPrice(), requestDTO.getAuctionDeadlineHours());
 
         return getWorkDetail(workDTO.getId());
     }
@@ -98,6 +103,7 @@ public class WorkService {
                 .orElseThrow(() -> new IllegalArgumentException("work not found"));
         Long memberId = resolveAuthenticatedMemberId();
         detail.setIsLiked(memberId != null && workDAO.existsLike(memberId, id));
+        detail.setHasActiveAuction(workDAO.existsActiveAuctionByWorkId(id));
         if (detail.getComments() != null) {
             detail.getComments().forEach(comment ->
                     comment.setIsLiked(memberId != null && commentService.isLikedByCurrentMember(comment.getId()))
@@ -303,6 +309,46 @@ public class WorkService {
                     return workDAO.findTagIdByName(tagName)
                             .orElseThrow(() -> new IllegalStateException("tag save failed"));
                 });
+    }
+
+    private void saveAuctionIfRequested(Long workId, Long sellerId, Integer askingPrice, Boolean auctionEnabled, Integer startingPrice, Integer deadlineHours) {
+        if (!Boolean.TRUE.equals(auctionEnabled)) {
+            return;
+        }
+        if (startingPrice == null || startingPrice <= 0) {
+            throw new IllegalArgumentException("입찰가를 입력해주세요.");
+        }
+        if (deadlineHours == null || deadlineHours <= 0) {
+            throw new IllegalArgumentException("입찰 마감기한을 선택해주세요.");
+        }
+        int resolvedAskingPrice = askingPrice != null && askingPrice > 0 ? askingPrice : startingPrice;
+        if (startingPrice > resolvedAskingPrice) {
+            throw new IllegalArgumentException("입찰가는 작품 가격보다 클 수 없습니다.");
+        }
+
+        LocalDateTime startedAt = LocalDateTime.now();
+        int feeAmount = (int) Math.round(resolvedAskingPrice * 0.10d);
+        int settlementAmount = Math.max(0, resolvedAskingPrice - feeAmount);
+
+        auctionDAO.save(
+                AuctionVO.builder()
+                        .workId(workId)
+                        .sellerId(sellerId)
+                        .askingPrice(resolvedAskingPrice)
+                        .startingPrice(startingPrice)
+                        .bidIncrement(10000)
+                        .currentPrice(startingPrice)
+                        .bidCount(0)
+                        .feeRate(0.10d)
+                        .feeAmount(feeAmount)
+                        .settlementAmount(settlementAmount)
+                        .deadlineHours(deadlineHours)
+                        .startedAt(startedAt)
+                        .closingAt(startedAt.plusHours(deadlineHours))
+                        .cancelThreshold(0.70d)
+                        .status("ACTIVE")
+                        .build()
+        );
     }
 
     private void saveGalleryLink(Long galleryId, Long workId) {

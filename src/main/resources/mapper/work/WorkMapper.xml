@@ -387,6 +387,15 @@
         order by c.created_datetime asc, c.id asc
     </select>
 
+    <select id="existsActiveAuctionByWorkId" resultType="boolean">
+        select exists (
+            select 1
+            from tbl_auction
+            where work_id = #{workId}
+              and status = 'ACTIVE'
+        )
+    </select>
+
     <select id="existsWorkLike" resultType="boolean">
         select exists (
             select 1

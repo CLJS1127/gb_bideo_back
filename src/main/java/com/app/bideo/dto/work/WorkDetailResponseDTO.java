@@ -37,6 +37,7 @@ public class WorkDetailResponseDTO {
     private List<CommentResponseDTO> comments;
     private Boolean isLiked;
     private Boolean isBookmarked;
+    private Boolean hasActiveAuction;
     private LocalDateTime createdDatetime;
     private LocalDateTime updatedDatetime;
     private LocalDateTime deletedDatetime;

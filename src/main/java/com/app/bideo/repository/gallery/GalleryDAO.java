@@ -1,6 +1,7 @@
 package com.app.bideo.repository.gallery;
 
 import com.app.bideo.domain.interaction.CommentVO;
+import com.app.bideo.dto.common.TagResponseDTO;
 import com.app.bideo.dto.gallery.GalleryCreateRequestDTO;
 import com.app.bideo.dto.gallery.GalleryDetailResponseDTO;
 import com.app.bideo.dto.gallery.GalleryListResponseDTO;
@@ -51,12 +52,20 @@ public class GalleryDAO {
         galleryMapper.insertGalleryWork(galleryId, workId);
     }
 
+    public void saveTag(Long galleryId, Long tagId) {
+        galleryMapper.insertGalleryTag(galleryId, tagId);
+    }
+
     public void deleteWorkLinkByWorkId(Long workId) {
         galleryMapper.deleteGalleryWorkByWorkId(workId);
     }
 
     public void deleteWorkLinksByGalleryId(Long galleryId) {
         galleryMapper.deleteGalleryWorkByGalleryId(galleryId);
+    }
+
+    public void deleteTagsByGalleryId(Long galleryId) {
+        galleryMapper.deleteGalleryTagByGalleryId(galleryId);
     }
 
     public Optional<Long> findGalleryIdByWorkId(Long workId) {
@@ -81,6 +90,18 @@ public class GalleryDAO {
 
     public List<CommentResponseDTO> findCommentsByGalleryId(Long galleryId) {
         return galleryMapper.selectGalleryCommentsByGalleryId(galleryId);
+    }
+
+    public List<TagResponseDTO> findTagsByGalleryId(Long galleryId) {
+        return galleryMapper.selectGalleryTagsByGalleryId(galleryId);
+    }
+
+    public Optional<Long> findTagIdByName(String tagName) {
+        return Optional.ofNullable(galleryMapper.selectTagIdByName(tagName));
+    }
+
+    public void saveTagName(String tagName) {
+        galleryMapper.insertTag(tagName);
     }
 
     public boolean existsLike(Long memberId, Long galleryId) {

@@ -58,6 +58,9 @@ async function submitGallery() {
     formData.append("allowComment", "true");
     formData.append("showSimilar", "true");
     formData.append("coverFile", coverFile);
+    tags.forEach((tag) => {
+        formData.append("tagNames", tag);
+    });
 
     try {
         const response = await fetch("/api/galleries", {
@@ -130,7 +133,11 @@ tagInput.addEventListener("keydown", (e) => {
 });
 
 function addTag(text) {
-    tags.push(text);
+    const normalized = text.startsWith("#") ? text : `#${text}`;
+    if (tags.includes(normalized)) {
+        return;
+    }
+    tags.push(normalized);
     renderTags();
 }
 

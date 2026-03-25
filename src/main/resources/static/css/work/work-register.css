@@ -659,6 +659,131 @@ body {
     display: flex;
 }
 
+.work-auction-config {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 8px;
+}
+
+.work-auction-config__section {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.work-auction-config__row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.work-auction-config__label,
+.work-auction-config__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    white-space: nowrap;
+}
+
+.work-auction-config__price-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 2px solid #222;
+    padding-bottom: 4px;
+}
+
+.work-auction-config__price-input {
+    width: 170px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    font-weight: 700;
+    color: #c3b72e;
+    text-align: right;
+    background: transparent;
+    font-family: inherit;
+}
+
+.work-auction-config__price-unit {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+}
+
+.work-auction-config__section--deadline {
+    border-bottom: 1px solid #ebebeb;
+    padding-bottom: 12px;
+}
+
+.work-auction-config__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.work-auction-config__selected-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.work-auction-config__selected {
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
+}
+
+.work-auction-config__reset {
+    padding: 3px 8px;
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    background: none;
+    color: rgba(34, 34, 34, 0.5);
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.work-auction-config__reset:hover {
+    background: #f7f7f7;
+}
+
+.work-auction-config__deadline-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.work-auction-config__deadline-btn {
+    flex: 0 0 auto;
+    min-width: 87px;
+    padding: 9px 8px;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    background: #fff;
+    color: #222;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+    text-align: center;
+}
+
+.work-auction-config__deadline-btn:hover:not(.work-auction-config__deadline-btn--active) {
+    border-color: #aaa;
+}
+
+.work-auction-config__deadline-btn--active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+}
+
 .toggle-row {
     display: flex;
     align-items: center;

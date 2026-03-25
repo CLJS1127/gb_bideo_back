@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>경매 상세 — BIDEO</title>
-    <link rel="icon" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/font.css">
-    <link rel="stylesheet" href="../../static/css/auction/auction-detail.css">
+    <link rel="icon" href="/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" href="/css/common/font.css">
+    <link rel="stylesheet" href="/css/common/global.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/auction/auction-detail.css">
 </head>
-<body>
+<body th:attr="data-work-id=${workId}">
 
 <div class="page">
 <div class="detail-grid">
@@ -22,44 +22,32 @@
 
         <!-- 영상 플레이어 -->
         <div class="player-wrap">
-            <video id="mainPlayer" controls muted loop>
-                <source src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" type="video/mp4">
-            </video>
+            <div id="auctionMainMedia"></div>
         </div>
 
         <!-- 썸네일 갤러리 스트립 -->
-        <div class="thumb-strip">
-            <div class="thumb-card active" onclick="switchMedia(this, 0)">
-                <video src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" muted></video>
-            </div>
-            <div class="thumb-card" onclick="switchMedia(this, 1)">
-                <video src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" muted></video>
-            </div>
-            <div class="thumb-card" onclick="switchMedia(this, 2)">
-                <video src="../../static/images/main_vidios/BIDEO_introduce_video.mp4" muted></video>
-            </div>
-        </div>
+        <div class="thumb-strip" id="auctionThumbStrip"></div>
 
         <!-- 작품 제목 + 메타 -->
         <div class="work-header">
-            <h1 class="work-title">The Method of Drawing — 2017-12</h1>
+            <h1 class="work-title" id="auctionWorkTitle">작품 제목</h1>
             <div class="work-meta">
                 <!-- 업로드 날짜 -->
                 <div class="meta-item">
                     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <span>2026.01.01 업로드</span>
+                    <span id="auctionUploadDate">업로드 날짜</span>
                 </div>
                 <span class="meta-sep">·</span>
                 <!-- 조회수 -->
                 <div class="meta-item">
                     <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    <span>조회수 2,847회</span>
+                    <span id="auctionViewCount">조회수 0회</span>
                 </div>
                 <!-- 좋아요 / 공유 -->
                 <div class="work-actions">
                     <button class="action-btn" id="likeBtn" onclick="toggleLike(this)">
                         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        <span id="likeCount">128</span>
+                        <span id="likeCount">0</span>
                     </button>
                     <button class="action-btn">
                         <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -71,15 +59,11 @@
 
         <!-- 아티스트 / 크리에이터 프로필 -->
         <div class="creator-section">
-            <div class="creator-avatar">이</div>
+            <div class="creator-avatar" id="auctionCreatorAvatar">B</div>
             <div class="creator-info">
-                <div class="creator-name">이건용 · Lee Kun-Yong</div>
-                <div class="creator-sub">현대미술 작가 · (b.1942) · 작품 34점</div>
-                <div class="creator-tags">
-                    <span class="creator-tag">행위예술</span>
-                    <span class="creator-tag">개념미술</span>
-                    <span class="creator-tag">드로잉</span>
-                </div>
+                <div class="creator-name" id="auctionCreatorName">작가명</div>
+                <div class="creator-sub" id="auctionCreatorSub">경매 진행 중</div>
+                <div class="creator-tags" id="auctionCreatorTags"></div>
             </div>
             <button class="btn-follow">+ 팔로우</button>
         </div>
@@ -87,14 +71,7 @@
         <!-- 내용 -->
         <div class="statement-section">
             <div class="section-label">내용</div>
-            <div class="statement-quote">
-                작가는 모름지기 자기 앞에 현전해 있는 화면에 무언가를 그리지만,
-                저는 화면을 제 앞에 두고 제 신체가 허용하는 것만큼만,
-                화면을 보지 않은 상태에서 선을 그립니다. 그것은 제가 평면을 보고
-                그 위에 무언가를 의식이 지시하는 대로 그리는 것이 아니라
-                제 팔이 움직여서 그어진 선을 통해, 내 신체가 평면을 지각해
-                나아가는 과정을 보여주는 것이지요.
-            </div>
+            <div class="statement-quote" id="auctionDescription">작품 설명</div>
 <!--            <div class="statement-source">이건용, 류한승, 『작가와의 대화』, 『이벤트-로지컬』, 갤러리현대, 2016</div>-->
 <!--        </div>-->
 
@@ -141,38 +118,38 @@
             <div class="countdown-label">경매 마감까지</div>
             <div class="countdown-timer">
                 <div class="cd-unit">
-                    <div class="cd-num" id="cdDay">11</div>
+                    <div class="cd-num" id="cdDay">00</div>
                     <div class="cd-lbl">일</div>
                 </div>
                 <div class="cd-sep">:</div>
                 <div class="cd-unit">
-                    <div class="cd-num" id="cdHour">04</div>
+                    <div class="cd-num" id="cdHour">00</div>
                     <div class="cd-lbl">시간</div>
                 </div>
                 <div class="cd-sep">:</div>
                 <div class="cd-unit">
-                    <div class="cd-num" id="cdMin">22</div>
+                    <div class="cd-num" id="cdMin">00</div>
                     <div class="cd-lbl">분</div>
                 </div>
                 <div class="cd-sep">:</div>
                 <div class="cd-unit">
-                    <div class="cd-num" id="cdSec">08</div>
+                    <div class="cd-num" id="cdSec">00</div>
                     <div class="cd-lbl">초</div>
                 </div>
             </div>
-            <div class="deadline-date">마감 2026년 03월 28일 (토) 오후 04:00</div>
+            <div class="deadline-date" id="auctionDeadlineDate">마감 일정</div>
         </div>
 
         <!-- 현재 최고가 -->
         <div class="price-section">
             <div class="price-label">현재 최고가</div>
             <div>
-                <span class="price-value" id="curPrice">5,000,000</span>
+                <span class="price-value" id="curPrice">0</span>
                 <span class="price-unit">원</span>
             </div>
             <div class="bid-count-row">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span class="bid-count">현재 입찰 <strong id="bidCount">3</strong>명 · 추정가 700만~1500만원</span>
+                <span class="bid-count" id="auctionBidMeta">현재 입찰 <strong id="bidCount">0</strong>명</span>
             </div>
         </div>
 
@@ -182,12 +159,12 @@
             <div class="bid-ctrl-wrap">
                 <button class="bid-ctrl-btn" onclick="changeBid(-500000)">−</button>
                 <div class="bid-amount-display">
-                    <span id="bidDisplay">5,500,000</span>원
+                    <span id="bidDisplay">0</span>원
                 </div>
                 <button class="bid-ctrl-btn" onclick="changeBid(500000)">+</button>
             </div>
             <div class="bid-unit-row">
-                <div class="bid-unit-info">입찰 단위 <strong>500,000원</strong></div>
+                <div class="bid-unit-info" id="auctionBidUnit">입찰 단위 <strong>10,000원</strong></div>
                 <div class="est-purchase">낙찰 수수료 <strong>포함 예상</strong></div>
             </div>
         </div>
@@ -197,8 +174,10 @@
             <button class="btn-bid-main" onclick="doBid()">입찰하기</button>
             <div class="btn-row-2">
                 <button class="btn-sub">
-                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                    관심 작품
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"></path>
+                    </svg>
+                    찜하기
                 </button>
                 <button class="btn-sub">
                     <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -229,6 +208,6 @@
 </div>
 </div>
 
-<script src="../../static/js/auction/auction-detail.js"></script>
+<script src="/js/auction/auction-detail.js"></script>
 </body>
 </html>

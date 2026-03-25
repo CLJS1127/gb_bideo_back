@@ -803,18 +803,24 @@ body[data-owner="true"] .profile-avatar {
 
 .gallery-closeup__close {
   position: absolute;
-  top: 14px;
+  top: 12px;
   right: 16px;
-  width: 36px;
-  height: 36px;
   border: none;
-  border-radius: 50%;
-  background: rgba(17, 17, 17, 0.55);
-  color: #fff;
-  font-size: 26px;
-  line-height: 1;
+  background: transparent;
+  color: #111;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 0.9;
   cursor: pointer;
-  z-index: 2;
+  z-index: 5;
+  padding: 4px 8px;
+  opacity: 0.92;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.gallery-closeup__close:hover {
+  opacity: 1;
+  transform: scale(1.04);
 }
 
 .gallery-closeup-hero-card {
@@ -825,6 +831,7 @@ body[data-owner="true"] .profile-avatar {
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  max-height: calc(100vh - 48px);
 }
 
 .gallery-closeup-hero-card.closeup__hero-card {
@@ -849,7 +856,8 @@ body[data-owner="true"] .profile-avatar {
 .gallery-closeup__media-wrap {
   position: relative;
   width: 100%;
-  min-height: 640px;
+  height: 100%;
+  min-height: min(640px, calc(100vh - 48px));
   background: #f3f5f7;
   overflow: hidden;
   cursor: default;
@@ -889,9 +897,11 @@ body[data-owner="true"] .profile-avatar {
 .gallery-closeup__discussion {
   background: #fff;
   padding: 28px 28px 24px;
-  display: flex;
-  flex-direction: column;
-  min-height: 640px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: min(820px, calc(100vh - 48px));
+  overflow: hidden;
 }
 
 .gallery-closeup__discussion.closeup__discussion-section {
@@ -995,6 +1005,26 @@ body[data-owner="true"] .profile-avatar {
   padding-bottom: 18px;
 }
 
+.gallery-closeup__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.gallery-closeup__tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f5f5f5;
+  color: #3f3f46;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .gallery-closeup__description {
   color: #4f4f4f;
 }
@@ -1029,6 +1059,9 @@ body[data-owner="true"] .profile-avatar {
 
 .gallery-closeup__comments {
   margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .gallery-closeup__comments .closeup__collapsible-header {
@@ -1043,8 +1076,11 @@ body[data-owner="true"] .profile-avatar {
 }
 
 .gallery-closeup__collapsible-content {
-  height: auto;
-  overflow: visible;
+  height: 100%;
+  overflow-y: auto;
+  min-height: 0;
+  padding-right: 4px;
+  padding-bottom: 8px;
 }
 
 .gallery-closeup__comments .closeup__comment-item {
@@ -1088,46 +1124,93 @@ body[data-owner="true"] .profile-avatar {
 }
 
 .gallery-closeup__composer {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 18px;
+  padding-bottom: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  border-top: 1px solid #efefef;
 }
 
 .gallery-closeup__composer .closeup__comment-box {
-  border: 1px solid #e5e5e5;
-  border-radius: 18px;
-  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 2px solid #cdcdcd;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.15s ease;
+}
+
+.gallery-closeup__composer .closeup__comment-box:focus-within {
+  border-color: #111;
 }
 
 .gallery-closeup__composer .closeup__comment-input {
-  min-height: 44px;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 13px 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 52px;
+  max-height: 146px;
   outline: none;
   color: #111;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  white-space: pre-wrap;
+  background: transparent;
 }
 
 .gallery-closeup__composer .closeup__comment-input:empty::before {
   content: attr(data-placeholder);
-  color: #9a9a9a;
+  color: #767676;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .gallery-closeup__composer .closeup__comment-toolbar {
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
+  align-items: center;
+  padding: 4px 10px 4px 4px;
+}
+
+.gallery-closeup__composer .closeup__toolbar-right {
+  display: flex;
+  align-items: center;
 }
 
 .gallery-closeup__composer .closeup__submit-btn {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: none;
   background: #111;
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+
+.gallery-closeup__composer .closeup__submit-btn--visible {
+  display: inline-flex;
 }
 
 .gallery-closeup__composer .closeup__submit-btn svg {
   fill: #fff;
+}
+
+.gallery-closeup__composer .closeup__submit-btn:hover {
+  background: #2a2a2a;
 }
 
 @media (max-width: 900px) {
@@ -1137,11 +1220,17 @@ body[data-owner="true"] .profile-avatar {
 
   .gallery-closeup-hero-card {
     grid-template-columns: 1fr;
+    max-height: calc(100vh - 24px);
   }
 
-  .gallery-closeup__media-wrap,
   .gallery-closeup__discussion {
-    min-height: auto;
+    min-height: 0;
+    height: auto;
+  }
+
+  .gallery-closeup__media-wrap {
+    min-height: 280px;
+    max-height: 38vh;
   }
 }
 

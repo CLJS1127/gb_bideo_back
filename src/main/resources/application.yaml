@@ -22,7 +22,7 @@ spring:
       enabled: true
       file-size-threshold: 10MB
       max-file-size: 20MB
-      max-request-size: 25MB
+      max-request-size: 2
   data:
     redis:
       host: localhost
