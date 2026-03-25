@@ -7,7 +7,7 @@ build/
 ex/
 key/
 *.zip
-application-*
+application*
 
 ### STS ###
 .apt_generated

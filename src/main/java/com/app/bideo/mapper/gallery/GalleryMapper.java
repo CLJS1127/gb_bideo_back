@@ -4,6 +4,8 @@ import com.app.bideo.domain.interaction.CommentVO;
 import com.app.bideo.dto.gallery.GalleryCreateRequestDTO;
 import com.app.bideo.dto.gallery.GalleryDetailResponseDTO;
 import com.app.bideo.dto.gallery.GalleryListResponseDTO;
+import com.app.bideo.dto.gallery.SearchGalleryCoverDataDTO;
+import com.app.bideo.dto.gallery.SearchGallerySuggestionDTO;
 import com.app.bideo.dto.gallery.GalleryUpdateRequestDTO;
 import com.app.bideo.dto.interaction.CommentResponseDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -41,4 +43,8 @@ public interface GalleryMapper {
     List<CommentResponseDTO> selectGalleryCommentsByGalleryId(@Param("galleryId") Long galleryId);
 
     List<GalleryListResponseDTO> selectRecommendedGalleries();
+
+    List<SearchGallerySuggestionDTO> selectRecommendedSearchGalleries();
+
+    SearchGalleryCoverDataDTO selectSearchGalleryCover(@Param("id") Long id);
 }
