@@ -246,4 +246,26 @@
 
     </select>
 
+    <select id="selectRecommendedSearchGalleries" resultType="SearchGallerySuggestionDTO">
+        select
+            g.id,
+            g.title,
+            case when nullif(g.cover_image, '') is not null then true else false end as has_cover_image
+        from tbl_gallery g
+        where g.deleted_datetime is null
+          and g.status = 'EXHIBITING'
+        order by g.view_count desc, g.like_count desc
+        limit 8
+    </select>
+
+    <select id="selectSearchGalleryCover" resultType="SearchGalleryCoverDataDTO">
+        select
+            g.cover_image,
+            g.updated_datetime
+        from tbl_gallery g
+        where g.id = #{id}
+          and g.deleted_datetime is null
+          and g.status = 'EXHIBITING'
+    </select>
+
 </mapper>

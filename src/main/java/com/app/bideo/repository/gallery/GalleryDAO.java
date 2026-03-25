@@ -2,6 +2,8 @@ package com.app.bideo.repository.gallery;
 
 import com.app.bideo.domain.interaction.CommentVO;
 import com.app.bideo.dto.gallery.GalleryCreateRequestDTO;
+import com.app.bideo.dto.gallery.SearchGalleryCoverDataDTO;
+import com.app.bideo.dto.gallery.SearchGallerySuggestionDTO;
 import com.app.bideo.dto.gallery.GalleryDetailResponseDTO;
 import com.app.bideo.dto.gallery.GalleryListResponseDTO;
 import com.app.bideo.dto.gallery.GalleryUpdateRequestDTO;
@@ -105,5 +107,13 @@ public class GalleryDAO {
 
     public int findLikeCount(Long galleryId) {
         return Optional.ofNullable(galleryMapper.selectGalleryLikeCount(galleryId)).orElse(0);
+    }
+
+    public List<SearchGallerySuggestionDTO> findRecommendedSearchGalleries() {
+        return galleryMapper.selectRecommendedSearchGalleries();
+    }
+
+    public Optional<SearchGalleryCoverDataDTO> findSearchGalleryCover(Long id) {
+        return Optional.ofNullable(galleryMapper.selectSearchGalleryCover(id));
     }
 }
