@@ -603,8 +603,7 @@
         width: min(360px, calc(100vw - 24px));
     }
 
-    /* ── 만들기·알림·메시지 패널 위치 보정 ── */
-    #create-menu > .layout-fixed,
+    /* ── 알림·메시지 패널 위치 보정 ── */
     #update-menu > .layout-fixed,
     #message-menu > .layout-fixed {
         margin-left: 0 !important;
@@ -686,8 +685,7 @@
         height: 40px;
     }
 
-    /* ── 만들기·알림·메시지 패널 → 바텀 시트 ── */
-    #create-menu > .layout-fixed,
+    /* ── 알림·메시지 패널 → 바텀 시트 ── */
     #update-menu > .layout-fixed,
     #message-menu > .layout-fixed {
         width: 100vw !important;

@@ -314,12 +314,12 @@ window.addEventListener('load', () => {
       dropdown.innerHTML =
           '<div class="dropdown-menu__section">' +
           '<div class="dropdown-menu__header">현재 로그인</div>' +
-          '<div class="dropdown-menu__user">' +
+          '<a href="/profile" class="dropdown-menu__user" style="text-decoration:none;color:inherit;cursor:pointer;">' +
           '<img class="dropdown-menu__avatar" src="' + LOCAL_PROFILE_IMAGE + '" alt="프로필">' +
           '<div class="dropdown-menu__user-info">' +
           '<div class="dropdown-menu__user-name">사용자</div>' +
           '</div>' +
-          '</div>' +
+          '</a>' +
           '</div>' +
           '<div class="dropdown-menu__divider"></div>' +
           '<button class="dropdown-menu__item" onclick="event.stopPropagation(); showToast(\'대시보드 준비 중입니다. 현재는 작품 탐색 기능을 이용할 수 있습니다\')">대시보드</button>' +
@@ -350,70 +350,42 @@ window.addEventListener('load', () => {
       const nav = document.getElementById('VerticalNavContent');
       const panel = document.createElement('div');
       panel.id = 'create-menu';
-      panel.className = 'layout-box';
-      panel.style.cssText = 'opacity:1;transition:opacity .3s ease-in-out';
+      panel.className = 'side-panel';
       panel.innerHTML =
-          '<div class="layout-box surface-default layout-fixed" style="margin-left:72px;border-right:1px solid rgb(233,233,233);height:100vh;width:384px;z-index:672">' +
-          '<div class="layout-box u-pad-inline-300 u-margin-top-300 u-pad-block-300">' +
-          '<div class="flex-row spacing-inline-zero spacing-block-zero u-row-bottom-40 justify-between items-center">' +
-          '<h3 class="heading-margin-reset text-antialiased text-default heading-400 heading-align-start heading-break-word">만들기</h3>' +
-          '<button class="button-reset" aria-label="만들기 옵션 닫기">' +
-          '<div class="button-reset-inner interactive-scale cursor-pointer-inner">' +
-          '<svg class="icon-container rounded-200 icon-surface-transparent" viewBox="0 0 24 24" width="20" height="20"><path d="m12 13.41 8.3 8.3 1.4-1.42L13.42 12l8.3-8.3-1.42-1.4-8.3 8.28-8.3-8.3L2.3 3.7l8.28 8.3-8.3 8.3 1.42 1.4z"></path></svg>' +
-          '</div>' +
+          '<div class="side-panel__header">' +
+          '<h2 class="side-panel__title">만들기</h2>' +
+          '<button class="side-panel__close" aria-label="만들기 옵션 닫기" type="button">' +
+          '<svg aria-hidden="true" height="16" viewBox="0 0 24 24" width="16"><path d="m12 13.41 8.3 8.3 1.4-1.42L13.42 12l8.3-8.3-1.42-1.4-8.3 8.28-8.3-8.3L2.3 3.7l8.28 8.3-8.3 8.3 1.42 1.4z"></path></svg>' +
           '</button>' +
           '</div>' +
-          '<div class="flex-row u-inline-gap-300 u-stack-gap-300 flex-column">' +
-          '<div class="slot-block">' +
-          '<style>.slot-block:hover .create-item-hover{background-color:rgb(228,228,228)}</style>' +
-          '<div class="layout-box create-item-hover" style="border-radius:16px">' +
-          '<a href="/work/work-register" onclick="event.stopPropagation();" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block;text-decoration:none">' +
-          '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
-          '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
+          '<div class="side-panel__body">' +
+          '<a href="/work/work-register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
+          '<div class="side-panel__menu-icon">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5 3h2a1 1 0 0 1 1 1v3.69l-.92.2a5 5 0 0 0-3.97 4.66l-.1 2.4A1 1 0 0 0 4 16h7v2.3q0 2.7.66 5.33l.09.37h.5l.1-.37a22 22 0 0 0 .65-5.34V16h7a1 1 0 0 0 1-1.1l-.24-2.58a5 5 0 0 0-3.9-4.43l-.86-.2V4a1 1 0 0 1 1-1h2V1H5zm5 1a3 3 0 0 0-.17-1h4.34A3 3 0 0 0 14 4v5.3l2.43.54a3 3 0 0 1 2.34 2.66l.13 1.5H5.05l.06-1.36a3 3 0 0 1 2.38-2.8L10 9.31z"></path></svg>' +
           '</div>' +
-          '<div class="layout-box u-margin-inline-start-300">' +
-          '<div class="text-dark text-align-start text-break-word text-with-inline-icon text-antialiased text-body-300 text-body-300-regular">작품</div>' +
-          '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">당신의 작품을 게시할 수 있습니다.</div>' +
-          '</div>' +
+          '<div class="side-panel__menu-text">' +
+          '<div class="side-panel__menu-title">작품</div>' +
+          '<div class="side-panel__menu-desc">당신의 작품을 게시할 수 있습니다.</div>' +
           '</div>' +
           '</a>' +
-          '</div>' +
-          '</div>' +
-          '<div class="slot-block">' +
-          '<style>.slot-block:hover .board-item-hover{background-color:rgb(228,228,228)}</style>' +
-          '<div class="layout-box board-item-hover" style="border-radius:16px">' +
-          '<a href="/gallery-register" onclick="event.stopPropagation();" style="cursor:pointer;display:block;text-decoration:none;color:inherit">' +
-          '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
-          '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
+          '<a href="/gallery-register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
+          '<div class="side-panel__menu-icon">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M23 5a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4zm-10 6V3h6a2 2 0 0 1 2 2v6zm8 8a2 2 0 0 1-2 2h-6v-8h8zM5 3h6v18H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2"></path></svg>' +
           '</div>' +
-          '<div class="layout-box u-margin-inline-start-300">' +
-          '<div class="text-dark text-align-start text-break-word text-with-inline-icon text-antialiased text-body-300 text-body-300-regular">예술관</div>' +
-          '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">예술관을 구성해 작품을 주제별로 소개하세요.</div>' +
-          '</div>' +
+          '<div class="side-panel__menu-text">' +
+          '<div class="side-panel__menu-title">예술관</div>' +
+          '<div class="side-panel__menu-desc">예술관을 구성해 작품을 주제별로 소개하세요.</div>' +
           '</div>' +
           '</a>' +
-          '</div>' +
-          '</div>' +
-          '<div class="slot-block">' +
-          '<style>.slot-block:hover .collage-item-hover{background-color:rgb(228,228,228)}</style>' +
-          '<div class="layout-box collage-item-hover" style="border-radius:16px">' +
-          '<a href="/contest/register" onclick="event.stopPropagation();" style="width:100%;padding:0;border:none;background:none;text-align:left;color:inherit;display:block;text-decoration:none">' +
-          '<div class="layout-box u-pad-inline-300 u-rounded-200-card u-pad-block-200 u-bg-transparent flex-row-container">' +
-          '<div class="layout-box section-padding-x-400 section-padding-y-400 rounded-400 u-bg-secondary">' +
+          '<a href="/contest/register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
+          '<div class="side-panel__menu-icon">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.95 1h-4.82a4 4 0 0 0-3.44-.66L3.97 2.4a4 4 0 0 0-2.83 4.9l.25.95a5 5 0 0 1 2-.24l-.32-1.23a2 2 0 0 1 1.41-2.45l7.73-2.07a2 2 0 0 1 2.45 1.41l3.62 13.53a2 2 0 0 1-1.41 2.45l-1.53.4a2 2 0 0 1-.27 1.43L14.13 23h5.82a4 4 0 0 0 4-4V5a4 4 0 0 0-4-4M16.6 3.17 16.54 3h3.41a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-1.3a4 4 0 0 0 1.57-4.31zM4.86 18.64l.48-.33 4.98 2.66q.59.4 1.25.4a2.2 2.2 0 0 0 1.78-.93L7.34 17l6-3.44a2.2 2.2 0 0 0-3.02-.53l-4.98 2.66-.48-.33a3 3 0 1 0-3.48.17L3.6 17l-2.22 1.47a3 3 0 1 0 3.48.17M4 21a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-2-8a1 1 0 1 1 2 0 1 1 0 0 1-2 0"></path></svg>' +
           '</div>' +
-          '<div class="layout-box u-margin-inline-start-300">' +
-          '<div class="text-dark text-align-start text-break-word text-with-inline-icon text-antialiased text-body-300 text-body-300-regular">공모전</div>' +
-          '<div class="text-subtle text-align-start text-break-word text-with-inline-icon text-antialiased text-body-200-leading text-body-200 text-body-200-regular">공모전을 올려 당신이 원하는 것을 얻으세요.</div>' +
-          '</div>' +
+          '<div class="side-panel__menu-text">' +
+          '<div class="side-panel__menu-title">공모전</div>' +
+          '<div class="side-panel__menu-desc">공모전을 올려 당신이 원하는 것을 얻으세요.</div>' +
           '</div>' +
           '</a>' +
-          '</div>' +
-          '</div>' +
-          '</div>' +
-          '</div>' +
           '</div>';
 
       panel.addEventListener('click', function (e) {
@@ -421,7 +393,7 @@ window.addEventListener('load', () => {
       });
       nav.after(panel);
 
-      panel.querySelector('[aria-label="만들기 옵션 닫기"]').addEventListener('click', function (e) {
+      panel.querySelector('.side-panel__close').addEventListener('click', function (e) {
         e.stopPropagation();
         panel.remove();
         resetAllNavIcons();
@@ -498,7 +470,7 @@ window.addEventListener('load', () => {
     return notifications.map(function (n, i) {
       const userName = n.senderNickname || 'BIDEO';
       const isSystem = !n.senderId || systemTypes.indexOf(n.notiType) !== -1;
-      const avatarSrc = n.senderProfileImage || createAvatarDataUri(userName, i);
+      const avatarSrc = n.senderProfileImage || LOCAL_PROFILE_IMAGE;
       const time = formatNotiTime(n.createdDatetime);
       const unreadDot = !n.isRead
           ? '<div style="width:8px; height:8px; background:#f0d999; border-radius:50%; flex-shrink:0;"></div>'
@@ -623,7 +595,7 @@ window.addEventListener('load', () => {
     if (isMine) {
       return '<div style="align-self:flex-end;background:#111;color:#fff;padding:10px 14px;border-radius:18px;max-width:75%;font-size:14px;line-height:1.4;margin-bottom:4px;">' + msgEscapeHtml(msg.content) + '</div>';
     }
-    const avatar = msg.senderProfileImage || createAvatarDataUri(msg.senderNickname || '', 0);
+    const avatar = msg.senderProfileImage || LOCAL_PROFILE_IMAGE;
     return '<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:4px;">' +
       '<img src="' + msgEscapeHtml(avatar) + '" style="width:24px;height:24px;border-radius:50%;flex-shrink:0;">' +
       '<div style="background:#efefef;padding:10px 14px;border-radius:18px;max-width:75%;font-size:14px;color:#111;line-height:1.4;">' + msgEscapeHtml(msg.content) + '</div>' +
@@ -671,7 +643,7 @@ window.addEventListener('load', () => {
         rooms.forEach(function(room) {
           const partner = room.members && room.members[0];
           const name = partner ? msgEscapeHtml(partner.nickname) : '알 수 없음';
-          const avatar = partner && partner.profileImage ? msgEscapeHtml(partner.profileImage) : createAvatarDataUri(name, room.id % 5);
+          const avatar = partner && partner.profileImage ? msgEscapeHtml(partner.profileImage) : LOCAL_PROFILE_IMAGE;
           const preview = msgEscapeHtml(room.lastMessage || '');
           const time = msgTimeAgo(room.lastMessageAt);
           const unread = room.unreadCount > 0 ? '<span style="background:#e60023;color:#fff;border-radius:50%;min-width:18px;height:18px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;">' + (room.unreadCount > 99 ? '99+' : room.unreadCount) + '</span>' : '';
@@ -903,7 +875,7 @@ window.addEventListener('load', () => {
             }
             let html = '';
             members.forEach(function (m, i) {
-              const avatar = m.profileImage ? msgEscapeHtml(m.profileImage) : createAvatarDataUri(m.nickname || '', i);
+              const avatar = m.profileImage ? msgEscapeHtml(m.profileImage) : LOCAL_PROFILE_IMAGE;
               html += '<div class="msg-search-member" data-member-id="' + m.id + '" data-nickname="' + msgEscapeHtml(m.nickname) + '" data-avatar="' + msgEscapeHtml(avatar) + '" ' +
                 'style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px;cursor:pointer;transition:background .2s;" ' +
                 'onmouseover="this.style.background=\'#f0f0f0\'" onmouseout="this.style.background=\'transparent\'">' +

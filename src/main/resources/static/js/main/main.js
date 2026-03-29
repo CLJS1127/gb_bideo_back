@@ -58,7 +58,7 @@ window.addEventListener('load', () => {
       description: work.description || '',
       author: {
         name: work.memberNickname || '크리에이터',
-        avatar: work.memberProfileImage || ''
+        avatar: work.memberProfileImage || LOCAL_PROFILE_IMAGE
       },
       saves: work.saveCount || 0
     };

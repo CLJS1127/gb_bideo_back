@@ -99,7 +99,7 @@ window.addEventListener('load', () => {
         '</div>' +
         '<input class="closeup-share-sheet__search" id="contactSearch" type="search" placeholder="이름 또는 이메일 검색" aria-label="검색 필드">' +
         '<div class="closeup-share-sheet__contacts">' +
-        '<div class="closeup-share-sheet__contact"><img src="' + createAvatarDataUri('정찬호', 20) + '" alt="정찬호"><div class="closeup-share-sheet__contact-copy"><span class="closeup-share-sheet__contact-name">정찬호</span><span class="closeup-share-sheet__contact-handle">@chanho8629</span></div><button class="closeup-share-sheet__send" type="button" data-action="toggle-send">보내기</button></div>' +
+        '<div class="closeup-share-sheet__contact"><img src="' + LOCAL_PROFILE_IMAGE + '" alt="정찬호"><div class="closeup-share-sheet__contact-copy"><span class="closeup-share-sheet__contact-name">정찬호</span><span class="closeup-share-sheet__contact-handle">@chanho8629</span></div><button class="closeup-share-sheet__send" type="button" data-action="toggle-send">보내기</button></div>' +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -458,7 +458,7 @@ window.addEventListener('load', () => {
     const comment = document.createElement('div');
     comment.className = 'closeup__comment-item';
     comment.innerHTML =
-        '<img class="closeup__comment-avatar" src="' + createAvatarDataUri('나', 21) + '" alt="나">' +
+        '<img class="closeup__comment-avatar" src="' + LOCAL_PROFILE_IMAGE + '" alt="나">' +
         '<div class="closeup__comment-body">' +
         '<div class="closeup__comment-meta">' +
         '<span class="closeup__comment-author">나</span>' +
@@ -531,8 +531,7 @@ window.addEventListener('load', () => {
 
   function resolveCreatorAvatar(pin) {
     const authorName = pin && pin.author && pin.author.name ? pin.author.name : '크리에이터';
-    const avatarFallback = createAvatarDataUri(authorName, pin && pin.workId ? pin.workId : 0);
-    const avatarSrc = pin && pin.author && pin.author.avatar ? pin.author.avatar : avatarFallback;
+    const avatarSrc = pin && pin.author && pin.author.avatar ? pin.author.avatar : LOCAL_PROFILE_IMAGE;
 
     return {
       src: avatarSrc,
@@ -720,10 +719,9 @@ window.addEventListener('load', () => {
       closeupDescription.textContent = gallery.description || '';
 
       const authorName = gallery.memberNickname || '크리에이터';
-      const avatarFallback = createAvatarDataUri(authorName, gallery.id || 0);
       creatorAvatar.onerror = function() {
         this.onerror = null;
-        this.src = avatarFallback;
+        this.src = LOCAL_PROFILE_IMAGE;
       };
       creatorAvatar.src = avatarFallback;
       creatorAvatar.alt = authorName;

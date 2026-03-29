@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (avatarSrc) {
             avatarHTML = '<img class="notification-item__avatar" src="' + avatarSrc + '" alt="">';
         } else {
-            avatarHTML = '<div class="notification-item__avatar notification-item__avatar--icon">' + icon + '</div>';
+            avatarHTML = '<img class="notification-item__avatar" src="/images/BIDEO_LOGO/BIDEO_favicon.png" alt="">';
         }
 
         return '<div class="notification-item' + unreadClass + '" data-id="' + item.id + '"'
