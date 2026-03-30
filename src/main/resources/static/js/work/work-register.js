@@ -527,7 +527,7 @@ publishBtn?.addEventListener("click", async () => {
             throw new Error(errorText || "작품 등록에 실패했습니다.");
         }
 
-        window.location.href = "/profile/profile";
+        window.location.href = "/profile"; // 최종 주소를 /profile/{nickname} 리다이렉트로 통일
     } catch (error) {
         alert(error.message || "작품 등록에 실패했습니다.");
     }
