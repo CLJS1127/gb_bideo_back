@@ -1,12 +1,25 @@
 /* Admin Core & Layout */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 body {
     margin: 0;
     padding: 0;
     background-color: #FDFDFD;
     font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
     display: flex;
     color: var(--admin-text-main);
-    min-width: 1280px; /* 최소 너비를 1280px로 상향 고정 */
+    min-width: 1280px;
 }
 table tr th {
     text-align: center !important;

@@ -42,8 +42,8 @@
             <thead>
             <tr>
                 <th class="text-center col-id">번호</th>
-                <th class="col-flexible">문의 내용</th>
-                <th style="width: 180px;">작성자</th>
+                <th class="text-center col-flexible">문의 내용</th>
+                <th class="text-center" style="width: 180px;">작성자</th>
                 <th class="text-center col-date">등록일</th>
                 <th class="text-center col-status">상태</th>
                 <th class="text-center col-action">상세</th>
@@ -53,12 +53,12 @@
             <tr th:if="${#lists.isEmpty(inquiries)}">
                 <td colspan="6" class="text-center text-muted">조회된 문의가 없습니다.</td>
             </tr>
-            <tr th:each="inquiry : ${inquiries}">
-                <td class="text-center col-id" th:text="${inquiry.id}">1</td>
-                <td class="fw-700 col-flexible">
+            <tr th:each="inquiry, stat : ${inquiries}">
+                <td class="text-center col-id" th:text="${#lists.size(inquiries) - stat.index}">1</td>
+                <td class="fw-700 text-center col-flexible">
                     <div class="text-truncate-2" th:text="${inquiry.content}">문의 내용</div>
                 </td>
-                <td th:text="${inquiry.memberNickname != null ? inquiry.memberNickname + ' (' + inquiry.memberEmail + ')' : '비회원 문의'}">작성자</td>
+                <td class="text-center" th:text="${inquiry.memberNickname != null ? inquiry.memberNickname + ' (' + inquiry.memberEmail + ')' : '비회원 문의'}">작성자</td>
                 <td class="text-center col-date text-muted"
                     th:text="${inquiry.createdDatetime != null ? #temporals.format(inquiry.createdDatetime, 'yyyy.MM.dd HH:mm') : '-'}">2024.03.10 14:20</td>
                 <td class="text-center col-status">

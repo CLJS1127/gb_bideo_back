@@ -46,8 +46,8 @@
             <thead>
             <tr>
                 <th class="text-center col-id">번호</th>
-                <th style="width: 160px;">신고자</th>
-                <th class="text-center" style="width: 120px;">대상 유형</th>
+                <th class="text-center" style="width: 160px;">신고자</th>
+                <th class="text-center" style="width: 120px;">신고 분류</th>
                 <th class="col-flexible">신고 사유</th>
                 <th class="text-center col-date">접수일</th>
                 <th class="text-center col-status">상태</th>
@@ -57,13 +57,13 @@
             <tr th:if="${#lists.isEmpty(reports)}">
                 <td colspan="6" class="text-center text-muted">조회된 신고가 없습니다.</td>
             </tr>
-            <tr th:each="report : ${reports}">
-                <td class="text-center col-id" th:text="${report.id}">1</td>
-                <td th:text="${report.reporterNickname}">reporter</td>
+            <tr th:each="report, stat : ${reports}">
+                <td class="text-center col-id" th:text="${#lists.size(reports) - stat.index}">1</td>
+                <td class="text-center" th:text="${report.reporterNickname}">reporter</td>
                 <td class="text-center" th:text="${report.targetType}">WORK</td>
-                <td class="col-flexible">
+                <td class="text-center col-flexible">
                     <div class="fw-700" th:text="${report.reason}">신고 사유</div>
-                    <div class="text-muted fs-13 mt-6" th:if="${report.detail != null and !#strings.isEmpty(report.detail)}"
+                    <div class="text-muted fs-13 mt-4" th:if="${report.detail != null and !#strings.isEmpty(report.detail)}"
                          th:text="${report.detail}">상세 사유</div>
                 </td>
                 <td class="text-center col-date text-muted"

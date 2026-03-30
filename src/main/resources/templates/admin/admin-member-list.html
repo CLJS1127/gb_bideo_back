@@ -28,10 +28,13 @@
 
     <section class="content-card">
         <form class="list-controls" method="get" th:action="@{/admin/members}">
-            <div class="search-wrapper">
-                <label for="member-search"><i data-lucide="search"></i></label>
-                <input type="text" id="member-search" name="keyword" class="search-input"
-                       th:value="${search.keyword}" placeholder="이메일 또는 닉네임 검색...">
+            <div class="d-flex gap-8 align-center">
+                <div class="search-wrapper">
+                    <label for="member-search"><i data-lucide="search"></i></label>
+                    <input type="text" id="member-search" name="keyword" class="search-input"
+                           th:value="${search.keyword}" placeholder="이메일 또는 닉네임 검색...">
+                </div>
+                <button type="submit" class="btn-secondary fs-12 p-8">검색</button>
             </div>
             <div class="filter-group">
                 <a class="btn-filter" th:classappend="${search.status == null or search.status == ''} ? ' active' : ''"
@@ -40,7 +43,6 @@
                    th:href="@{/admin/members(status='ACTIVE')}">활동회원</a>
                 <a class="btn-filter" th:classappend="${search.status == 'SUSPENDED'} ? ' active' : ''"
                    th:href="@{/admin/members(status='SUSPENDED')}">정지회원</a>
-                <button type="submit" class="btn-secondary">검색</button>
             </div>
         </form>
 
@@ -58,8 +60,8 @@
             <tr th:if="${#lists.isEmpty(members)}">
                 <td colspan="5" class="text-center text-muted">조회된 회원이 없습니다.</td>
             </tr>
-            <tr th:each="member : ${members}">
-                <td class="text-center col-id" th:text="${member.id}">1</td>
+            <tr th:each="member, stat : ${members}">
+                <td class="text-center col-id" th:text="${#lists.size(members) - stat.index}">1</td>
                 <td class="text-center fw-700 col-flexible" th:text="${member.email}">user@example.com</td>
                 <td class="text-center" th:text="${member.nickname}">닉네임</td>
                 <td class="text-center col-status">
