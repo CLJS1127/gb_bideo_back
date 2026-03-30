@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum MemberStatus {
-    ACTIVE("ACTIVE"), INACTIVE("INACTIVE");
+    ACTIVE("ACTIVE"),
+    SUSPENDED("SUSPENDED"),
+    BANNED("BANNED");
 
     private final String value;
 

@@ -1,201 +1,173 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO Admin - 차단/제한 관리</title>
-    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div id="admin-lnb"></div>
-    
-    <main class="main-content">
-        <!-- 현재 위치 -->
-        <div class="breadcrumbs">
-            <span class="current">차단/제한 관리</span>
+<div th:replace="~{admin/admin-lnb :: adminLnb('restrictions')}"></div>
+
+<main class="main-content">
+    <div class="breadcrumbs">
+        <span class="current">차단/제한 관리</span>
+    </div>
+
+    <header class="mb-32">
+        <h1 class="fs-24 fw-800 text-main">차단/제한 관리</h1>
+        <p class="text-sub fs-14">부정 이용자 및 규정 위반 계정에 대한 이용 제한 상태를 관리합니다.</p>
+    </header>
+
+    <section class="content-card">
+        <div class="list-controls">
+            <form method="get" th:action="@{/admin/restrictions}" class="search-wrapper" style="flex: 1;">
+                <label for="block-search"><i data-lucide="search"></i></label>
+                <input type="text" id="block-search" name="keyword" class="search-input"
+                       th:value="${search.keyword}" placeholder="닉네임 또는 이메일 검색...">
+                <input type="hidden" name="restrictionType" th:value="${search.restrictionType}">
+            </form>
+            <div class="filter-group">
+                <a class="btn-filter" th:classappend="${search.restrictionType == null or search.restrictionType == ''} ? ' active' : ''"
+                   th:href="@{/admin/restrictions(keyword=${search.keyword})}">전체</a>
+                <a class="btn-filter" th:classappend="${search.restrictionType == 'BLOCK'} ? ' active' : ''"
+                   th:href="@{/admin/restrictions(restrictionType='BLOCK',keyword=${search.keyword})}">차단됨</a>
+                <a class="btn-filter" th:classappend="${search.restrictionType == 'LIMIT'} ? ' active' : ''"
+                   th:href="@{/admin/restrictions(restrictionType='LIMIT',keyword=${search.keyword})}">제한됨</a>
+                <button type="button" class="btn-primary" id="btn-open-create-restriction">이용 제한 등록</button>
+            </div>
         </div>
-        
-        <!-- 타이틀, 서브 타이틀 -->
-        <header class="mb-32">
-            <h1 class="fs-24 fw-800 text-main">차단/제한 관리</h1>
-            <p class="text-sub fs-14">부정 이용자 및 규정 위반 계정에 대한 이용 제한 상태를 관리합니다.</p>
-        </header>
 
-        <!-- 컨텐츠 -->
-        <section class="content-card">
+        <table class="bideo-table">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 180px;">제한 대상</th>
+                <th class="text-center col-flexible">차단/제한 사유</th>
+                <th class="text-center col-date" style="width: 170px;">제한 기간</th>
+                <th class="text-center col-status">상태</th>
+                <th class="text-center col-action">관리 액션</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(restrictions)}">
+                <td colspan="5" class="text-center text-muted">등록된 제한 내역이 없습니다.</td>
+            </tr>
+            <tr th:each="restriction : ${restrictions}">
+                <td class="fw-700 text-center" th:text="${restriction.memberNickname}">닉네임</td>
+                <td class="col-flexible text-center">
+                    <span style="display: inline-block; text-align: left;">
+                        <div class="text-truncate-2" th:text="${restriction.reason}">사유</div>
+                    </span>
+                </td>
+                <td class="text-center col-date"
+                    th:text="${restriction.restrictionType == 'BLOCK' ? '영구' : (restriction.endDatetime != null ? #temporals.format(restriction.endDatetime, 'yyyy.MM.dd HH:mm') : '-')}">영구</td>
+                <td class="text-center col-status">
+                    <span class="status-badge"
+                          th:classappend="${
+                              restriction.status == 'ACTIVE'
+                                  ? (restriction.restrictionType == 'BLOCK' ? ' status-urgent' : ' status-pending')
+                                  : (restriction.status == 'RELEASED' ? ' status-approved' : ' status-muted')
+                          }"
+                          th:text="${
+                              restriction.status == 'ACTIVE'
+                                  ? (restriction.restrictionType == 'BLOCK' ? '차단됨' : '제한됨')
+                                  : (restriction.status == 'RELEASED'
+                                      ? (restriction.restrictionType == 'BLOCK' ? '차단 해제' : '제한 해제')
+                                      : '제한 만료')
+                          }">차단됨</span>
+                </td>
+                <td class="text-center col-action">
+                    <div class="d-flex gap-8 justify-center" th:if="${restriction.status == 'ACTIVE'}">
+                        <button type="button"
+                                th:if="${restriction.restrictionType == 'LIMIT'}"
+                                class="btn-secondary fs-12 p-8 flex-1 btn-edit-restriction"
+                                th:attr="data-restriction-id=${restriction.id},
+                                         data-member-id=${restriction.memberId},
+                                         data-member-label=${restriction.memberNickname + ' (' + restriction.memberEmail + ')'},
+                                         data-restriction-type=${restriction.restrictionType},
+                                         data-end-datetime=${restriction.endDatetime != null ? #temporals.format(restriction.endDatetime, 'yyyy-MM-dd''T''HH:mm') : ''},
+                                         data-reason=${restriction.reason}">
+                            기간 수정
+                        </button>
+                        <button type="button"
+                                class="btn-success fs-12 p-8 flex-1 btn-release-restriction"
+                                th:attr="data-restriction-id=${restriction.id},
+                                         data-release-label=${restriction.restrictionType == 'BLOCK' ? '차단 해제' : '제한 해제'}"
+                                th:text="${restriction.restrictionType == 'BLOCK'} ? '차단 해제' : '제한 해제'">
+                            차단 해제
+                        </button>
+                    </div>
+                    <span class="text-muted fs-12" th:if="${restriction.status != 'ACTIVE'}">처리 완료</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
 
-            <!-- 컨텐츠 안 네비게이션 -->
-            <div class="list-controls">
-                <div class="search-wrapper">
-                    <label for="block-search"><i data-lucide="search"></i></label>
-                    <input type="text" id="block-search" class="search-input" placeholder="대상자 이름, ID 또는 이메일 검색...">
+<div class="modal-overlay" id="block-modal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h2 class="modal-title" id="restriction-modal-title">이용 제한 정보 수정</h2>
+            <button type="button" class="modal-close" data-modal-close="restriction">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="restriction-form">
+                <input type="hidden" id="restriction-id">
+                <input type="hidden" id="restriction-member-id">
+                <div class="admin-form-group mb-24">
+                    <label class="admin-form-label" for="restriction-member-keyword">대상자 불러오기</label>
+                    <input type="text" id="restriction-member-keyword" class="admin-input" autocomplete="off" placeholder="닉네임 또는 이메일 검색">
+                    <div id="restriction-member-results" class="mt-12"></div>
                 </div>
-                <div class="filter-group">
-                    <button class="btn-filter active">전체</button>
-                    <button class="btn-filter">영구 차단</button>
-                    <button class="btn-filter">기간 제한</button>
+                <div class="admin-form-group mb-24">
+                    <label class="admin-form-label" for="restriction-type">제한 종류</label>
+                    <select id="restriction-type" class="admin-input">
+                        <option value="BLOCK">차단</option>
+                        <option value="LIMIT">제한</option>
+                    </select>
                 </div>
-            </div>
+                <div class="admin-form-group mb-24">
+                    <label class="admin-form-label" for="edit-block-date">제한 종료일</label>
+                    <input type="datetime-local" id="edit-block-date" class="admin-input" value="">
+                </div>
+                <div class="admin-form-group">
+                    <label class="admin-form-label" for="edit-block-reason">제한 사유</label>
+                    <textarea id="edit-block-reason" class="admin-textarea" rows="4"></textarea>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" data-modal-close="restriction">취소</button>
+            <button type="button" class="btn-primary" id="btn-save-restriction">변경 사항 저장</button>
+        </div>
+    </div>
+</div>
 
-            <!-- 리스트 -->
-            <table class="bideo-table">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="width: 150px;">제한 대상</th>
-                        <th class="text-center col-flexible">차단/제한 사유</th>
-                        <th class="text-center col-date" style="width: 150px;">제한 기간</th>
-                        <th class="text-center col-status">상태</th>
-                        <th class="text-center col-action">관리 액션</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="fw-700 text-center">
-                            <div class="text-truncate">이혁진 (hyuk_jin)</div>
-                        </td>
-                        <td class="col-flexible text-center">
-                            <span style="display: inline-block; text-align: left;">
-                                <div class="text-truncate-2">부정 낙찰 시도 및 결제 거부 반복</div>
-                            </span>
-                        </td>
-                        <td class="text-center col-date">영구 차단</td>
-                        <td class="text-center col-status"><span class="status-badge status-urgent">차단됨</span></td>
-                        <td class="text-center col-action">
-                            <div class="d-flex gap-8 justify-center">
-                                <button class="btn-success fs-12 p-8 flex-1">차단 해제</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-700 text-center">
-                            <div class="text-truncate">정수아 (sua_jung)</div>
-                        </td>
-                        <td class="col-flexible text-center">
-                            <span style="display: inline-block; text-align: left;">
-                                <div class="text-truncate-2">커뮤니티 가이드라인 위반 (욕설)</div>
-                            </span>
-                        </td>
-                        <td class="text-center col-date">~ 2024.04.10</td>
-                        <td class="text-center col-status"><span class="status-badge status-pending">기간 제한</span></td>
-                        <td class="text-center col-action">
-                            <div class="d-flex gap-8 justify-center">
-                                <button class="btn-secondary fs-12 p-8 flex-1 btn-edit-block">기간 수정</button>
-                                <button class="btn-success fs-12 p-8 flex-1">해제</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="fw-700 text-center">
-                            <div class="text-truncate">Mike Ross (m_ross)</div>
-                        </td>
-                        <td class="col-flexible text-center">
-                            <span style="display: inline-block; text-align: left;">
-                                <div class="text-truncate-2">작품 저작권 침해 의심 신고 접수</div>
-                            </span>
-                        </td>
-                        <td class="text-center col-date">~ 2024.03.20</td>
-                        <td class="text-center col-status"><span class="status-badge status-pending">임시 제한</span></td>
-                        <td class="text-center col-action">
-                            <div class="d-flex gap-8 justify-center">
-                                <button class="btn-secondary fs-12 p-8 flex-1" onclick="openBlockDetailModal('Mike Ross (m_ross)', '2024-03-20', '작품 저작권 침해 의심 신고 접수')">상세 확인</button>
-                                <button class="btn-success fs-12 p-8 flex-1" onclick="openConfirmModal('해제', '제한을 해제하시겠습니까?')">해제</button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
-
-    <!-- Block Edit Modal -->
-    <div class="modal-overlay" id="block-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 class="modal-title">이용 제한 정보 수정</h2>
-                <button class="modal-close" onclick="closeBlockModal()">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="block-form">
-                    <div class="admin-form-group mb-24">
-                        <label class="admin-form-label">대상자</label>
-                        <input type="text" id="edit-block-user" class="admin-input" value="" disabled style="background: #F5F5F5;">
-                    </div>
-                    <div class="admin-form-group mb-24">
-                        <label class="admin-form-label">제한 종료일</label>
-                        <input type="date" id="edit-block-date" class="admin-input" value="">
-                    </div>
-                    <div class="admin-form-group">
-                        <label class="admin-form-label">제한 사유 수정</label>
-                        <textarea id="edit-block-reason" class="admin-textarea" rows="4"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeBlockModal()">취소</button>
-                <button class="btn-primary" id="btn-save-block" onclick="closeBlockModal()">변경 사항 저장</button>
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-body text-only">
+            <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+            <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+            <div class="d-flex justify-end gap-12 mt-32">
+                <button type="button" class="btn-secondary w-100" data-modal-close="confirm">취소</button>
+                <button type="button" class="btn-primary w-100" id="btn-confirm-execute">확인</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Block Details Modal -->
-    <div class="modal-overlay" id="block-detail-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2 class="modal-title">이용 제한 정보 상세</h2>
-                <button class="modal-close" onclick="closeBlockDetailModal()">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="info-section">
-                    <div class="info-row">
-                        <div class="info-label">대상자</div>
-                        <div class="info-value" id="detail-block-user">-</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">제한 종료일</div>
-                        <div class="info-value" id="detail-block-date">-</div>
-                    </div>
-                    <div class="info-section mt-24">
-                        <h3 class="fs-14 fw-700 mb-12">제한 사유</h3>
-                        <div class="p-16 bg-light br-12 fs-14 lh-1.6" id="detail-block-reason">
-                            -
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary w-full" onclick="closeBlockDetailModal()">닫기</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 공통 모달 -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-container" style="max-width: 400px;">
-            <div class="modal-body text-only">
-                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
-                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
-                <div class="d-flex justify-end gap-12 mt-32">
-                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
-                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 스크립트 -->
-    <script src="../../static/js/admin/admin-service.js"></script>
-    <script src="../../static/js/admin/admin-layout.js"></script>
-    <script src="../../static/js/admin/admin-event.js"></script>
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
 </body>
 </html>

@@ -23,6 +23,7 @@ class GalleryServiceSearchTest {
     private GalleryDAO galleryDAO;
     private GalleryService galleryService;
 
+<<<<<<< HEAD
 //    @BeforeEach
 //    void setUp() {
 //        galleryDAO = Mockito.mock(GalleryDAO.class);
@@ -45,4 +46,23 @@ class GalleryServiceSearchTest {
 //        assertEquals("public, max-age=300", response.getCacheControl());
 //        assertArrayEquals(imageBytes, response.getBytes());
 //    }
+=======
+    @BeforeEach
+    void setUp() {
+        galleryDAO = Mockito.mock(GalleryDAO.class);
+        galleryService = new GalleryService(
+                galleryDAO,
+                Mockito.mock(WorkDAO.class),
+                Mockito.mock(CommentService.class),
+                Mockito.mock(NotificationService.class)
+        );
+    }
+
+    @Test
+    void getGalleryDetailThrowsWhenGalleryDoesNotExist() {
+        given(galleryDAO.findById(5L)).willReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> galleryService.getGalleryDetail(5L));
+    }
+>>>>>>> admin
 }

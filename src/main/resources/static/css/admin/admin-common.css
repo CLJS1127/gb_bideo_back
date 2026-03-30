@@ -75,6 +75,12 @@ table tr th {
     box-shadow: 0 8px 16px rgba(17, 17, 17, 0.15);
 }
 
+.nav-item.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    cursor: default;
+}
+
 .nav-item i {
     margin-right: 14px;
     font-size: 20px;

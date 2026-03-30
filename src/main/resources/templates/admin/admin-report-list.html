@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIDEO Admin - 신고 관리 목록</title>
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<div th:replace="~{admin/admin-lnb :: adminLnb('reports')}"></div>
+
+<main class="main-content">
+    <div class="breadcrumbs">
+        <span class="current">신고 관리 목록</span>
+    </div>
+
+    <header class="mb-32">
+        <h1 class="fs-24 fw-800 text-main">신고 관리 목록</h1>
+        <p class="text-sub fs-14">접수된 신고 내역과 검토 상태를 운영 화면에서 확인합니다.</p>
+    </header>
+
+    <section class="content-card">
+        <div class="list-controls">
+            <div class="filter-group">
+                <a class="btn-filter" th:classappend="${search.status == null or search.status == ''} ? ' active' : ''"
+                   th:href="@{/admin/reports}">전체</a>
+                <a class="btn-filter" th:classappend="${search.status == 'PENDING'} ? ' active' : ''"
+                   th:href="@{/admin/reports(status='PENDING')}">접수됨</a>
+                <a class="btn-filter" th:classappend="${search.status == 'REVIEWING'} ? ' active' : ''"
+                   th:href="@{/admin/reports(status='REVIEWING')}">검토중</a>
+                <a class="btn-filter" th:classappend="${search.status == 'RESOLVED'} ? ' active' : ''"
+                   th:href="@{/admin/reports(status='RESOLVED')}">처리완료</a>
+                <a class="btn-filter" th:classappend="${search.status == 'CANCELLED'} ? ' active' : ''"
+                   th:href="@{/admin/reports(status='CANCELLED')}">취소됨</a>
+            </div>
+        </div>
+
+        <table class="bideo-table">
+            <thead>
+            <tr>
+                <th class="text-center col-id">번호</th>
+                <th style="width: 160px;">신고자</th>
+                <th class="text-center" style="width: 120px;">대상 유형</th>
+                <th class="col-flexible">신고 사유</th>
+                <th class="text-center col-date">접수일</th>
+                <th class="text-center col-status">상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(reports)}">
+                <td colspan="6" class="text-center text-muted">조회된 신고가 없습니다.</td>
+            </tr>
+            <tr th:each="report : ${reports}">
+                <td class="text-center col-id" th:text="${report.id}">1</td>
+                <td th:text="${report.reporterNickname}">reporter</td>
+                <td class="text-center" th:text="${report.targetType}">WORK</td>
+                <td class="col-flexible">
+                    <div class="fw-700" th:text="${report.reason}">신고 사유</div>
+                    <div class="text-muted fs-13 mt-6" th:if="${report.detail != null and !#strings.isEmpty(report.detail)}"
+                         th:text="${report.detail}">상세 사유</div>
+                </td>
+                <td class="text-center col-date text-muted"
+                    th:text="${report.createdDatetime != null ? #temporals.format(report.createdDatetime, 'yyyy.MM.dd HH:mm') : '-'}">2026.03.30 10:00</td>
+                <td class="text-center col-status">
+                    <span class="status-badge"
+                          th:classappend="${
+                              report.status == 'RESOLVED'
+                                  ? ' status-active'
+                                  : (report.status == 'CANCELLED'
+                                      ? ' status-muted'
+                                      : ' status-pending')
+                          }"
+                          th:text="${
+                              report.status == 'RESOLVED'
+                                  ? '처리완료'
+                                  : (report.status == 'CANCELLED'
+                                      ? '취소됨'
+                                      : (report.status == 'REVIEWING' ? '검토중' : '접수됨'))
+                          }">접수됨</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
+</body>
+</html>

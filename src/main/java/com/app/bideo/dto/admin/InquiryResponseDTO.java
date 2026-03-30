@@ -12,6 +12,7 @@ public class InquiryResponseDTO {
     private Long id;
     private Long memberId;
     private String memberNickname;
+    private String memberEmail;
     private String category;
     private String content;
     private String reply;

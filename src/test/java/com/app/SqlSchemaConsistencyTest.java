@@ -16,7 +16,7 @@ class SqlSchemaConsistencyTest {
     void bideoDomainSchemaIncludesOrderSupport() throws IOException {
         String runAll = readResource("sql/99_run_all.sql");
 
-        assertTrue(runAll.contains("\\i tbl_order.sql"));
+        assertTrue(runAll.contains("\\i tbl_order.sql") || runAll.contains("\\ir tbl_order.sql"));
     }
 
     @Test
@@ -89,12 +89,28 @@ class SqlSchemaConsistencyTest {
         String runAll = readResource("sql/99_run_all.sql");
         String wr = readResource("sql/tbl_withdrawal_request.sql");
 
-        assertTrue(runAll.contains("\\i tbl_withdrawal_request.sql"), "99_run_all.sql should include tbl_withdrawal_request.sql");
+        assertTrue(
+                runAll.contains("\\i tbl_withdrawal_request.sql") || runAll.contains("\\ir tbl_withdrawal_request.sql"),
+                "99_run_all.sql should include tbl_withdrawal_request.sql"
+        );
         assertTrue(wr.contains("withdrawal_code"), "tbl_withdrawal_request should have withdrawal_code column");
         assertTrue(wr.contains("requested_amount"), "tbl_withdrawal_request should have requested_amount column");
         assertTrue(wr.contains("net_amount"), "tbl_withdrawal_request should have net_amount column");
         assertTrue(wr.contains("fk_wr_member"), "tbl_withdrawal_request should have member FK");
         assertTrue(wr.contains("fk_wr_settlement"), "tbl_withdrawal_request should have settlement FK");
+    }
+
+    @Test
+    void memberRestrictionTableExistsAndIsIncludedInRunAll() throws IOException {
+        String runAll = readResource("sql/99_run_all.sql");
+        String restriction = readResource("sql/tbl_member_restriction.sql");
+
+        assertTrue(runAll.contains("\\ir tbl_member_restriction.sql"), "99_run_all.sql should include tbl_member_restriction.sql");
+        assertTrue(restriction.contains("member_id"), "tbl_member_restriction should have member_id column");
+        assertTrue(restriction.contains("restriction_type"), "tbl_member_restriction should have restriction_type column");
+        assertTrue(restriction.contains("previous_member_status"), "tbl_member_restriction should have previous_member_status column");
+        assertTrue(restriction.contains("end_datetime"), "tbl_member_restriction should have end_datetime column");
+        assertTrue(restriction.contains("released_datetime"), "tbl_member_restriction should have released_datetime column");
     }
 
     @Test
