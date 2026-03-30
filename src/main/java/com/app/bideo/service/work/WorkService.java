@@ -117,6 +117,12 @@ public class WorkService {
         return detail;
     }
 
+    public void increaseViewCount(Long id) {
+        workDAO.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("work not found"));
+        workDAO.increaseViewCount(id);
+    }
+
     // 프로필 화면에 표시할 작성자 작품 목록 조회
     @Transactional(readOnly = true)
     public List<WorkListResponseDTO> getProfileWorks(Long galleryId) {

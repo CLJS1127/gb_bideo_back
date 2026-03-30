@@ -123,6 +123,15 @@
         where id = #{id}
     </select>
 
+    <update id="increaseWorkViewCount">
+        update tbl_work
+        set
+            view_count = coalesce(view_count, 0) + 1,
+            updated_datetime = now()
+        where id = #{id}
+          and deleted_datetime is null
+    </update>
+
     <select id="selectWorkDetail" resultMap="workDetailMap">
         select
             w.id,

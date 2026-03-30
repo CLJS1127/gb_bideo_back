@@ -33,3 +33,5 @@ create index idx_report_reporter on tbl_report (reporter_id);
 create index idx_report_target on tbl_report (target_type, target_id);
 create index idx_report_status on tbl_report (status, created_datetime desc);
 
+
+select * from tbl_report;

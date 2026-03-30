@@ -51,6 +51,11 @@ public class WorkAPIController {
         return workService.getWorkDetail(id);
     }
 
+    @PostMapping("/{id}/views")
+    public void increaseViewCount(@PathVariable Long id) {
+        workService.increaseViewCount(id);
+    }
+
     // 작품 수정
     @PutMapping("/{id}")
     public WorkDetailResponseDTO update(

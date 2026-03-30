@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/payment")
 public class PaymentViewController {
 
+    @GetMapping("/pay-api")
+    public String payApi() {
+        return "pay/pay-api";
+    }
+
     @GetMapping("/history")
     public String history() {
         return "paymentdetail/paymentlist";

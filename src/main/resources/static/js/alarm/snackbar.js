@@ -66,3 +66,5 @@ const BideoSnackbar = {
         }
     }
 };
+
+window.BideoSnackbar = BideoSnackbar;

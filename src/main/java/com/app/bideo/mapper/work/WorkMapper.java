@@ -33,6 +33,8 @@ public interface WorkMapper {
 
     WorkDTO selectWork(@Param("id") Long id);
 
+    int increaseWorkViewCount(@Param("id") Long id);
+
     WorkDetailResponseDTO selectWorkDetail(@Param("id") Long id);
 
     List<WorkListResponseDTO> selectWorkList(WorkSearchDTO searchDTO);

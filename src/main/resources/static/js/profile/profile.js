@@ -21,6 +21,16 @@ let isGalleryLikeRequestPending = false;
 let auctionRegisterDeadlineHours = 0;
 let isAuctionRegisterSubmitting = false;
 let isWorkSaved = false;
+let currentWorkBlockTargetName = '';
+let isWorkBookmarkRequestPending = false;
+
+function showProfileSnackbar(message, type = 'success', duration = 3000, action = null) {
+  if (window.BideoSnackbar?.show) {
+    window.BideoSnackbar.show(message, type, duration, action);
+    return;
+  }
+  alert(message);
+}
 const workEditGallerySelect = document.getElementById('workEditGallerySelect');
 const workEditGallerySelectWrap = document.getElementById('workEditGallerySelectWrap');
 const workEditGallerySelectTrigger = document.getElementById('workEditGallerySelectTrigger');
@@ -107,6 +117,25 @@ function formatWorkDate(value) {
   if (!value) return '';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+
+  if (diffMs < 0) {
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  }
+
+  const diffSeconds = Math.floor(diffMs / 1000);
+  if (diffSeconds < 60) return '방금 전';
+
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) return `${diffMinutes}분 전`;
+
+  const diffHours = Math.floor(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours}시간 전`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 30) return `${diffDays}일 전`;
+
   return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
@@ -177,9 +206,15 @@ async function toggleCommentLikeButton(likeButton) {
 
   const previousLiked = likeButton.classList.contains('is-liked');
   const nextLiked = !previousLiked;
+  const likeCountElement = likeButton.parentElement?.querySelector('.work-detail-comment-like-count');
+  const previousLikeCount = Number((likeCountElement?.textContent || '0').replace(/[^\d]/g, '')) || 0;
+  const optimisticLikeCount = Math.max(previousLikeCount + (nextLiked ? 1 : -1), 0);
 
   likeButton.dataset.pending = 'true';
   syncLikeButtonIcon(likeButton, nextLiked, 12);
+  if (likeCountElement) {
+    likeCountElement.textContent = optimisticLikeCount.toLocaleString('ko-KR');
+  }
 
   try {
     const response = await fetch(`/api/comments/${commentId}/likes`, {
@@ -193,8 +228,14 @@ async function toggleCommentLikeButton(likeButton) {
 
     const result = await response.json();
     syncLikeButtonIcon(likeButton, Boolean(result.liked), 12);
+    if (likeCountElement) {
+      likeCountElement.textContent = Number(result.likeCount ?? optimisticLikeCount).toLocaleString('ko-KR');
+    }
   } catch (error) {
     syncLikeButtonIcon(likeButton, previousLiked, 12);
+    if (likeCountElement) {
+      likeCountElement.textContent = previousLikeCount.toLocaleString('ko-KR');
+    }
     alert(error.message || '댓글 좋아요 처리에 실패했습니다.');
   } finally {
     delete likeButton.dataset.pending;
@@ -320,16 +361,16 @@ function openWorkShareModal() {
 
 function submitWorkShare() {
   if (!selectedShareRecipients.length) {
-    alert('공유할 대상을 1명 이상 선택해주세요.');
+    showProfileSnackbar('공유할 대상을 1명 이상 선택해주세요.', 'share');
     return;
   }
 
   const recipientsLabel = selectedShareRecipients.map((recipient) => recipient.username).join(', ');
   const message = document.getElementById('workShareMessageInput')?.value.trim() || '';
   const workTitle = currentWorkDetail?.title || '게시물';
-  const suffix = message ? `\n메시지: ${message}` : '';
+  const suffix = message ? ` 메시지: ${message}` : '';
 
-  alert(`${workTitle}을(를) ${recipientsLabel}에게 공유했습니다.${suffix}`);
+  showProfileSnackbar(`${workTitle}을(를) ${recipientsLabel}에게 공유했습니다.${suffix}`, 'share', 4000);
   closeModal('workShareModal');
 }
 
@@ -347,7 +388,7 @@ function requestWorkAuction() {
     return;
   }
 
-  alert(`"${currentWorkDetail.title || '작품'}" 경매요청을 보냈습니다.`);
+  showProfileSnackbar(`"${currentWorkDetail.title || '작품'}" 경매요청을 보냈습니다.`, 'auction', 4000);
 }
 
 function formatAuctionRegisterDeadline(hours) {
@@ -528,7 +569,10 @@ function renderWorkComments(comments) {
           <span>${formatWorkDate(comment.createdDatetime)}</span>
         </div>
       </div>
-      <button class="work-detail-comment-like-btn${comment.isLiked ? ' is-liked' : ''}" type="button" data-comment-id="${comment.id}" aria-label="좋아요" aria-pressed="${comment.isLiked ? 'true' : 'false'}">${getHeartIconMarkup(Boolean(comment.isLiked), 12)}</button>
+      <div class="work-detail-comment-like-wrap">
+        <button class="work-detail-comment-like-btn${comment.isLiked ? ' is-liked' : ''}" type="button" data-comment-id="${comment.id}" aria-label="좋아요" aria-pressed="${comment.isLiked ? 'true' : 'false'}">${getHeartIconMarkup(Boolean(comment.isLiked), 12)}</button>
+        <span class="work-detail-comment-like-count">${Number(comment.likeCount ?? 0).toLocaleString('ko-KR')}</span>
+      </div>
     </div>
   `).join('');
 }
@@ -614,6 +658,10 @@ async function renderWorkDetailModal(work) {
   if (commentSummaryElement) {
     commentSummaryElement.textContent = formatCommentCountLabel(work.commentCount ?? 0);
   }
+  const viewCountElement = document.getElementById('workDetailViewCount');
+  if (viewCountElement) {
+    viewCountElement.textContent = `조회수 ${Number(work.viewCount ?? 0).toLocaleString('ko-KR')}회`;
+  }
 
   const tradeButton = document.getElementById('workDetailTradeButton');
   const tradeWrap = document.getElementById('workDetailTradeWrap');
@@ -622,7 +670,9 @@ async function renderWorkDetailModal(work) {
   const auctionLabel = document.getElementById('workDetailAuctionLabel');
   const savedButton = document.getElementById('workDetailSavedButton');
   const isOwnWork = currentMemberId !== null && work.memberId === currentMemberId;
-  const shouldHideTrade = IS_OWNER || isOwnWork;
+  const hasTradePrice = Number(work.price ?? 0) > 0;
+  const shouldHideTrade = IS_OWNER || isOwnWork || !hasTradePrice || Boolean(work.hasActiveAuction);
+  const shouldHideAuction = hasTradePrice && !Boolean(work.hasActiveAuction);
   const isViewerWork = !IS_OWNER && !isOwnWork;
   if (tradeWrap) {
     tradeWrap.hidden = shouldHideTrade;
@@ -634,8 +684,8 @@ async function renderWorkDetailModal(work) {
     tradeButton.title = '거래하기';
   }
   if (auctionWrap) {
-    auctionWrap.hidden = false;
-    auctionWrap.style.display = 'flex';
+    auctionWrap.hidden = shouldHideAuction;
+    auctionWrap.style.display = shouldHideAuction ? 'none' : 'flex';
   }
   if (auctionButton) {
     auctionButton.disabled = false;
@@ -660,10 +710,12 @@ async function renderWorkDetailModal(work) {
       : (isViewerWork ? '경매요청하기' : '경매하기');
   }
   if (savedButton) {
-    savedButton.classList.remove('is-saved');
+    const isBookmarked = Boolean(work.isBookmarked);
+    savedButton.classList.toggle('is-saved', isBookmarked);
     savedButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+    savedButton.disabled = false;
   }
-  isWorkSaved = false;
+  isWorkSaved = Boolean(work.isBookmarked);
 
   syncLikeButtonIcon(document.getElementById('workDetailLikeButton'), Boolean(work.isLiked), 24);
 
@@ -682,7 +734,6 @@ async function submitWorkComment() {
 
   const content = input.value.trim();
   if (!content) {
-    alert('댓글 내용을 입력해주세요.');
     return;
   }
 
@@ -715,6 +766,9 @@ async function submitWorkComment() {
 
 async function openWorkDetailModal(workId) {
   try {
+    await fetch(`/api/works/${workId}/views`, {
+      method: 'POST'
+    });
     const response = await fetch(`/api/works/${workId}`);
     if (!response.ok) {
       throw new Error('작품 정보를 불러오지 못했습니다.');
@@ -766,12 +820,145 @@ function closeModal(id, e) {
     if (id === 'auctionRegisterModal') {
       auctionRegisterDeadlineHours = 0;
     }
+    if (id === 'workBlockModal') {
+      resetWorkBlockModal();
+    }
   }
 }
 
 function openWorkActionModal(event) {
   event.stopPropagation();
   document.getElementById('workActionModal')?.classList.add('active');
+}
+
+function resetWorkBlockModal() {
+  document.getElementById('workBlockActionSheet')?.classList.remove('is-hidden');
+  document.getElementById('workBlockReportReason')?.classList.remove('active');
+  document.getElementById('workBlockReportComplete')?.classList.remove('active');
+  document.getElementById('workBlockConfirm')?.classList.remove('active');
+  document.getElementById('workBlockDone')?.classList.remove('active');
+}
+
+function openWorkBlockModal(event) {
+  event.stopPropagation();
+  currentWorkBlockTargetName = currentWorkDetail?.memberNickname || currentWorkDetail?.realName || '사용자';
+  document.getElementById('workBlockUserName').textContent = `${currentWorkBlockTargetName}님 차단`;
+  document.getElementById('workBlockTargetName').textContent = currentWorkBlockTargetName;
+  document.getElementById('workBlockDoneName').textContent = currentWorkBlockTargetName;
+  resetWorkBlockModal();
+  document.getElementById('workBlockModal')?.classList.add('active');
+}
+
+async function submitWorkReport(reason) {
+  if (!currentWorkDetail?.id) {
+    throw new Error('신고 대상 작품이 없습니다.');
+  }
+
+  const response = await fetch('/api/reports', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      targetType: 'WORK',
+      targetId: currentWorkDetail.id,
+      reason,
+      detail: `${currentWorkBlockTargetName} 작품 신고`
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || '신고 접수에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+async function submitWorkBlock() {
+  if (!currentWorkDetail?.memberId) {
+    throw new Error('차단 대상 사용자가 없습니다.');
+  }
+
+  const response = await fetch(`/api/members/${currentWorkDetail.memberId}/block`, {
+    method: 'POST'
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || '차단에 실패했습니다.');
+  }
+
+  return response.json();
+}
+
+function bindWorkBlockModalEvents() {
+  const reportButton = document.getElementById('workBlockReportBtn');
+  const openBlockButton = document.getElementById('workBlockOpenBtn');
+  const reportReason = document.getElementById('workBlockReportReason');
+  const reportComplete = document.getElementById('workBlockReportComplete');
+  const blockConfirm = document.getElementById('workBlockConfirm');
+  const blockDone = document.getElementById('workBlockDone');
+  const actionSheet = document.getElementById('workBlockActionSheet');
+
+  reportButton?.addEventListener('click', () => {
+    actionSheet?.classList.add('is-hidden');
+    reportReason?.classList.add('active');
+  });
+
+  openBlockButton?.addEventListener('click', () => {
+    actionSheet?.classList.add('is-hidden');
+    blockConfirm?.classList.add('active');
+  });
+
+  document.getElementById('workBlockReasonCloseBtn')?.addEventListener('click', () => {
+    reportReason?.classList.remove('active');
+    actionSheet?.classList.remove('is-hidden');
+  });
+
+  document.querySelectorAll('.work-block-reason-item').forEach((button) => {
+    button.addEventListener('click', async () => {
+      try {
+        await submitWorkReport(button.dataset.reason || '');
+        reportReason?.classList.remove('active');
+        reportComplete?.classList.add('active');
+      } catch (error) {
+        alert(error.message || '신고 접수에 실패했습니다.');
+      }
+    });
+  });
+
+  document.getElementById('workBlockUserBtn')?.addEventListener('click', () => {
+    reportComplete?.classList.remove('active');
+    blockConfirm?.classList.add('active');
+  });
+
+  document.getElementById('workBlockGuideBtn')?.addEventListener('click', () => {
+    alert('커뮤니티 규정 페이지는 아직 연결 전입니다.');
+  });
+
+  document.getElementById('workBlockCloseCompleteBtn')?.addEventListener('click', () => {
+    closeModal('workBlockModal');
+  });
+
+  document.getElementById('workBlockCancelBtn')?.addEventListener('click', () => {
+    blockConfirm?.classList.remove('active');
+    actionSheet?.classList.remove('is-hidden');
+  });
+
+  document.getElementById('workBlockConfirmBtn')?.addEventListener('click', async () => {
+    try {
+      await submitWorkBlock();
+      blockConfirm?.classList.remove('active');
+      blockDone?.classList.add('active');
+    } catch (error) {
+      alert(error.message || '차단에 실패했습니다.');
+    }
+  });
+
+  document.getElementById('workBlockDoneBtn')?.addEventListener('click', () => {
+    closeModal('workBlockModal');
+  });
 }
 
 async function editCurrentWork() {
@@ -1322,7 +1509,10 @@ function renderGalleryComments(comments) {
         </div>
         <p class="closeup__comment-text">${escapeHtml(comment.content || '')}</p>
       </div>
-      <button class="work-detail-comment-like-btn${comment.isLiked ? ' is-liked' : ''}" type="button" data-comment-id="${comment.id}" aria-label="좋아요" aria-pressed="${comment.isLiked ? 'true' : 'false'}">${getHeartIconMarkup(Boolean(comment.isLiked), 12)}</button>
+      <div class="work-detail-comment-like-wrap">
+        <button class="work-detail-comment-like-btn${comment.isLiked ? ' is-liked' : ''}" type="button" data-comment-id="${comment.id}" aria-label="좋아요" aria-pressed="${comment.isLiked ? 'true' : 'false'}">${getHeartIconMarkup(Boolean(comment.isLiked), 12)}</button>
+        <span class="work-detail-comment-like-count">${Number(comment.likeCount ?? 0).toLocaleString('ko-KR')}</span>
+      </div>
     </div>
   `).join('') + (hasMore ? `
     <button class="comment-more-btn" type="button" data-comments-toggle="gallery" aria-expanded="false">더보기</button>
@@ -2185,13 +2375,59 @@ document.addEventListener('DOMContentLoaded', () => {
     requestWorkAuction();
   });
 
-  document.getElementById('workDetailSavedButton')?.addEventListener('click', () => {
-    const savedButton = document.getElementById('workDetailSavedButton');
-    if (!savedButton) return;
+document.getElementById('workDetailSavedButton')?.addEventListener('click', () => {
+  const savedButton = document.getElementById('workDetailSavedButton');
+  if (!savedButton || !currentWorkDetail?.id || isWorkBookmarkRequestPending) return;
 
-    isWorkSaved = !isWorkSaved;
-    savedButton.classList.toggle('is-saved', isWorkSaved);
-  });
+  const previousSaved = Boolean(currentWorkDetail.isBookmarked);
+  const nextSaved = !previousSaved;
+
+  isWorkBookmarkRequestPending = true;
+  savedButton.disabled = true;
+  savedButton.classList.toggle('is-saved', nextSaved);
+
+  fetch('/api/bookmarks', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      targetType: 'WORK',
+      targetId: currentWorkDetail.id
+    })
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || '찜하기 처리에 실패했습니다.');
+      }
+      return response.json();
+    })
+    .then((result) => {
+      const bookmarked = Boolean(result.bookmarked);
+      isWorkSaved = bookmarked;
+      currentWorkDetail.isBookmarked = bookmarked;
+      savedButton.classList.toggle('is-saved', bookmarked);
+      showProfileSnackbar(bookmarked ? '찜한 작품에 추가했습니다.' : '찜한 작품에서 제거했습니다.', 'success');
+    })
+    .catch((error) => {
+      isWorkSaved = previousSaved;
+      currentWorkDetail.isBookmarked = previousSaved;
+      savedButton.classList.toggle('is-saved', previousSaved);
+      showProfileSnackbar(error.message || '찜하기 처리에 실패했습니다.', 'error');
+    })
+    .finally(() => {
+      isWorkBookmarkRequestPending = false;
+      savedButton.disabled = false;
+    });
+});
+
+document.getElementById('workDetailTradeButton')?.addEventListener('click', () => {
+  if (!currentWorkDetail?.id) return;
+  window.location.href = `/payment/pay-api?workId=${currentWorkDetail.id}`;
+});
+
+bindWorkBlockModalEvents();
 
   auctionRegisterPriceInput?.addEventListener('input', (event) => {
     const digitsOnly = event.target.value.replace(/,/g, '').replace(/\D/g, '');

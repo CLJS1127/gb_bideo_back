@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href=/images/BIDEO_LOGO/BIDEO_favicon.png>
 <link rel="stylesheet" href="/css/common/global.css">
 <link rel="stylesheet" href="/css/common/buttons.css">
+<link rel="stylesheet" href="/css/alarm/snackbar.css">
 <link rel="stylesheet" href="/css/auction/auction-register.css">
 <link rel="stylesheet" href="/css/profile/profile.css">
   
@@ -187,6 +188,15 @@
           <div class="work-detail-author-copy">
             <div class="work-detail-author-meta">
               <span class="work-detail-author" id="workDetailAuthor">작성자</span>
+              <div class="work-detail-option-wrap viewer-only">
+                <button class="work-detail-option-btn" type="button" aria-label="신고 또는 차단" onclick="openWorkBlockModal(event)">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="1.5"></circle>
+                    <circle cx="6" cy="12" r="1.5"></circle>
+                    <circle cx="18" cy="12" r="1.5"></circle>
+                  </svg>
+                </button>
+              </div>
               <div class="work-detail-option-wrap owner-only">
                 <button class="work-detail-option-btn" type="button" aria-label="옵션 더 보기" onclick="openWorkActionModal(event)">
                   <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
@@ -199,6 +209,13 @@
             </div>
             <div class="work-detail-title" id="workDetailTitle">제목</div>
             <div class="work-detail-description" id="workDetailDescription">설명</div>
+            <div class="meta-item work-detail-meta-item">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span class="work-detail-view-count" id="workDetailViewCount">조회수 0회</span>
+            </div>
             <div class="work-detail-tags" id="workDetailTags"></div>
             <div class="work-detail-date" id="workDetailDate">작성일</div>
           </div>
@@ -251,7 +268,7 @@
               </button>
               <span class="work-detail-like-count" id="workDetailAuctionLabel">경매하기</span>
             </div>
-            <div class="work-detail-like-stack owner-only" id="workDetailSavedWrap">
+            <div class="work-detail-like-stack" id="workDetailSavedWrap">
               <button class="work-detail-icon-btn" id="workDetailSavedButton" type="button" title="찜하기" aria-label="찜하기">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
@@ -387,6 +404,93 @@
     <button class="danger" type="button" onclick="editCurrentWork()">수정하기</button>
     <button class="danger" type="button" onclick="deleteCurrentWork()">삭제하기</button>
     <button class="cancel" type="button" onclick="closeModal('workActionModal')">취소</button>
+  </div>
+</div>
+
+<div class="modal-overlay work-block-modal-overlay" id="workBlockModal" onclick="closeModal('workBlockModal', event)">
+  <div class="work-block-modal__sheet" id="workBlockActionSheet">
+    <button class="danger" id="workBlockReportBtn" type="button">신고</button>
+    <button class="danger" id="workBlockOpenBtn" type="button">차단</button>
+    <button class="cancel" type="button" onclick="closeModal('workBlockModal')">취소</button>
+  </div>
+
+  <div class="work-block-report-reason" id="workBlockReportReason">
+    <div class="work-block-report-reason__header">
+      <button class="work-block-close-btn" type="button" id="workBlockReasonCloseBtn">&times;</button>
+      <h2>신고하기</h2>
+    </div>
+    <div class="work-block-report-reason__body">
+      <p class="subtitle">이 게시물을 신고하는 이유</p>
+      <button class="work-block-reason-item" type="button" data-reason="sensitive">
+        <span>민감한 콘텐츠</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+      <button class="work-block-reason-item" type="button" data-reason="impersonation">
+        <span>사칭</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+      <button class="work-block-reason-item" type="button" data-reason="hate">
+        <span>괴롭힘 및 혐오 표현</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+      <button class="work-block-reason-item" type="button" data-reason="copyright">
+        <span>저작권 침해</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="work-block-report-complete" id="workBlockReportComplete">
+    <div class="work-block-report-complete__body">
+      <div class="work-block-check-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="30" fill="none" stroke="#4BB543" stroke-width="3"/>
+          <path d="M20 33 L28 41 L44 25" fill="none" stroke="#4BB543" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>신고가 접수되었습니다.</h2>
+      <p class="description">
+        비데오에서 마음에 들지 않는 콘텐츠를 발견할 경우 해당 콘텐츠가
+        <strong>커뮤니티 규정</strong>을 위반한다면 신고할 수 있으며 공유한 사람을 이용 환경에서 삭제할 수도 있습니다.
+      </p>
+    </div>
+    <div class="work-block-report-complete__actions">
+      <button class="action-link" id="workBlockUserBtn" type="button">
+        <span id="workBlockUserName">사용자님 차단</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+      <button class="action-link" id="workBlockGuideBtn" type="button">
+        <span>커뮤니티 규정에 대해 더 알아보기</span>
+        <span class="chevron">&#8250;</span>
+      </button>
+    </div>
+    <button class="work-block-close-complete-btn" id="workBlockCloseCompleteBtn" type="button">닫기</button>
+  </div>
+
+  <div class="work-block-confirm" id="workBlockConfirm">
+    <div class="work-block-confirm__body">
+      <h2 class="work-block-confirm__title">
+        <span id="workBlockTargetName">사용자</span>님을 차단하시겠어요?
+      </h2>
+      <p class="work-block-confirm__desc">
+        상대방은 BIDEO에서 회원님의 프로필, 게시물 및 스토리를 찾을 수 없게 됩니다.
+        BIDEO는 회원님이 차단한 사실을 상대방에게 알리지 않습니다.
+      </p>
+    </div>
+    <button class="work-block-confirm__btn danger" id="workBlockConfirmBtn" type="button">차단</button>
+    <button class="work-block-confirm__btn cancel" id="workBlockCancelBtn" type="button">취소</button>
+  </div>
+
+  <div class="work-block-done" id="workBlockDone">
+    <div class="work-block-done__body">
+      <h2 class="work-block-done__title">
+        <span id="workBlockDoneName">사용자</span>님을 차단했습니다.
+      </h2>
+      <p class="work-block-done__desc">
+        상대방의 프로필에서 언제든지 차단할 수 있습니다.
+      </p>
+    </div>
+    <button class="work-block-done__btn" id="workBlockDoneBtn" type="button">닫기</button>
   </div>
 </div>
 
@@ -861,6 +965,7 @@
   </div>
 </div>
 
+<script src="/js/alarm/snackbar.js"></script>
 <script src="/js/profile/profile.js"></script>
 </body>
 </html>

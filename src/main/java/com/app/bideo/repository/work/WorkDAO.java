@@ -43,6 +43,10 @@ public class WorkDAO {
         return Optional.ofNullable(workMapper.selectWork(id));
     }
 
+    public void increaseViewCount(Long id) {
+        workMapper.increaseWorkViewCount(id);
+    }
+
     public Optional<Long> findFirstMemberId() {
         return Optional.ofNullable(workMapper.selectFirstMemberId());
     }

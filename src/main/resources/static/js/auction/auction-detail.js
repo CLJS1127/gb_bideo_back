@@ -23,6 +23,33 @@ let auctionDetailState = {
     selectedShareRecipients: []
 };
 
+function showAuctionSnackbar(message, type = "auction", duration = 3000, action = null) {
+    if (window.BideoSnackbar?.show) {
+        window.BideoSnackbar.show(message, type, duration, action);
+        return;
+    }
+    alert(message);
+}
+
+function confirmAuctionSnackbar(message, actionLabel = "확인", duration = 5000) {
+    return new Promise((resolve) => {
+        let resolved = false;
+
+        const finish = (value) => {
+            if (resolved) return;
+            resolved = true;
+            resolve(value);
+        };
+
+        showAuctionSnackbar(message, "auction", duration, {
+            label: actionLabel,
+            callback: () => finish(true)
+        });
+
+        window.setTimeout(() => finish(false), duration);
+    });
+}
+
 function formatPrice(value) {
     return Number(value || 0).toLocaleString("ko-KR");
 }
@@ -385,7 +412,7 @@ function startCountdown(closingAt) {
 
 async function initializeAuctionDetail() {
     if (!auctionDetailWorkId) {
-        alert("경매 작품 정보를 찾을 수 없습니다.");
+        showAuctionSnackbar("경매 작품 정보를 찾을 수 없습니다.", "error");
         return;
     }
 
@@ -415,7 +442,7 @@ async function initializeAuctionDetail() {
         renderWorkDetail(work);
         renderAuctionDetail(auction);
     } catch (error) {
-        alert(error.message || "경매 상세를 불러오지 못했습니다.");
+        showAuctionSnackbar(error.message || "경매 상세를 불러오지 못했습니다.", "error");
     }
 }
 
@@ -450,37 +477,36 @@ function closeShareModal() {
 
 function submitWorkShare() {
     if (!auctionDetailState.selectedShareRecipients.length) {
-        alert("공유할 대상을 1명 이상 선택해주세요.");
+        showAuctionSnackbar("공유할 대상을 1명 이상 선택해주세요.", "share");
         return;
     }
 
     const recipientsLabel = auctionDetailState.selectedShareRecipients.map((recipient) => recipient.username).join(", ");
     const message = workShareMessageInput?.value.trim() || "";
     const workTitle = auctionDetailState.work?.title || "게시물";
-    const suffix = message ? `\n메시지: ${message}` : "";
-    const shareUrl = getShareUrl();
+    const suffix = message ? ` 메시지: ${message}` : "";
 
-    alert(`${workTitle}을(를) ${recipientsLabel}에게 공유했습니다.${suffix}\n링크: ${shareUrl}`);
+    showAuctionSnackbar(`${workTitle}을(를) ${recipientsLabel}에게 공유했습니다.${suffix}`, "share", 4000);
     closeShareModal();
 }
 
 async function doBid() {
     if (!auctionDetailState.auction?.id) {
-        alert("경매 정보를 찾을 수 없습니다.");
+        showAuctionSnackbar("경매 정보를 찾을 수 없습니다.", "error");
         return;
     }
     if (!bidActionButton || bidActionButton.disabled) {
         return;
     }
     if (!auctionDetailState.currentMemberId) {
-        alert("로그인 후 입찰할 수 있습니다.");
+        showAuctionSnackbar("로그인 후 입찰할 수 있습니다.", "error");
         return;
     }
     if (auctionDetailState.isBidSubmitting) {
         return;
     }
 
-    const confirmed = window.confirm(`${formatPrice(window.bidVal)}원으로 입찰하시겠습니까?`);
+    const confirmed = await confirmAuctionSnackbar(`${formatPrice(window.bidVal)}원으로 입찰하시겠습니까?`, "입찰");
     if (!confirmed) {
         return;
     }
@@ -510,9 +536,9 @@ async function doBid() {
         auctionDetailState.auction.currentPrice = nextPrice;
         auctionDetailState.auction.bidCount = Number(auctionDetailState.auction.bidCount || 0) + 1;
         renderAuctionDetail(auctionDetailState.auction);
-        alert("입찰이 완료되었습니다.");
+        showAuctionSnackbar("입찰이 완료되었습니다.", "auction");
     } catch (error) {
-        alert(error.message || "입찰에 실패했습니다.");
+        showAuctionSnackbar(error.message || "입찰에 실패했습니다.", "error");
         syncBidActionState();
     } finally {
         auctionDetailState.isBidSubmitting = false;
@@ -543,11 +569,11 @@ function toggleLike(btn) {
 
 async function deleteAuctionWork() {
     if (!auctionDetailState.work?.id) {
-        alert("삭제할 작품 정보를 찾을 수 없습니다.");
+        showAuctionSnackbar("삭제할 작품 정보를 찾을 수 없습니다.", "error");
         return;
     }
 
-    const confirmed = window.confirm("이 작품을 삭제하시겠습니까?");
+    const confirmed = await confirmAuctionSnackbar("이 작품을 삭제하시겠습니까?", "삭제");
     if (!confirmed) {
         return;
     }
@@ -562,9 +588,10 @@ async function deleteAuctionWork() {
             throw new Error(errorText || "작품 삭제에 실패했습니다.");
         }
 
+        showAuctionSnackbar("작품을 삭제했습니다.", "success");
         window.location.href = "/profile";
     } catch (error) {
-        alert(error.message || "작품 삭제에 실패했습니다.");
+        showAuctionSnackbar(error.message || "작품 삭제에 실패했습니다.", "error");
     }
 }
 
@@ -577,7 +604,7 @@ shareButton?.addEventListener("click", async () => {
         }
         openShareModal();
     } catch (error) {
-        alert(error.message || "공유 대상을 불러오지 못했습니다.");
+        showAuctionSnackbar(error.message || "공유 대상을 불러오지 못했습니다.", "error");
     }
 });
 auctionShareCloseButton?.addEventListener("click", closeShareModal);

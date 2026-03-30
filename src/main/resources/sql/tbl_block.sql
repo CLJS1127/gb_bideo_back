@@ -23,3 +23,5 @@ comment on column tbl_block.blocker_id is '차단한 회원';
 comment on column tbl_block.blocked_id is '차단당한 회원';
 
 create index idx_block_blocked on tbl_block (blocked_id);
+
+select * from tbl_block;
