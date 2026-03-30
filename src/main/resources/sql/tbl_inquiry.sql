@@ -31,3 +31,6 @@ comment on column tbl_inquiry.status is '상태 (PENDING/ANSWERED/CLOSED)';
 create index idx_inquiry_member on tbl_inquiry (member_id);
 create index idx_inquiry_status on tbl_inquiry (status, created_datetime desc);
 
+-- 기존 테이블에 제약조건만 추가할 경우 아래 실행
+alter table tbl_inquiry add constraint chk_inquiry_status check (status in ('PENDING', 'ANSWERED', 'CLOSED'));
+
