@@ -398,6 +398,27 @@
     display: inline-block;
 }
 
+.status-active,
+.status-approved {
+    background: #E9F8EF;
+    color: #157347;
+}
+
+.status-pending {
+    background: #FFF5E6;
+    color: #B4690E;
+}
+
+.status-urgent {
+    background: #FDECEC;
+    color: #C92A2A;
+}
+
+.status-muted {
+    background: #F2F4F7;
+    color: #667085;
+}
+
 /* Custom Select Component */
 .custom-select-wrapper {
     position: relative;

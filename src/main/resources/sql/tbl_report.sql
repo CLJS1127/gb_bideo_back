@@ -16,7 +16,13 @@ create table tbl_report (
     updated_datetime  timestamp    not null default now(),
 
     constraint fk_report_reporter foreign key (reporter_id)
-        references tbl_member (id)
+        references tbl_member (id),
+    constraint chk_report_target_type
+        check (target_type in ('WORK', 'MEMBER', 'COMMENT', 'GALLERY')),
+    constraint chk_report_reason
+        check (reason in ('SENSITIVE', 'IMPERSONATION', 'HARASSMENT', 'COPYRIGHT')),
+    constraint chk_report_status
+        check (status in ('PENDING', 'REVIEWING', 'RESOLVED', 'CANCELLED'))
 );
 
 comment on table tbl_report is '신고';

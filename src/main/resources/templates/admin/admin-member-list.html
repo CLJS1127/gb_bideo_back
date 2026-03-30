@@ -1,112 +1,108 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO Admin - 회원관리</title>
-    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div id="admin-lnb"></div>
+<div th:replace="~{admin/admin-lnb :: adminLnb('members')}"></div>
 
-    <main class="main-content">
-        <!-- 현재 위치 -->
-        <div class="breadcrumbs">
-            <span class="current">회원관리</span>
-        </div>
+<main class="main-content">
+    <div class="breadcrumbs">
+        <span class="current">회원관리</span>
+    </div>
 
-        <!-- 타이틀, 서브 타이틀 -->
-        <header class="mb-32">
-            <h1 class="fs-24 fw-800 text-main">회원관리</h1>
-            <p class="text-sub fs-14">BIDEO에 가입된 모든 회원을 관리합니다.</p>
-        </header>
+    <header class="mb-32">
+        <h1 class="fs-24 fw-800 text-main">회원관리</h1>
+        <p class="text-sub fs-14">BIDEO에 가입된 모든 회원을 관리합니다.</p>
+    </header>
 
-        <!-- 컨텐츠 -->
-        <section class="content-card">
-
-            <!-- 컨텐츠 안 네비게이션 -->
-            <div class="list-controls">
-                <div class="search-wrapper">
-                    <label for="member-search"><i data-lucide="search"></i></label>
-                    <input type="text" id="member-search" class="search-input" placeholder="이메일, 닉네임 또는 이름 검색...">
-                </div>
-                <div class="filter-group">
-                    <button class="btn-filter active">전체</button>
-                    <button class="btn-filter">일반회원</button>
-                    <button class="btn-filter">아티스트</button>
-                    <button class="btn-filter">정지회원</button>
-                </div>
+    <section class="content-card">
+        <form class="list-controls" method="get" th:action="@{/admin/members}">
+            <div class="search-wrapper">
+                <label for="member-search"><i data-lucide="search"></i></label>
+                <input type="text" id="member-search" name="keyword" class="search-input"
+                       th:value="${search.keyword}" placeholder="이메일 또는 닉네임 검색...">
             </div>
+            <div class="filter-group">
+                <a class="btn-filter" th:classappend="${search.status == null or search.status == ''} ? ' active' : ''"
+                   th:href="@{/admin/members}">전체</a>
+                <a class="btn-filter" th:classappend="${search.status == 'ACTIVE'} ? ' active' : ''"
+                   th:href="@{/admin/members(status='ACTIVE')}">활동회원</a>
+                <a class="btn-filter" th:classappend="${search.status == 'SUSPENDED'} ? ' active' : ''"
+                   th:href="@{/admin/members(status='SUSPENDED')}">정지회원</a>
+                <button type="submit" class="btn-secondary">검색</button>
+            </div>
+        </form>
 
-            <!-- 리스트 -->
-            <table class="bideo-table">
-                <thead>
-                    <tr>
-                        <th class="text-center col-id">번호</th>
-                        <th class="col-flexible">이메일</th>
-                        <th class="text-center">닉네임</th>
-                        <th class="text-center">이름</th>
-                        <th class="text-center col-status">구분</th>
-                        <th class="text-center col-status">상태</th>
-                        <th class="text-center col-action">상세</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-center col-id">#U-001</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate">user01@example.com</div>
-                        </td>
-                        <td class="text-center">비디오매니아</td>
-                        <td class="text-center">홍길동</td>
-                        <td class="text-center col-status">일반회원</td>
-                        <td class="text-center col-status"><span class="status-badge status-active">활동중</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-member-detail.html?id=U-001'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center col-id">#U-002</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate">artist01@bideo.com</div>
-                        </td>
-                        <td class="text-center">캔버스마스터</td>
-                        <td class="text-center">이몽룡</td>
-                        <td class="text-center col-status">아티스트</td>
-                        <td class="text-center col-status"><span class="status-badge status-active">활동중</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-member-detail.html?id=U-002'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-    </main>
+        <table class="bideo-table">
+            <thead>
+            <tr>
+                <th class="text-center col-id">번호</th>
+                <th class="text-center col-flexible">이메일</th>
+                <th class="text-center">닉네임</th>
+                <th class="text-center col-status">회원 상태</th>
+                <th class="text-center col-action">관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(members)}">
+                <td colspan="5" class="text-center text-muted">조회된 회원이 없습니다.</td>
+            </tr>
+            <tr th:each="member : ${members}">
+                <td class="text-center col-id" th:text="${member.id}">1</td>
+                <td class="text-center fw-700 col-flexible" th:text="${member.email}">user@example.com</td>
+                <td class="text-center" th:text="${member.nickname}">닉네임</td>
+                <td class="text-center col-status">
+                    <span class="status-badge"
+                          th:classappend="${member.status == 'ACTIVE'} ? ' status-active' : ' status-urgent'"
+                          th:text="${member.status == 'ACTIVE'} ? '활동' : '정지'">활동</span>
+                </td>
+                <td class="text-center col-action">
+                    <div class="d-flex gap-8 justify-center">
+                        <a class="btn-secondary fs-12 p-8 flex-1"
+                           th:href="@{/admin/members/{id}(id=${member.id})}">상세</a>
+                        <button type="button"
+                                class="btn-primary fs-12 p-8 flex-1 btn-member-status-toggle"
+                                th:attr="data-member-id=${member.id},
+                                         data-current-status=${member.status},
+                                         data-next-status=${member.status == 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'},
+                                         data-action-label=${member.status == 'ACTIVE' ? '계정 일시 정지' : '계정 일시 정지 해제'}"
+                                th:text="${member.status == 'ACTIVE'} ? '계정 일시 정지' : '계정 일시 정지 해제'">
+                            계정 일시 정지
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
 
-    <!-- 공통 모달 -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-container" style="max-width: 400px;">
-            <div class="modal-body text-only">
-                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
-                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
-                <div class="d-flex justify-end gap-12 mt-32">
-                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
-                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
-                </div>
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-body text-only">
+            <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+            <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+            <div class="d-flex justify-end gap-12 mt-32">
+                <button type="button" class="btn-secondary w-100" data-modal-close="confirm">취소</button>
+                <button type="button" class="btn-primary w-100" id="btn-confirm-execute">확인</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- 스크립트 -->
-    <script src="../../static/js/admin/admin-service.js"></script>
-    <script src="../../static/js/admin/admin-layout.js"></script>
-    <script src="../../static/js/admin/admin-event.js"></script>
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
 </body>
 </html>

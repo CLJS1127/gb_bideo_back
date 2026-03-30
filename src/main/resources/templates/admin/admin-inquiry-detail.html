@@ -1,107 +1,102 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO Admin - 문의 상세 정보</title>
-    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div id="admin-lnb"></div>
+<div th:replace="~{admin/admin-lnb :: adminLnb('inquiries')}"></div>
 
-    <!-- Common Confirmation Modal -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-container" style="max-width: 400px;">
-            <div class="modal-body text-only">
-                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
-                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
-                <div class="d-flex justify-end gap-12 mt-32">
-                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
-                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
-                </div>
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-body text-only">
+            <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+            <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+            <div class="d-flex justify-end gap-12 mt-32">
+                <button type="button" class="btn-secondary w-100" data-modal-close="confirm">취소</button>
+                <button type="button" class="btn-primary w-100" id="btn-confirm-execute">확인</button>
             </div>
         </div>
     </div>
+</div>
 
-    <main class="main-content">
-        <div class="breadcrumbs">
-            <a href="admin-inquiry-list.html">문의 관리 목록</a>
-            <i data-lucide="chevron-right"></i>
-            <span class="current">상세 내역</span>
+<main class="main-content">
+    <div class="breadcrumbs">
+        <a th:href="@{/admin/inquiries}">문의 관리 목록</a>
+        <i data-lucide="chevron-right"></i>
+        <span class="current">상세 내역</span>
+    </div>
+
+    <a th:href="@{/admin/inquiries}" class="btn-back">
+        <i data-lucide="arrow-left" class="w-16"></i>
+        목록으로 돌아가기
+    </a>
+
+    <header class="mb-40">
+        <div class="d-flex align-center gap-12 mb-8">
+            <span class="status-badge"
+                  th:classappend="${inquiry.status == 'ANSWERED'} ? ' status-active' : ' status-pending'"
+                  th:text="${inquiry.status == 'ANSWERED'} ? '답변 완료' : '답변 대기'">답변 대기</span>
+            <span class="text-muted fs-14">문의번호: <span th:text="${inquiry.id}">1</span></span>
         </div>
+        <h1 class="fs-28 fw-800 text-main">문의 상세 내역</h1>
+    </header>
 
-        <a href="admin-inquiry-list.html" class="btn-back">
-            <i data-lucide="arrow-left" class="w-16"></i>
-            목록으로 돌아가기
-        </a>
-
-        <header class="mb-40">
-            <div class="d-flex align-center gap-12 mb-8">
-                <span class="status-badge status-pending">답변 대기</span>
-                <span class="text-muted fs-14">문의번호: #INQ-128</span>
+    <div class="detail-grid">
+        <div class="content-card">
+            <div class="info-section">
+                <h2 class="info-title"><i data-lucide="user" class="w-18"></i>작성자 정보</h2>
+                <div class="info-row"><div class="info-label">작성자</div><div class="info-value" th:text="${inquiry.memberNickname != null ? inquiry.memberNickname + ' (' + inquiry.memberEmail + ')' : '비회원 문의'}">닉네임</div></div>
+                <div class="info-row"><div class="info-label">등록일시</div><div class="info-value" th:text="${inquiry.createdDatetime != null ? #temporals.format(inquiry.createdDatetime, 'yyyy.MM.dd HH:mm:ss') : '-'}">2024.03.10 14:20:15</div></div>
             </div>
-            <h1 class="fs-28 fw-800 text-main">문의 상세 내역</h1>
-        </header>
 
-        <div class="detail-grid">
-            <div class="content-card">
-                <div class="info-section">
-                    <h2 class="info-title"><i data-lucide="user" class="w-18"></i>작성자 정보</h2>
-                    <div class="info-row"><div class="info-label">이름</div><div class="info-value">김철수 (chulsoo@bideo.com)</div></div>
-                    <div class="info-row"><div class="info-label">등록일시</div><div class="info-value">2024.03.10 14:20:15</div></div>
-                </div>
-
-                <!-- 유저가 입력한 폼 위치 -->
-                <div class="info-section">
-                    <h2 class="info-title"><i data-lucide="file-text" class="w-18"></i>문의 내용</h2>
-                    <div class="p-24 bg-light br-14 mt-16">
-                        <h3 class="fs-16 fw-700 mb-12">비디오 작품 등록 시 해상도 제한 문의 드립니다.</h3>
-                        <p class="fs-14 text-main lh-1.6">
-                            안녕하세요. 이번에 처음으로 작품을 등록하려고 하는 아티스트입니다.<br>
-                            등록 가이드를 보니 해상도에 대한 내용이 조금 모호해서 질문 드립니다.<br><br>
-                            현재 제가 작업한 영상은 8K(7680x4320) 해상도인데, 혹시 플랫폼 내에서 업로드 가능한<br>
-                            최대 해상도나 파일 용량 제한이 별도로 있을까요? 답변 부탁드립니다.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 관리자가 보낼 메시지 -->
-                <div class="info-section mb-0">
-                    <h2 class="info-title"><i data-lucide="reply" class="w-18"></i>답변 작성</h2>
-                    <div class="mt-16">
-                        <textarea id="answer-content" class="admin-textarea" rows="8" placeholder="고객에게 전달할 답변 내용을 입력하세요..."></textarea>
-                        <div class="d-flex justify-end mt-16 gap-8">
-                            <button class="btn-secondary w-120">임시 저장</button>
-                            <button id="btn-submit-answer" class="btn-primary w-120">답변 등록</button>
-                        </div>
-                    </div>
+            <div class="info-section">
+                <h2 class="info-title"><i data-lucide="file-text" class="w-18"></i>문의 내용</h2>
+                <div class="p-24 bg-light br-14 mt-16">
+                    <p class="fs-14 text-main lh-1.6" th:text="${inquiry.content}">문의 내용</p>
                 </div>
             </div>
 
-            <!-- 관리자가 보낼 메시지 -->
-            <aside>
-                <div class="summary-card theme-dark">
-                    <div class="label">문의 처리 현황</div>
-                    <div class="value fs-18">처리 대기 중</div>
-                    <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
-                    <p class="action-desc fs-12 mb-16 fw-500">답변 작성 후 '답변 등록' 버튼을 눌러주세요.</p>
-                    <div class="btn-group">
-                        <button class="btn-secondary w-full">내부 메모 추가</button>
+            <div class="info-section mb-0">
+                <h2 class="info-title"><i data-lucide="reply" class="w-18"></i>답변 작성</h2>
+                <div class="mt-16">
+                    <textarea id="answer-content"
+                              class="admin-textarea"
+                              rows="8"
+                              th:attr="data-inquiry-id=${inquiry.id}"
+                              placeholder="고객에게 전달할 답변 내용을 입력하세요..."
+                              th:text="${inquiry.reply}"></textarea>
+                    <div class="d-flex justify-end mt-16 gap-8">
+                        <button type="button" id="btn-submit-answer" class="btn-primary w-120"
+                                th:attr="data-inquiry-id=${inquiry.id}"
+                                th:text="${inquiry.reply != null and !inquiry.reply.isBlank()} ? '답변 수정' : '답변 등록'">답변 등록</button>
                     </div>
                 </div>
-            </aside>
+            </div>
         </div>
-    </main>
 
-    <script src="../../static/js/admin/admin-service.js"></script>
-    <script src="../../static/js/admin/admin-layout.js"></script>
-    <script src="../../static/js/admin/admin-event.js"></script>
+        <aside>
+            <div class="summary-card theme-dark">
+                <div class="label">문의 처리 현황</div>
+                <div class="value fs-18" th:text="${inquiry.status == 'ANSWERED'} ? '처리 완료' : '처리 대기 중'">처리 대기 중</div>
+                <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
+                <p class="action-desc fs-12 mb-16 fw-500">답변 작성 후 버튼을 눌러 저장해주세요.</p>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
 </body>
 </html>

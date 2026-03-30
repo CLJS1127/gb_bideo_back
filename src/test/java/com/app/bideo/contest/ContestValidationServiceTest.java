@@ -4,6 +4,7 @@ import com.app.bideo.dto.contest.ContestCreateRequestDTO;
 import com.app.bideo.dto.contest.ContestUpdateRequestDTO;
 import com.app.bideo.mapper.contest.ContestMapper;
 import com.app.bideo.service.contest.ContestService;
+import com.app.bideo.service.notification.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,7 +27,7 @@ class ContestValidationServiceTest {
     @BeforeEach
     void setUp() {
         contestMapper = Mockito.mock(ContestMapper.class);
-        contestService = new ContestService(contestMapper);
+        contestService = new ContestService(contestMapper, Mockito.mock(NotificationService.class));
     }
 
     @Test

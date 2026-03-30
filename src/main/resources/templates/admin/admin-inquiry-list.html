@@ -1,143 +1,84 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO Admin - 문의 관리 목록</title>
-    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div id="admin-lnb"></div>
+<div th:replace="~{admin/admin-lnb :: adminLnb('inquiries')}"></div>
 
-    <main class="main-content">
-        <!-- 현재 위치 -->
-        <div class="breadcrumbs">
-            <span class="current">문의 관리 목록</span>
-        </div>
-        
-        <!-- 타이틀, 서브 타이틀 -->
-        <header class="mb-32">
-            <h1 class="fs-24 fw-800 text-main">문의 관리 목록</h1>
-            <p class="text-sub fs-14">BIDEO 서비스 이용 관련 고객 문의 사항을 확인하고 답변을 관리합니다.</p>
-        </header>
-
-        <!-- 컨텐츠 -->
-        <section class="content-card">
-
-            <!-- 컨텐츠 안 네비게이션 -->
-            <div class="list-controls">
-                <div class="search-wrapper">
-                    <label for="inquiry-search"><i data-lucide="search"></i></label>
-                    <input type="text" id="inquiry-search" class="search-input" placeholder="문의 제목, 작성자 또는 이메일 검색...">
-                </div>
-                <div class="filter-group">
-                    <button class="btn-filter active">전체</button>
-                    <button class="btn-filter">답변 대기</button>
-                    <button class="btn-filter">답변 완료</button>
-                    <button class="btn-filter">중요 문의</button>
-                </div>
-            </div>
-
-            <!-- 리스트 -->
-            <table class="bideo-table">
-                <thead>
-                    <tr>
-                        <th class="text-center col-id">번호</th>
-                        <th class="col-flexible">문의 제목</th>
-                        <th style="width: 150px;">작성자</th>
-                        <th class="text-center col-date">등록일</th>
-                        <th class="text-center col-status">상태</th>
-                        <th class="text-center col-action">상세</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-center col-id">#INQ-128</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate-2">비디오 작품 등록 시 해상도 제한 문의 드립니다.</div>
-                        </td>
-                        <td>김철수 (chulsoo@bideo.com)</td>
-                        <td class="text-center col-date text-muted">2024.03.10 14:20</td>
-                        <td class="text-center col-status"><span class="status-badge status-pending">답변 대기</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-inquiry-detail.html?id=128'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center col-id">#INQ-127</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate-2">경매 낙찰 후 결제 수단 변경이 가능한가요?</div>
-                        </td>
-                        <td>이영희 (younghee@gmail.com)</td>
-                        <td class="text-center col-date text-muted">2024.03.09 11:05</td>
-                        <td class="text-center col-status"><span class="status-badge status-urgent">중요 문의</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-inquiry-detail.html?id=127'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center col-id">#INQ-126</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate-2">아티스트 등급 승인 절차 안내 부탁드립니다.</div>
-                        </td>
-                        <td>박지민 (jimin_park@naver.com)</td>
-                        <td class="text-center col-date text-muted">2024.03.08 09:30</td>
-                        <td class="text-center col-status"><span class="status-badge status-active">답변 완료</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-inquiry-detail.html?id=126'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center col-id">#INQ-125</td>
-                        <td class="fw-700 col-flexible">
-                            <div class="text-truncate-2">모바일 앱에서 영상 끊김 현상이 발생합니다.</div>
-                        </td>
-                        <td>최민호 (minho_choi@bideo.com)</td>
-                        <td class="text-center col-date text-muted">2024.03.07 18:45</td>
-                        <td class="text-center col-status"><span class="status-badge status-active">답변 완료</span></td>
-                        <td class="text-center col-action">
-                            <button class="action-btn" onclick="location.href='admin-inquiry-detail.html?id=125'"><i data-lucide="chevron-right"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-center mt-32 gap-8">
-                <button class="btn-secondary p-8 fs-12" disabled><i data-lucide="chevron-left" class="w-16"></i></button>
-                <button class="btn-primary p-8 fs-12 w-40">1</button>
-                <button class="btn-secondary p-8 fs-12 w-40">2</button>
-                <button class="btn-secondary p-8 fs-12 w-40">3</button>
-                <button class="btn-secondary p-8 fs-12"><i data-lucide="chevron-right" class="w-16"></i></button>
-            </div>
-
-        </section>
-    </main>
-
-    <!-- 취소 모달 -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-container" style="max-width: 400px;">
-            <div class="modal-body text-only">
-                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
-                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
-                <div class="d-flex justify-end gap-12 mt-32">
-                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
-                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
-                </div>
-            </div>
-        </div>
+<main class="main-content">
+    <div class="breadcrumbs">
+        <span class="current">문의 관리 목록</span>
     </div>
 
-    <!-- 스크립트 -->
-    <script src="../../static/js/admin/admin-service.js"></script>
-    <script src="../../static/js/admin/admin-layout.js"></script>
-    <script src="../../static/js/admin/admin-event.js"></script>
+    <header class="mb-32">
+        <h1 class="fs-24 fw-800 text-main">문의 관리 목록</h1>
+        <p class="text-sub fs-14">BIDEO 서비스 이용 관련 고객 문의 사항을 확인하고 답변을 관리합니다.</p>
+    </header>
+
+    <section class="content-card">
+        <div class="list-controls">
+            <div class="filter-group">
+                <a class="btn-filter" th:classappend="${search.status == null or search.status == ''} ? ' active' : ''"
+                   th:href="@{/admin/inquiries}">전체</a>
+                <a class="btn-filter" th:classappend="${search.status == 'PENDING'} ? ' active' : ''"
+                   th:href="@{/admin/inquiries(status='PENDING')}">답변 대기</a>
+                <a class="btn-filter" th:classappend="${search.status == 'ANSWERED'} ? ' active' : ''"
+                   th:href="@{/admin/inquiries(status='ANSWERED')}">답변 완료</a>
+            </div>
+        </div>
+
+        <table class="bideo-table">
+            <thead>
+            <tr>
+                <th class="text-center col-id">번호</th>
+                <th class="col-flexible">문의 내용</th>
+                <th style="width: 180px;">작성자</th>
+                <th class="text-center col-date">등록일</th>
+                <th class="text-center col-status">상태</th>
+                <th class="text-center col-action">상세</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(inquiries)}">
+                <td colspan="6" class="text-center text-muted">조회된 문의가 없습니다.</td>
+            </tr>
+            <tr th:each="inquiry : ${inquiries}">
+                <td class="text-center col-id" th:text="${inquiry.id}">1</td>
+                <td class="fw-700 col-flexible">
+                    <div class="text-truncate-2" th:text="${inquiry.content}">문의 내용</div>
+                </td>
+                <td th:text="${inquiry.memberNickname != null ? inquiry.memberNickname + ' (' + inquiry.memberEmail + ')' : '비회원 문의'}">작성자</td>
+                <td class="text-center col-date text-muted"
+                    th:text="${inquiry.createdDatetime != null ? #temporals.format(inquiry.createdDatetime, 'yyyy.MM.dd HH:mm') : '-'}">2024.03.10 14:20</td>
+                <td class="text-center col-status">
+                    <span class="status-badge"
+                          th:classappend="${inquiry.status == 'ANSWERED'} ? ' status-active' : ' status-pending'"
+                          th:text="${inquiry.status == 'ANSWERED'} ? '답변 완료' : '답변 대기'">답변 대기</span>
+                </td>
+                <td class="text-center col-action">
+                    <a class="action-btn" th:href="@{/admin/inquiries/{id}(id=${inquiry.id})}">
+                        <i data-lucide="chevron-right"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
 </body>
 </html>

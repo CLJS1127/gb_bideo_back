@@ -1,103 +1,110 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIDEO Admin - 회원 상세 정보</title>
-    <link rel="icon" type="image/png" href="../../static/images/BIDEO_LOGO/BIDEO_favicon.png">
-    <link rel="stylesheet" href="../../static/css/common/global.css">
-    <link rel="stylesheet" href="../../static/css/common/font.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-common.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-style.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-util.css">
-    <link rel="stylesheet" href="../../static/css/admin/admin-modal.css">
+    <link rel="icon" type="image/png" th:href="@{/static/images/BIDEO_LOGO/BIDEO_favicon.png}" href="/static/images/BIDEO_LOGO/BIDEO_favicon.png">
+    <link rel="stylesheet" th:href="@{/static/css/common/global.css}" href="/static/css/common/global.css">
+    <link rel="stylesheet" th:href="@{/static/css/common/font.css}" href="/static/css/common/font.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-common.css}" href="/static/css/admin/admin-common.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-style.css}" href="/static/css/admin/admin-style.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-util.css}" href="/static/css/admin/admin-util.css">
+    <link rel="stylesheet" th:href="@{/static/css/admin/admin-modal.css}" href="/static/css/admin/admin-modal.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div id="admin-lnb"></div>
+<div th:replace="~{admin/admin-lnb :: adminLnb('members')}"></div>
 
-    <main class="main-content">
-        <!-- 현재 위치 -->
-        <div class="breadcrumbs">
-            <a href="admin-member-list.html">회원관리</a>
-            <i data-lucide="chevron-right"></i>
-            <span class="current">상세 정보</span>
+<main class="main-content">
+    <div class="breadcrumbs">
+        <a th:href="@{/admin/members}">회원관리</a>
+        <i data-lucide="chevron-right"></i>
+        <span class="current">상세 정보</span>
+    </div>
+
+    <a th:href="@{/admin/members}" class="btn-back">
+        <i data-lucide="arrow-left" class="w-16"></i>
+        목록으로 돌아가기
+    </a>
+
+    <header class="mb-40">
+        <div class="d-flex align-center gap-12 mb-8">
+            <span class="status-badge"
+                  th:classappend="${member.status == 'ACTIVE'} ? ' status-active' : ' status-urgent'"
+                  th:text="${member.status == 'ACTIVE'} ? '활동' : '정지'">활동</span>
+            <span class="text-muted fs-14">회원번호: <span th:text="${member.id}">1</span></span>
         </div>
+        <h1 class="fs-28 fw-800 text-main">회원 상세 정보</h1>
+    </header>
 
-        <!-- 뒤로가기 버튼 -->
-        <a href="admin-member-list.html" class="btn-back">
-            <i data-lucide="arrow-left" class="w-16"></i>
-            목록으로 돌아가기
-        </a>
-
-        <!-- 타이틀, 서브 타이틀 -->
-        <header class="mb-40">
-            <div class="d-flex align-center gap-12 mb-8">
-                <span class="status-badge status-active">활동중</span>
-                <span class="text-muted fs-14">회원번호: #U-001</span>
+    <div class="detail-grid">
+        <div class="content-card">
+            <div class="info-section">
+                <h2 class="info-title"><i data-lucide="user" class="w-18"></i>기본 정보</h2>
+                <div class="info-row"><div class="info-label">이메일</div><div class="info-value" th:text="${member.email}">user@example.com</div></div>
+                <div class="info-row"><div class="info-label">닉네임</div><div class="info-value" th:text="${member.nickname}">닉네임</div></div>
+                <div class="info-row"><div class="info-label">연락처</div><div class="info-value" th:text="${member.phoneNumber}">010-0000-0000</div></div>
+                <div class="info-row"><div class="info-label">가입일</div><div class="info-value" th:text="${member.createdDatetime != null ? #temporals.format(member.createdDatetime, 'yyyy-MM-dd HH:mm') : '-'}">2026-01-01 10:00</div></div>
             </div>
-            <h1 class="fs-28 fw-800 text-main">회원 상세 정보</h1>
-        </header>
 
-        <!-- 상세 내역 (Grid) -->
-        <div class="detail-grid">
-            <div class="content-card">
-                <div class="info-section">
-                    <h2 class="info-title"><i data-lucide="user" class="w-18"></i>기본 정보</h2>
-                    <div class="info-row"><div class="info-label">이메일</div><div class="info-value">user01@example.com</div></div>
-                    <div class="info-row"><div class="info-label">닉네임</div><div class="info-value">비디오매니아</div></div>
-                    <div class="info-row"><div class="info-label">이름</div><div class="info-value">홍길동</div></div>
-                    <div class="info-row"><div class="info-label">연락처</div><div class="info-value">010-1234-5678</div></div>
-                    <div class="info-row"><div class="info-label">가입일</div><div class="info-value">2026-01-15 14:30:22</div></div>
+            <div class="info-section">
+                <h2 class="info-title"><i data-lucide="shield" class="w-18"></i>계정 상태</h2>
+                <div class="info-row">
+                    <div class="info-label">회원 상태</div>
+                    <div class="info-value" th:text="${member.status == 'ACTIVE'} ? '활동' : '정지'">활동</div>
                 </div>
-
-                <div class="info-section">
-                    <h2 class="info-title"><i data-lucide="shield" class="w-18"></i>계정 권한 및 상태</h2>
-                    <div class="info-row"><div class="info-label">회원 구분</div><div class="info-value">일반회원</div></div>
-                    <div class="info-row"><div class="info-label">최종 로그인</div><div class="info-value">2026-03-16 09:12:45</div></div>
-                </div>
-
-                <div class="info-section mb-0">
-                    <h2 class="info-title"><i data-lucide="activity" class="w-18"></i>활동 요약</h2>
-                    <div class="info-row"><div class="info-label">작품 등록 수</div><div class="info-value">0 건</div></div>
-                    <div class="info-row"><div class="info-label">경매 참여 수</div><div class="info-value">12 건</div></div>
-                    <div class="info-row"><div class="info-label">누적 결제 금액</div><div class="info-value">2,450,000 원</div></div>
+                <div class="info-row">
+                    <div class="info-label">최종 로그인</div>
+                    <div class="info-value" th:text="${member.lastLoginDatetime != null ? #temporals.format(member.lastLoginDatetime, 'yyyy-MM-dd HH:mm') : '-'}">2026-03-16 09:12</div>
                 </div>
             </div>
 
-            <!-- 사이드 바 -->
-            <aside>
-                <div class="summary-card">
-                    <div class="label">계정 관리</div>
-                    <div class="value fs-18">상태 변경 및 권한 설정</div>
-                    <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
-                    
-                    <div class="d-flex flex-column gap-12">
-                        <button class="btn-primary w-100 justify-center" onclick="openConfirmModal('권한 변경', '회원 권한을 아티스트로 변경하시겠습니까?')">아티스트로 변경</button>
-                        <button class="btn-secondary w-100 justify-center text-error" onclick="openConfirmModal('계정 정지', '정말 이 회원을 정지하시겠습니까?')">계정 일시 정지</button>
-                    </div>
-                </div>
-            </aside>
+            <div class="info-section mb-0">
+                <h2 class="info-title"><i data-lucide="activity" class="w-18"></i>활동 요약</h2>
+                <div class="info-row"><div class="info-label">예술관 수</div><div class="info-value" th:text="${member.galleryCount != null ? member.galleryCount : 0} + ' 건'">0 건</div></div>
+                <div class="info-row"><div class="info-label">팔로워 수</div><div class="info-value" th:text="${member.followerCount != null ? member.followerCount : 0} + ' 명'">0 명</div></div>
+                <div class="info-row"><div class="info-label">팔로잉 수</div><div class="info-value" th:text="${member.followingCount != null ? member.followingCount : 0} + ' 명'">0 명</div></div>
+            </div>
         </div>
-    </main>
 
-    <!-- 취소 모달 -->
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal-container" style="max-width: 400px;">
-            <div class="modal-body text-only">
-                <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
-                <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
-                <div class="d-flex justify-end gap-12 mt-32">
-                    <button class="btn-secondary w-100" onclick="closeConfirmModal()">취소</button>
-                    <button class="btn-primary w-100" id="btn-confirm-execute">확인</button>
+        <aside>
+            <div class="summary-card">
+                <div class="label">계정 관리</div>
+                <div class="value fs-18">상태 변경</div>
+                <hr class="border-none mt-24 mb-24" style="border-top: 1px solid rgba(255,255,255,0.1) !important;">
+
+                <div class="d-flex flex-column gap-12">
+                    <button type="button"
+                            class="btn-primary w-100 justify-center btn-member-status-toggle"
+                            th:attr="data-member-id=${member.id},
+                                     data-current-status=${member.status},
+                                     data-next-status=${member.status == 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE'},
+                                     data-action-label=${member.status == 'ACTIVE' ? '계정 일시 정지' : '계정 일시 정지 해제'}"
+                            th:text="${member.status == 'ACTIVE'} ? '계정 일시 정지' : '계정 일시 정지 해제'">
+                        계정 일시 정지
+                    </button>
                 </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<div class="modal-overlay" id="confirm-modal">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-body text-only">
+            <h2 class="modal-title fs-20 fw-800" id="confirm-title">정말 처리하시겠습니까?</h2>
+            <p class="modal-desc" id="confirm-message">이 작업은 취소할 수 없습니다.</p>
+            <div class="d-flex justify-end gap-12 mt-32">
+                <button type="button" class="btn-secondary w-100" data-modal-close="confirm">취소</button>
+                <button type="button" class="btn-primary w-100" id="btn-confirm-execute">확인</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- 스크립트 -->
-    <script src="../../static/js/admin/admin-service.js"></script>
-    <script src="../../static/js/admin/admin-layout.js"></script>
-    <script src="../../static/js/admin/admin-event.js"></script>
+<script th:src="@{/static/js/admin/admin-service.js}" src="/static/js/admin/admin-service.js"></script>
+<script th:src="@{/static/js/admin/admin-layout.js}" src="/static/js/admin/admin-layout.js"></script>
+<script th:src="@{/static/js/admin/admin-event.js}" src="/static/js/admin/admin-event.js"></script>
 </body>
 </html>

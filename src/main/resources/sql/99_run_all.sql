@@ -32,6 +32,7 @@
 \ir tbl_comment_like.sql
 \ir tbl_hide.sql
 \ir tbl_report.sql
+\ir tbl_member_restriction.sql
 \ir tbl_notification.sql
 \ir tbl_message_room_member.sql
 \ir tbl_message.sql
