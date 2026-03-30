@@ -16,6 +16,7 @@
 .fs-18 { font-size: 18px !important; }
 .fs-24 { font-size: 24px !important; }
 .fs-28 { font-size: 28px !important; }
+.fs-32 { font-size: 32px !important; }
 
 .text-main { color: var(--admin-text-main) !important; }
 .text-sub { color: var(--admin-text-sub) !important; }
@@ -37,6 +38,7 @@
 .mb-24 { margin-bottom: 24px !important; }
 .mb-32 { margin-bottom: 32px !important; }
 .mb-40 { margin-bottom: 40px !important; }
+.mb-48 { margin-bottom: 48px !important; }
 
 .mt-0 { margin: 0 !important; }
 .mt-4 { margin-top: 4px !important; }
@@ -85,7 +87,11 @@
 .gap-16 { gap: 16px !important; }
 
 /* Width & Sizing */
+.w-40 { width: 40px !important; }
 .w-100 { width: 100% !important; }
+.w-120 { width: 120px !important; }
+.w-200 { width: 200px !important; }
+.w-full { width: 100% !important; }
 .w-14 { width: 14px !important; }
 .w-16 { width: 16px !important; }
 .w-18 { width: 18px !important; }
@@ -93,5 +99,18 @@
 /* Misc */
 .ls-1 { letter-spacing: 1px !important; }
 .pointer { cursor: pointer !important; }
+.cursor-pointer { cursor: pointer !important; }
 .border-none { border: none !important; }
 .bg-transparent { background: transparent !important; }
+.bg-light { background: #F9F9F9 !important; }
+.br-14 { border-radius: 14px !important; }
+.border-radius-16 { border-radius: 16px !important; }
+.overflow-hidden { overflow: hidden !important; }
+.lh-1\.6 { line-height: 1.6 !important; }
+.position-relative { position: relative !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-1 { flex: 1 !important; }
+.justify-end { justify-content: flex-end !important; }
+.hover-scale { transition: transform 0.3s; }
+.hover-scale:hover { transform: scale(1.02); }
+.transition-03 { transition: all 0.3s; }

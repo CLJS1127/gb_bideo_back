@@ -22,5 +22,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         STATIC_UPLOAD_DIR.toUri().toString(),
                         LEGACY_STATIC_IMAGE_UPLOAD_DIR.toUri().toString()
                 );
+
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
     }
 }

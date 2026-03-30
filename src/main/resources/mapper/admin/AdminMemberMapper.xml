@@ -5,91 +5,91 @@
 <mapper namespace="com.app.bideo.mapper.admin.AdminMemberMapper">
 
     <select id="selectMemberList" resultType="com.app.bideo.dto.admin.AdminMemberListResponseDTO">
-        SELECT
+        select
             id,
             email,
             nickname,
-            real_name AS real_name,
+            real_name as real_name,
             role,
             status,
-            creator_verified AS creator_verified,
-            creator_tier AS creator_tier,
-            follower_count AS follower_count,
-            created_datetime AS created_datetime
-        FROM tbl_member
+            creator_verified as creator_verified,
+            creator_tier as creator_tier,
+            follower_count as follower_count,
+            created_datetime as created_datetime
+        from tbl_member
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (
-                    email ILIKE '%' || #{keyword} || '%'
-                    OR nickname ILIKE '%' || #{keyword} || '%'
-                    OR real_name ILIKE '%' || #{keyword} || '%'
+                and (
+                    email ilike '%' || #{keyword} || '%'
+                    or nickname ilike '%' || #{keyword} || '%'
+                    or real_name ilike '%' || #{keyword} || '%'
                 )
             </if>
             <if test="role != null and role != ''">
-                AND role = #{role}
+                and role = #{role}
             </if>
             <if test="status != null and status != ''">
-                AND status = #{status}
+                and status = #{status}
             </if>
             <if test="creatorVerified != null">
-                AND creator_verified = #{creatorVerified}
+                and creator_verified = #{creatorVerified}
             </if>
         </where>
-        ORDER BY created_datetime DESC
-        LIMIT #{size} OFFSET (#{page} - 1) * #{size}
+        order by created_datetime desc
+        limit #{size} offset (#{page} - 1) * #{size}
     </select>
 
     <select id="selectMemberDetail" resultType="com.app.bideo.dto.admin.AdminMemberDetailResponseDTO">
-        SELECT
+        select
             id,
             email,
             nickname,
-            real_name AS real_name,
-            birth_date AS birth_date,
+            real_name as real_name,
+            birth_date as birth_date,
             bio,
-            profile_image AS profile_image,
+            profile_image as profile_image,
             role,
             status,
-            creator_verified AS creator_verified,
-            seller_verified AS seller_verified,
-            creator_tier AS creator_tier,
-            follower_count AS follower_count,
-            following_count AS following_count,
-            gallery_count AS gallery_count,
-            phone_number AS phone_number,
-            last_login_datetime AS last_login_datetime,
-            created_datetime AS created_datetime,
-            updated_datetime AS updated_datetime
-        FROM tbl_member
-        WHERE id = #{id}
+            creator_verified as creator_verified,
+            seller_verified as seller_verified,
+            creator_tier as creator_tier,
+            follower_count as follower_count,
+            following_count as following_count,
+            gallery_count as gallery_count,
+            phone_number as phone_number,
+            last_login_datetime as last_login_datetime,
+            created_datetime as created_datetime,
+            updated_datetime as updated_datetime
+        from tbl_member
+        where id = #{id}
     </select>
 
     <update id="updateMemberStatus">
-        UPDATE tbl_member
-        SET status = #{status},
+        update tbl_member
+        set status = #{status},
             updated_datetime = now()
-        WHERE id = #{id}
+        where id = #{id}
     </update>
 
     <select id="countMembers" resultType="int">
-        SELECT COUNT(*)
-        FROM tbl_member
+        select count(*)
+        from tbl_member
         <where>
             <if test="keyword != null and keyword != ''">
-                AND (
-                    email ILIKE '%' || #{keyword} || '%'
-                    OR nickname ILIKE '%' || #{keyword} || '%'
-                    OR real_name ILIKE '%' || #{keyword} || '%'
+                and (
+                    email ilike '%' || #{keyword} || '%'
+                    or nickname ilike '%' || #{keyword} || '%'
+                    or real_name ilike '%' || #{keyword} || '%'
                 )
             </if>
             <if test="role != null and role != ''">
-                AND role = #{role}
+                and role = #{role}
             </if>
             <if test="status != null and status != ''">
-                AND status = #{status}
+                and status = #{status}
             </if>
             <if test="creatorVerified != null">
-                AND creator_verified = #{creatorVerified}
+                and creator_verified = #{creatorVerified}
             </if>
         </where>
     </select>

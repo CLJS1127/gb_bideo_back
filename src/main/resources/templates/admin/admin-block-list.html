@@ -28,12 +28,14 @@
 
     <section class="content-card">
         <div class="list-controls">
-            <form method="get" th:action="@{/admin/restrictions}" class="search-wrapper" style="flex: 1;">
-                <label for="block-search"><i data-lucide="search"></i></label>
-                <input type="text" id="block-search" name="keyword" class="search-input"
-                       th:value="${search.keyword}" placeholder="닉네임 또는 이메일 검색...">
-                <input type="hidden" name="restrictionType" th:value="${search.restrictionType}">
-            </form>
+            <div class="d-flex gap-8 align-center">
+                <form method="get" th:action="@{/admin/restrictions}" class="search-wrapper" style="flex: 1;">
+                    <label for="block-search"><i data-lucide="search"></i></label>
+                    <input type="text" id="block-search" name="keyword" class="search-input"
+                           th:value="${search.keyword}" placeholder="닉네임 또는 이메일 검색...">
+                    <input type="hidden" name="restrictionType" th:value="${search.restrictionType}">
+                </form>
+            </div>
             <div class="filter-group">
                 <a class="btn-filter" th:classappend="${search.restrictionType == null or search.restrictionType == ''} ? ' active' : ''"
                    th:href="@{/admin/restrictions(keyword=${search.keyword})}">전체</a>
@@ -41,7 +43,7 @@
                    th:href="@{/admin/restrictions(restrictionType='BLOCK',keyword=${search.keyword})}">차단됨</a>
                 <a class="btn-filter" th:classappend="${search.restrictionType == 'LIMIT'} ? ' active' : ''"
                    th:href="@{/admin/restrictions(restrictionType='LIMIT',keyword=${search.keyword})}">제한됨</a>
-                <button type="button" class="btn-primary" id="btn-open-create-restriction">이용 제한 등록</button>
+                <button type="button" class="btn-primary fs-12 p-8" id="btn-open-create-restriction">이용 제한 등록</button>
             </div>
         </div>
 
@@ -130,15 +132,23 @@
                     <div id="restriction-member-results" class="mt-12"></div>
                 </div>
                 <div class="admin-form-group mb-24">
-                    <label class="admin-form-label" for="restriction-type">제한 종류</label>
-                    <select id="restriction-type" class="admin-input">
-                        <option value="BLOCK">차단</option>
-                        <option value="LIMIT">제한</option>
-                    </select>
+                    <label class="admin-form-label">제한 종류</label>
+                    <input type="hidden" id="restriction-type" value="BLOCK">
+                    <div class="custom-select-wrapper" id="restriction-type-select">
+                        <div class="custom-select-trigger">
+                            <span class="selected-text">차단</span>
+                            <i data-lucide="chevron-down"></i>
+                        </div>
+                        <div class="custom-options">
+                            <div class="custom-option active" data-value="BLOCK">차단</div>
+                            <div class="custom-option" data-value="LIMIT">제한</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="admin-form-group mb-24">
                     <label class="admin-form-label" for="edit-block-date">제한 종료일</label>
                     <input type="datetime-local" id="edit-block-date" class="admin-input" value="">
+                    <div id="block-permanent-label" class="admin-input" style="display:none; background:#f5f5f5; color:#999; cursor:default;">영구</div>
                 </div>
                 <div class="admin-form-group">
                     <label class="admin-form-label" for="edit-block-reason">제한 사유</label>

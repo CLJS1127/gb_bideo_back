@@ -18,7 +18,7 @@ public class AuthorizationHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType("application/json;charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), Map.of(
                 "message", "접근 권한이 없습니다.",
                 "path", request.getRequestURI()

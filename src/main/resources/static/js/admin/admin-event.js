@@ -202,7 +202,29 @@ function initRestrictionActions() {
 
     createButton?.addEventListener("click", () => openRestrictionCreateModal());
     saveButton?.addEventListener("click", saveRestriction);
-    restrictionType?.addEventListener("change", syncRestrictionEndDatetimeField);
+
+    const restrictionTypeSelect = document.getElementById("restriction-type-select");
+    if (restrictionTypeSelect) {
+        const trigger = restrictionTypeSelect.querySelector(".custom-select-trigger");
+        const selectedText = restrictionTypeSelect.querySelector(".selected-text");
+        trigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (restrictionType.disabled) return;
+            restrictionTypeSelect.classList.toggle("open");
+        });
+        restrictionTypeSelect.querySelectorAll(".custom-option").forEach((opt) => {
+            opt.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (restrictionType.disabled) return;
+                restrictionTypeSelect.querySelectorAll(".custom-option").forEach((o) => o.classList.remove("active"));
+                opt.classList.add("active");
+                selectedText.textContent = opt.textContent;
+                restrictionType.value = opt.dataset.value;
+                restrictionTypeSelect.classList.remove("open");
+                syncRestrictionEndDatetimeField();
+            });
+        });
+    }
 
     document.querySelectorAll(".btn-edit-restriction").forEach((button) => {
         button.addEventListener("click", () => openRestrictionEditModal(button.dataset));
@@ -354,7 +376,11 @@ function openRestrictionCreateModal() {
         memberKeyword.disabled = false;
         memberKeyword.dataset.locked = "false";
     }
-    if (restrictionType) restrictionType.value = "BLOCK";
+    if (restrictionType) {
+        restrictionType.value = "BLOCK";
+        restrictionType.disabled = false;
+    }
+    syncRestrictionTypeSelect("BLOCK", false);
     if (endDatetime) endDatetime.value = "";
     if (reason) reason.value = "";
     if (results) results.innerHTML = "";
@@ -384,6 +410,7 @@ function openRestrictionEditModal(dataset) {
         restrictionType.value = dataset.restrictionType || "LIMIT";
         restrictionType.disabled = true;
     }
+    syncRestrictionTypeSelect(dataset.restrictionType || "LIMIT", true);
     if (endDatetime) endDatetime.value = dataset.endDatetime || "";
     if (reason) reason.value = dataset.reason || "";
     if (results) results.innerHTML = "";
@@ -394,14 +421,20 @@ function openRestrictionEditModal(dataset) {
 function syncRestrictionEndDatetimeField() {
     const restrictionType = document.getElementById("restriction-type");
     const endDatetime = document.getElementById("edit-block-date");
+    const permanentLabel = document.getElementById("block-permanent-label");
     if (!restrictionType || !endDatetime) {
         return;
     }
 
     const isLimit = restrictionType.value === "LIMIT";
-    endDatetime.disabled = !isLimit;
-    if (!isLimit) {
+    if (isLimit) {
+        endDatetime.style.display = "";
+        endDatetime.disabled = false;
+        if (permanentLabel) permanentLabel.style.display = "none";
+    } else {
+        endDatetime.style.display = "none";
         endDatetime.value = "";
+        if (permanentLabel) permanentLabel.style.display = "";
     }
 }
 
@@ -474,6 +507,28 @@ function closeBlockModal() {
     }
     if (restrictionType) {
         restrictionType.disabled = false;
+    }
+    const typeSelect = document.getElementById("restriction-type-select");
+    if (typeSelect) {
+        typeSelect.classList.remove("open");
+    }
+}
+
+function syncRestrictionTypeSelect(value, disabled) {
+    const wrapper = document.getElementById("restriction-type-select");
+    if (!wrapper) return;
+    const selectedText = wrapper.querySelector(".selected-text");
+    const options = wrapper.querySelectorAll(".custom-option");
+    options.forEach((opt) => {
+        opt.classList.toggle("active", opt.dataset.value === value);
+        if (opt.dataset.value === value && selectedText) {
+            selectedText.textContent = opt.textContent;
+        }
+    });
+    const trigger = wrapper.querySelector(".custom-select-trigger");
+    if (trigger) {
+        trigger.style.opacity = disabled ? "0.5" : "";
+        trigger.style.pointerEvents = disabled ? "none" : "";
     }
 }
 
