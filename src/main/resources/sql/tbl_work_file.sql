@@ -18,6 +18,8 @@ create table tbl_work_file (
         references tbl_work (id)
 );
 
+-- alter table tbl_work_file alter column file_url type text;
+
 comment on table tbl_work_file is '작품 파일';
 comment on column tbl_work_file.id is 'PK';
 comment on column tbl_work_file.work_id is '작품 FK';

@@ -10,9 +10,9 @@ create table tbl_gallery_tag (
 
     constraint uk_gallery_tag unique (gallery_id, tag_id),
     constraint fk_gt_gallery foreign key (gallery_id)
-        references tbl_gallery (id),
+    references tbl_gallery (id),
     constraint fk_gt_tag foreign key (tag_id)
-        references tbl_tag (id)
+    references tbl_tag (id)
 );
 
 comment on table  tbl_gallery_tag                is '예술관 태그';

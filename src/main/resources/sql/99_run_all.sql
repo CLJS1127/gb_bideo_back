@@ -15,6 +15,7 @@
 \ir tbl_member_badge.sql
 \ir tbl_notification_setting.sql
 \ir tbl_work.sql
+\ir tbl_work_view.sql
 \ir tbl_follow.sql
 \ir tbl_block.sql
 \ir tbl_card.sql

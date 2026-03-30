@@ -20,3 +20,4 @@ comment on column tbl_search_history.keyword is '검색 키워드';
 comment on column tbl_search_history.searched_at is '검색 일시';
 
 create index idx_sh_member on tbl_search_history (member_id, searched_at desc);
+create index idx_sh_searched_at on tbl_search_history (searched_at);
