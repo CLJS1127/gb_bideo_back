@@ -24,11 +24,19 @@ public class ProfileController {
     private final MemberRepository memberRepository; // 이승민| 프로필 닉네임 경로 적용으로 인한 추가
 
     @GetMapping
-    public String redirectProfile(@AuthenticationPrincipal CustomUserDetails userDetails) { // 이승민| 프로필 닉네임 경로 적용으로 인한 추가
-        if (userDetails == null || userDetails.getNickname() == null || userDetails.getNickname().isBlank()) {
+    public String redirectProfile(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                  @RequestParam(required = false) Long galleryId,
+                                  Model model) { // 이승민| 프로필 닉네임 경로 적용으로 인한 추가
+        if (userDetails == null || userDetails.getId() == null) {
             return "redirect:/";
         }
-        return "redirect:/profile/" + userDetails.getNickname();
+
+        MemberVO profileMember = memberRepository.findById(userDetails.getId()).orElse(null);
+        if (profileMember == null) {
+            return "redirect:/";
+        }
+
+        return renderProfilePage(profileMember, galleryId, userDetails, model);
     }
 
     @GetMapping("/{nickname}")
@@ -39,6 +47,11 @@ public class ProfileController {
             return "redirect:/error-page";
         }
 
+        return renderProfilePage(profileMember, galleryId, userDetails, model);
+    }
+
+    private String renderProfilePage(MemberVO profileMember, Long galleryId,
+                                     CustomUserDetails userDetails, Model model) {
         boolean isOwner = userDetails != null && profileMember.getId().equals(userDetails.getId());
         model.addAttribute("works", workService.getProfileWorks(profileMember.getId(), galleryId));
         model.addAttribute("galleries", galleryService.getProfileGalleries(profileMember.getId()));

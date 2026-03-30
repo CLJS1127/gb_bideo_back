@@ -1,12 +1,9 @@
 package com.app.bideo.service.auction;
 
 import com.app.bideo.domain.auction.AuctionVO;
-import com.app.bideo.dto.auction.AuctionDetailResponseDTO;
-import com.app.bideo.dto.auction.AuctionListResponseDTO;
-import com.app.bideo.dto.auction.AuctionSearchDTO;
 import com.app.bideo.dto.auction.AuctionCreateRequestDTO;
+import com.app.bideo.dto.auction.AuctionDetailResponseDTO;
 import com.app.bideo.dto.auction.BidResponseDTO;
-import com.app.bideo.dto.common.PageResponseDTO;
 import com.app.bideo.dto.work.WorkDTO;
 import com.app.bideo.repository.auction.AuctionDAO;
 import com.app.bideo.repository.auction.BidDAO;
@@ -17,18 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(rollbackFor = Exception.class)
-public class AuctionService {
+public class AuctionCommandService {
 
     private final AuctionDAO auctionDAO;
     private final BidDAO bidDAO;
     private final WorkDAO workDAO;
     private final NotificationService notificationService;
+    private final AuctionQueryService auctionQueryService;
 
     public AuctionDetailResponseDTO createAuction(Long memberId, AuctionCreateRequestDTO requestDTO) {
         if (requestDTO.getWorkId() == null) {
@@ -84,36 +81,7 @@ public class AuctionService {
                         .build()
         );
 
-        return getActiveAuctionByWorkId(requestDTO.getWorkId());
-    }
-
-    @Transactional(readOnly = true)
-    public AuctionDetailResponseDTO getActiveAuctionByWorkId(Long workId) {
-        return auctionDAO.findActiveByWorkId(workId)
-                .orElseThrow(() -> new IllegalArgumentException("활성 경매를 찾을 수 없습니다."));
-    }
-
-    @Transactional(readOnly = true)
-    public PageResponseDTO<AuctionListResponseDTO> getAuctionList(AuctionSearchDTO searchDTO) {
-        if (searchDTO.getPage() == null) searchDTO.setPage(1);
-        if (searchDTO.getSize() == null) searchDTO.setSize(20);
-
-        List<AuctionListResponseDTO> content = auctionDAO.findAuctions(searchDTO);
-        int total = auctionDAO.countAuctions(searchDTO);
-
-        return PageResponseDTO.<AuctionListResponseDTO>builder()
-                .content(content)
-                .page(searchDTO.getPage())
-                .size(searchDTO.getSize())
-                .totalElements((long) total)
-                .totalPages((int) Math.ceil((double) total / searchDTO.getSize()))
-                .build();
-    }
-
-    @Transactional(readOnly = true)
-    public AuctionDetailResponseDTO getAuctionDetail(Long auctionId, Long memberId) {
-        return auctionDAO.findById(auctionId, memberId)
-                .orElseThrow(() -> new IllegalArgumentException("경매를 찾을 수 없습니다."));
+        return auctionQueryService.getActiveAuctionByWorkId(requestDTO.getWorkId());
     }
 
     public Map<String, Object> toggleWishlist(Long memberId, Long auctionId) {
@@ -147,13 +115,13 @@ public class AuctionService {
                     auction.getSellerId(), null, "AUCTION_END", "AUCTION",
                     auction.getWorkId(), "경매가 종료되어 낙찰자가 결정되었습니다."
             );
-        } else {
-            auctionDAO.updateStatus(auctionId, "CLOSED");
-
-            notificationService.createNotification(
-                    auction.getSellerId(), null, "AUCTION_END", "AUCTION",
-                    auction.getWorkId(), "경매가 입찰 없이 종료되었습니다."
-            );
+            return;
         }
+
+        auctionDAO.updateStatus(auctionId, "CLOSED");
+        notificationService.createNotification(
+                auction.getSellerId(), null, "AUCTION_END", "AUCTION",
+                auction.getWorkId(), "경매가 입찰 없이 종료되었습니다."
+        );
     }
 }

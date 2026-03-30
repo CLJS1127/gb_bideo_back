@@ -67,7 +67,8 @@
           <div class="video-gallery-button"
                role="button"
                tabindex="0"
-               th:onclick="|window.location.href='${profilePath}?galleryId=${gallery.id}'|"> <!-- 예술관 선택 후에도 /profile/{nickname} 유지 -->
+               onclick="window.location.href=this.dataset.profileUrl"
+               th:attr="data-profile-url=|${profilePath}?galleryId=${gallery.id}|"> <!-- 예술관 선택 후에도 /profile/{nickname} 유지 -->
             <div class="canvas-parent">
               <canvas class="ring-canvas"
                       width="87"

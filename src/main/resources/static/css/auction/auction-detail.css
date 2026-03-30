@@ -13,11 +13,24 @@
             line-height: 1.5;
         }
 
+        .auction-detail-header {
+            margin-bottom: 88px;
+        }
+
         /* ────────── 페이지 레이아웃 ────────── */
         .page {
             max-width: 1120px;
             margin: 0 auto;
             padding: 32px 20px 80px;
+        }
+
+        body:has(#VerticalNavContent) .page {
+            max-width: 1192px;
+            margin-left: 72px;
+        }
+
+        body:has(#VerticalNavContent) .main-header__layout {
+            padding-left: 72px;
         }
 
         /* 2열 그리드: 좌(영상+정보) / 우(입찰 패널) */
@@ -418,6 +431,15 @@
 
         /* ── 반응형 ── */
         @media (max-width: 860px) {
+            body:has(#VerticalNavContent) .page {
+                max-width: 1120px;
+                margin-left: auto;
+            }
+
+            body:has(#VerticalNavContent) .main-header__layout {
+                padding-left: 0;
+            }
+
             .detail-grid { grid-template-columns: 1fr; }
             .bid-panel { position: static; }
         }

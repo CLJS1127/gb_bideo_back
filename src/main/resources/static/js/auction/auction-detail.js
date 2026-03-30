@@ -374,7 +374,7 @@ async function deleteAuctionWork() {
             throw new Error(errorText || "작품 삭제에 실패했습니다.");
         }
 
-        window.location.href = "/profile/profile";
+        window.location.href = "/profile";
     } catch (error) {
         alert(error.message || "작품 삭제에 실패했습니다.");
     }
