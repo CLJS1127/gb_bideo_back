@@ -40,22 +40,306 @@ window.addEventListener('load', () => {
   window.window.isCloseupOpen = false;
   let commentComposerInitialized = false;
   let activeCloseupPinId = null;
+  let activeGalleryDetail = null;
   let closeupSeed = 0;
   let closeupOffset = 0;
   let closeupScrollHandler = null;
+  let isGalleryLikePending = false;
+  let isGalleryBookmarkPending = false;
+  let isGalleryCommentPending = false;
 
-// ─── 찜 버튼 토글 (카드/클로즈업 통합) ──────────────
-  function toggleSave(event, btn) {
-    if (event) event.stopPropagation();
-    if (!IS_LOGGED_IN) { showAuthModal(); return; }
-    const isCloseup = btn.classList.contains('closeup__save-btn');
-    const savedClass = isCloseup ? 'closeup__save-btn--saved' : 'art-gallery-card__save-btn--saved';
-    const isSaved = btn.classList.toggle(savedClass);
-    btn.textContent = isSaved ? '찜 완료' : '찜';
+  function isGalleryCloseup(pinId) {
+    const targetPinId = pinId || activeCloseupPinId;
+    return typeof targetPinId === 'string' && targetPinId.startsWith('gallery-');
   }
 
-  function toggleCloseupLike(btn) {
+  function getActiveGalleryId() {
+    if (!isGalleryCloseup()) return null;
+    return Number(String(activeCloseupPinId).replace('gallery-', ''));
+  }
+
+  function getGalleryIdFromButton(btn) {
+    if (btn.classList.contains('closeup__save-btn')) {
+      return getActiveGalleryId();
+    }
+
+    const card = btn.closest('.art-gallery-card');
+    const pinId = card ? card.getAttribute('data-id') : null;
+    if (!pinId || !pinId.startsWith('gallery-')) return null;
+    return Number(pinId.replace('gallery-', ''));
+  }
+
+  function showCloseupMessage(message, type) {
+    const text = String(message || '');
+    if (!text) return;
+
+    if (typeof BideoSnackbar !== 'undefined') {
+      BideoSnackbar.show(text, type || 'info');
+      return;
+    }
+
+    if (typeof showToast === 'function') {
+      showToast(text);
+      return;
+    }
+
+    window.alert(text);
+  }
+
+  function showNotReadyMessage(message) {
+    showCloseupMessage(message || '준비 중입니다.', 'info');
+  }
+
+  async function readErrorMessage(response, fallback) {
+    const text = (await response.text()).trim();
+    if (!text || text.startsWith('<!DOCTYPE') || text.startsWith('<html')) {
+      return fallback;
+    }
+    return text;
+  }
+
+  function updateCloseupCommentHeader(count) {
+    const header = document.querySelector('.closeup__collapsible-header');
+    if (!header) return;
+    const textNode = Array.from(header.childNodes).find(function(node) {
+      return node.nodeType === Node.TEXT_NODE;
+    });
+    const label = '댓글 ' + count + '개 ';
+    if (textNode) {
+      textNode.textContent = label;
+      return;
+    }
+    header.prepend(document.createTextNode(label));
+  }
+
+  function setCommentComposerEnabled(enabled, disabledMessage) {
+    const input = document.querySelector('.closeup__comment-input');
+    const submitBtn = document.querySelector('.closeup__submit-btn');
+    if (!input || !submitBtn) return;
+
+    input.textContent = '';
+    input.setAttribute('contenteditable', enabled ? 'true' : 'false');
+    input.setAttribute(
+        'data-placeholder',
+        enabled ? '댓글을 추가하고 대화를 시작하세요.' : (disabledMessage || '댓글 작성이 비활성화되었습니다.')
+    );
+    submitBtn.classList.remove('closeup__submit-btn--visible');
+    submitBtn.style.display = enabled ? '' : 'none';
+  }
+
+  function escapeCommentHtml(text) {
+    return String(text == null ? '' : text).replace(/[&<>"']/g, function(char) {
+      return ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '\'': '&#39;'
+      })[char];
+    });
+  }
+
+  function formatCommentTimestamp(createdDatetime) {
+    if (!createdDatetime) return '방금';
+    const parsed = new Date(createdDatetime);
+    if (Number.isNaN(parsed.getTime())) return '방금';
+    return parsed.toLocaleString('ko-KR', {
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
+  function updateCloseupLikeUi(liked, likeCount) {
+    const closeupView = document.getElementById('closeupView');
+    const likeBtn = closeupView ? closeupView.querySelector('.closeup__icon-btn[aria-label="좋아요"]') : null;
+    const likePath = likeBtn ? likeBtn.querySelector('path') : null;
+    const countEl = closeupView ? closeupView.querySelector('.closeup__stat-count') : null;
+
+    if (likeBtn) {
+      likeBtn.classList.toggle('closeup__icon-btn--liked', Boolean(liked));
+    }
+    if (likePath) {
+      likePath.setAttribute('d', liked ? CLOSEUP_LIKE_FILLED_PATH : CLOSEUP_LIKE_OUTLINE_PATH);
+    }
+    if (countEl) {
+      countEl.textContent = String(Number(likeCount || 0));
+    }
+
+    if (activeGalleryDetail) {
+      activeGalleryDetail.isLiked = Boolean(liked);
+      activeGalleryDetail.likeCount = Number(likeCount || 0);
+      const pin = pinStore.get('gallery-' + activeGalleryDetail.id);
+      if (pin) {
+        pin.saves = activeGalleryDetail.likeCount;
+      }
+    }
+  }
+
+  function updateCloseupBookmarkUi(bookmarked) {
+    const closeupView = document.getElementById('closeupView');
+    const saveBtn = closeupView ? closeupView.querySelector('.closeup__save-btn') : null;
+    if (saveBtn) {
+      saveBtn.classList.toggle('closeup__save-btn--saved', Boolean(bookmarked));
+      saveBtn.textContent = bookmarked ? '찜 완료' : '찜';
+    }
+
+    if (activeGalleryDetail) {
+      activeGalleryDetail.isBookmarked = Boolean(bookmarked);
+    }
+  }
+
+  function updateCardBookmarkUi(galleryId, bookmarked) {
+    document.querySelectorAll('.art-gallery-card[data-id="gallery-' + galleryId + '"] .art-gallery-card__save-btn')
+        .forEach(function(button) {
+          button.classList.toggle('art-gallery-card__save-btn--saved', Boolean(bookmarked));
+          button.textContent = bookmarked ? '찜 완료' : '찜';
+        });
+  }
+
+  function renderCloseupComments(comments) {
+    const commentsSection = document.querySelector('.closeup__comments');
+    const content = commentsSection ? commentsSection.querySelector('.closeup__collapsible-content') : null;
+    if (!commentsSection || !content) return;
+
+    const list = Array.isArray(comments) ? comments : [];
+    updateCloseupCommentHeader(list.length);
+
+    if (!list.length) {
+      const emptyText = activeGalleryDetail && activeGalleryDetail.allowComment === false
+          ? '이 예술관은 댓글 작성이 비활성화되어 있습니다.'
+          : '댓글을 추가하고 대화를 시작하세요.';
+      content.innerHTML = '<p class="closeup__comments-empty">' + escapeCommentHtml(emptyText) + '</p>';
+      return;
+    }
+
+    content.innerHTML = list.map(function(comment) {
+      const profileImage = comment.memberProfileImage || LOCAL_PROFILE_IMAGE;
+      const likeCount = Number(comment.likeCount || 0);
+      const likeCountHtml = likeCount > 0
+          ? '<span class="closeup__comment-like-count">' + likeCount + '</span>'
+          : '<span class="closeup__comment-like-count" style="display:none;">0</span>';
+
+      return '' +
+          '<div class="closeup__comment-item">' +
+          '<img class="closeup__comment-avatar" src="' + profileImage + '" alt="' + escapeCommentHtml(comment.memberNickname || 'user') + '">' +
+          '<div class="closeup__comment-body">' +
+          '<div class="closeup__comment-meta">' +
+          '<span class="closeup__comment-author">' + escapeCommentHtml(comment.memberNickname || 'user') + '</span>' +
+          '<span class="closeup__comment-time">' + escapeCommentHtml(formatCommentTimestamp(comment.createdDatetime)) + '</span>' +
+          '</div>' +
+          '<p class="closeup__comment-text">' + escapeCommentHtml(comment.content || '') + '</p>' +
+          '<div class="closeup__comment-actions">' +
+          likeCountHtml +
+          '<button class="closeup__comment-like-btn" type="button" data-action="toggle-comment-like" data-comment-id="' + Number(comment.id || 0) + '">좋아요</button>' +
+          '</div>' +
+          '</div>' +
+          '</div>';
+    }).join('');
+  }
+
+  async function loadGalleryComments(galleryId) {
+    const response = await fetch('/api/galleries/' + galleryId + '/comments');
+    if (!response.ok) {
+      throw new Error(await readErrorMessage(response, '예술관 댓글을 불러오지 못했습니다.'));
+    }
+    const comments = await response.json();
+    renderCloseupComments(comments);
+    if (activeGalleryDetail) {
+      activeGalleryDetail.commentCount = Array.isArray(comments) ? comments.length : 0;
+    }
+  }
+
+// ─── 찜 버튼 토글 (카드/클로즈업 통합) ──────────────
+  async function toggleSave(event, btn) {
+    if (event) event.stopPropagation();
     if (!IS_LOGGED_IN) { showAuthModal(); return; }
+    const galleryId = getGalleryIdFromButton(btn);
+    if (!galleryId) {
+      const isCloseup = btn.classList.contains('closeup__save-btn');
+      const savedClass = isCloseup ? 'closeup__save-btn--saved' : 'art-gallery-card__save-btn--saved';
+      const isSaved = btn.classList.toggle(savedClass);
+      btn.textContent = isSaved ? '찜 완료' : '찜';
+      return;
+    }
+    if (isGalleryBookmarkPending) return;
+
+    const previousBookmarked = btn.classList.contains('closeup__save-btn')
+        ? Boolean(activeGalleryDetail && activeGalleryDetail.isBookmarked)
+        : btn.classList.contains('art-gallery-card__save-btn--saved');
+    const nextBookmarked = !previousBookmarked;
+
+    isGalleryBookmarkPending = true;
+    if (btn.classList.contains('closeup__save-btn')) {
+      updateCloseupBookmarkUi(nextBookmarked);
+    }
+    updateCardBookmarkUi(galleryId, nextBookmarked);
+
+    try {
+      const response = await fetch('/api/bookmarks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          targetType: 'GALLERY',
+          targetId: galleryId
+        })
+      });
+      if (!response.ok) {
+        throw new Error(await readErrorMessage(response, '예술관 찜 처리에 실패했습니다.'));
+      }
+
+      const result = await response.json();
+      const bookmarked = Boolean(result.bookmarked);
+      if (btn.classList.contains('closeup__save-btn')) {
+        updateCloseupBookmarkUi(bookmarked);
+      }
+      updateCardBookmarkUi(galleryId, bookmarked);
+    } catch (error) {
+      if (btn.classList.contains('closeup__save-btn')) {
+        updateCloseupBookmarkUi(previousBookmarked);
+      }
+      updateCardBookmarkUi(galleryId, previousBookmarked);
+      showCloseupMessage(error.message || '예술관 찜 처리에 실패했습니다.', 'error');
+    } finally {
+      isGalleryBookmarkPending = false;
+    }
+  }
+
+  async function toggleCloseupLike(btn) {
+    if (!IS_LOGGED_IN) { showAuthModal(); return; }
+    if (activeGalleryDetail && activeGalleryDetail.id) {
+      if (isGalleryLikePending) return;
+
+      const previousLiked = Boolean(activeGalleryDetail.isLiked);
+      const previousLikeCount = Number(activeGalleryDetail.likeCount || 0);
+      const nextLiked = !previousLiked;
+      const nextLikeCount = nextLiked ? previousLikeCount + 1 : Math.max(0, previousLikeCount - 1);
+
+      isGalleryLikePending = true;
+      updateCloseupLikeUi(nextLiked, nextLikeCount);
+
+      try {
+        const response = await fetch('/api/galleries/' + activeGalleryDetail.id + '/likes', {
+          method: 'POST'
+        });
+        if (!response.ok) {
+          throw new Error(await readErrorMessage(response, '예술관 좋아요 처리에 실패했습니다.'));
+        }
+
+        const result = await response.json();
+        updateCloseupLikeUi(Boolean(result.liked), Number(result.likeCount || 0));
+      } catch (error) {
+        updateCloseupLikeUi(previousLiked, previousLikeCount);
+        showCloseupMessage(error.message || '예술관 좋아요 처리에 실패했습니다.', 'error');
+      } finally {
+        isGalleryLikePending = false;
+      }
+      return;
+    }
+
     const isActive = btn.classList.toggle('closeup__icon-btn--liked');
     const path = btn.querySelector('path');
     if (!path) return;
@@ -138,9 +422,8 @@ window.addEventListener('load', () => {
         '<span data-type="inside" tabindex="0" aria-hidden="true" data-floating-ui-focus-guard="" data-floating-ui-inert=""></span>' +
         '<div class="u-floating-block u-rounded-300-popover" tabindex="-1" style="position:absolute;left:0;top:0;visibility:visible;outline:none;transform:translate(' + Math.max(16, rect.left - 140) + 'px, ' + Math.max(96, rect.bottom + 12) + 'px);">' +
         '<div aria-label="Dropdown" class="u-position-relative u-max-viewport-90 u-min-touch-target u-bg-elevation u-rounded-300-popover closeup-more-menu" data-test-id="pin-action-dropdown" role="menu">' +
-        '<button class="closeup-more-menu__item" type="button">작품 정보 보기</button>' +
-        '<button class="closeup-more-menu__item" type="button">비슷한 예술관 더 보기</button>' +
-        '<button class="closeup-more-menu__item" type="button">비슷한 예술관 덜 보기</button>' +
+        '<button class="closeup-more-menu__item" type="button" data-action="unsupported-gallery-action" data-message="비슷한 예술관 기능은 준비 중입니다.">비슷한 예술관 더 보기</button>' +
+        '<button class="closeup-more-menu__item" type="button" data-action="unsupported-gallery-action" data-message="비슷한 예술관 기능은 준비 중입니다.">비슷한 예술관 덜 보기</button>' +
         '<button class="closeup-more-menu__item" type="button">작품 신고</button>' +
         '</div>' +
         '</div>' +
@@ -273,6 +556,10 @@ window.addEventListener('load', () => {
 // ─── 핀 상세 Closeup 뷰 ──────────────────────────────
   async function openPinDetail(cardEl) {
     const pinId = cardEl.getAttribute('data-id');
+    if (pinId && pinId.startsWith('gallery-')) {
+      await openGalleryDetail(pinId.replace('gallery-', ''), cardEl);
+      return;
+    }
     var pin = pinStore.get(pinId);
     // API fallback: pinStore에 없으면 상세 조회
     if (!pin && pinId && pinId.startsWith('gallery-')) {
@@ -352,6 +639,7 @@ window.addEventListener('load', () => {
     teardownCloseupScrollShadow();
     const closeupView = document.getElementById('closeupView');
     resetCloseupActionState(closeupView);
+    activeGalleryDetail = null;
     document.body.classList.remove('closeup-open');
     closeupView.style.display = 'none';
     window.isCloseupOpen = false;
@@ -439,12 +727,46 @@ window.addEventListener('load', () => {
     commentComposerInitialized = true;
   }
 
-  function submitComment() {
+  async function submitComment() {
     if (!IS_LOGGED_IN) { showAuthModal(); return; }
     const input = document.querySelector('.closeup__comment-input');
     const submitBtn = document.querySelector('.closeup__submit-btn');
     const text = input.textContent.trim();
     if (!text) return;
+    if (input.getAttribute('contenteditable') === 'false') return;
+
+    if (activeGalleryDetail && activeGalleryDetail.id) {
+      if (isGalleryCommentPending) return;
+      isGalleryCommentPending = true;
+
+      try {
+        const response = await fetch('/api/galleries/' + activeGalleryDetail.id + '/comments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            targetType: 'GALLERY',
+            targetId: activeGalleryDetail.id,
+            content: text
+          })
+        });
+        if (!response.ok) {
+          throw new Error(await readErrorMessage(response, '예술관 댓글 등록에 실패했습니다.'));
+        }
+
+        const comments = await response.json();
+        renderCloseupComments(comments);
+        input.textContent = '';
+        submitBtn.classList.remove('closeup__submit-btn--visible');
+        input.focus();
+      } catch (error) {
+        showCloseupMessage(error.message || '예술관 댓글 등록에 실패했습니다.', 'error');
+      } finally {
+        isGalleryCommentPending = false;
+      }
+      return;
+    }
 
     const commentsSection = document.querySelector('.closeup__comments');
     const content = commentsSection.querySelector('.closeup__collapsible-content');
@@ -489,6 +811,10 @@ window.addEventListener('load', () => {
   }
 
   function toggleCommentLike(btn) {
+    if (activeGalleryDetail && activeGalleryDetail.id) {
+      showNotReadyMessage('예술관 댓글 좋아요 기능은 준비 중입니다.');
+      return;
+    }
     const countEl = btn.parentElement.querySelector('.closeup__comment-like-count');
     const isActive = btn.classList.toggle('closeup__comment-like-btn--active');
     let count = parseInt(countEl.textContent) || 0;
@@ -503,9 +829,7 @@ window.addEventListener('load', () => {
   }
 
   function toggleFollow(btn) {
-    if (!IS_LOGGED_IN) { showAuthModal(); return; }
-    const isFollowing = btn.classList.toggle('closeup__creator-follow--following');
-    btn.textContent = isFollowing ? '팔로잉' : '팔로우';
+    showNotReadyMessage('작성자 팔로우 기능은 준비 중입니다.');
   }
 
   function toggleCloseupCollapsible(headerEl) {
@@ -681,6 +1005,11 @@ window.addEventListener('load', () => {
       case 'toggle-comment-like':
         toggleCommentLike(actionTarget);
         break;
+      case 'unsupported-gallery-action':
+        event.stopPropagation();
+        showNotReadyMessage(actionTarget.dataset.message);
+        closeCloseupFloatingLayers();
+        break;
       case 'copy-pin-link':
         event.stopPropagation();
         copyPinLink(actionTarget);
@@ -694,10 +1023,10 @@ window.addEventListener('load', () => {
     }
   });
 
-  async function openGalleryDetail(galleryId) {
+  async function openGalleryDetail(galleryId, cardEl) {
     try {
       const res = await fetch('/api/galleries/' + galleryId);
-      if (!res.ok) throw new Error('API error: ' + res.status);
+      if (!res.ok) throw new Error(await readErrorMessage(res, '예술관 상세를 불러오지 못했습니다.'));
       const gallery = await res.json();
 
       const closeupView = document.getElementById('closeupView');
@@ -707,16 +1036,19 @@ window.addEventListener('load', () => {
       const creatorAvatar = closeupView.querySelector('.closeup__creator-avatar');
       const creatorName = closeupView.querySelector('.closeup__creator-name');
       const creatorHandle = closeupView.querySelector('.closeup__creator-handle');
-      const statCount = closeupView.querySelector('.closeup__stat-count');
       const imageWrap = closeupView.querySelector('.closeup__image-wrap');
 
       activeCloseupPinId = 'gallery-' + galleryId;
+      activeGalleryDetail = gallery;
       resetCloseupActionState(closeupView);
 
-      closeupImage.src = gallery.coverImage || '/images/BIDEO_LOGO/BIDEO_favicon.png';
+      const fallbackImage = cardEl && cardEl.querySelector('.art-gallery-card__image')
+          ? cardEl.querySelector('.art-gallery-card__image').src
+          : '/images/BIDEO_LOGO/BIDEO_favicon.png';
+      closeupImage.src = gallery.coverImage || fallbackImage;
       closeupImage.alt = gallery.title || '';
       closeupTitle.textContent = gallery.title || '';
-      closeupDescription.textContent = gallery.description || '';
+      closeupDescription.textContent = gallery.description || '예술관 설명이 아직 없습니다.';
 
       const authorName = gallery.memberNickname || '크리에이터';
       creatorAvatar.onerror = function() {
@@ -727,8 +1059,11 @@ window.addEventListener('load', () => {
       creatorAvatar.alt = authorName;
       creatorName.textContent = authorName;
       creatorHandle.textContent = '';
-      statCount.textContent = String(gallery.likeCount || 0);
       imageWrap.style.aspectRatio = '16 / 9';
+      updateCloseupLikeUi(Boolean(gallery.isLiked), Number(gallery.likeCount || 0));
+      updateCloseupBookmarkUi(Boolean(gallery.isBookmarked));
+      setCommentComposerEnabled(gallery.allowComment !== false, '이 예술관은 댓글 작성이 비활성화되어 있습니다.');
+      renderCloseupComments([]);
 
       const badgeContainer = closeupView.querySelector('.closeup__creator-badges');
       badgeContainer.innerHTML = '';
@@ -746,12 +1081,14 @@ window.addEventListener('load', () => {
       window.scrollTo(0, 0);
       setupCloseupScrollShadow();
       initCommentComposer();
+      await loadGalleryComments(galleryId);
 
       // 관련 작품은 표시하지 않음
       document.getElementById('closeupRelatedPins').innerHTML = '';
       document.getElementById('closeupBelowPins').innerHTML = '';
     } catch (e) {
       console.error('예술관 상세 조회 실패:', e);
+      showCloseupMessage(e.message || '예술관 상세 조회에 실패했습니다.', 'error');
     }
   }
 

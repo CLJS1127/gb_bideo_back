@@ -128,6 +128,7 @@
                                         <button class="sort-btn sort-btn--active" data-sort="" type="button">최신 등록순</button>
                                         <button class="sort-btn" data-sort="deadline" type="button">마감일순</button>
                                         <button class="sort-btn" data-sort="entryStart" type="button">접수일순</button>
+                                        <span class="sort-divider" aria-hidden="true" th:if="${isLoggedIn}"></span>
                                         <button class="sort-btn" id="myContestBtn" type="button" th:if="${isLoggedIn}">내 공모전</button>
                                         <button class="sort-btn" id="myEntryBtn" type="button" th:if="${isLoggedIn}">참여한 공모전</button>
                                     </div>

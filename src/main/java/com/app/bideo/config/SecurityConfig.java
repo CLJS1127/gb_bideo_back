@@ -36,6 +36,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/works/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/galleries", "/api/galleries/*", "/api/galleries/*/comments").permitAll()
                         .requestMatchers(
                                 "/",
                                 "/main",

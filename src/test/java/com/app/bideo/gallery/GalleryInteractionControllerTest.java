@@ -1,23 +1,22 @@
 package com.app.bideo.gallery;
 
 import com.app.bideo.controller.gallery.GalleryAPIController;
-import com.app.bideo.controller.member.MemberFollowAPIController;
-import com.app.bideo.dto.gallery.GalleryBookmarkStateResponseDTO;
-import com.app.bideo.dto.gallery.GalleryCardResponseDTO;
-import com.app.bideo.dto.gallery.GalleryLikeStateResponseDTO;
-import com.app.bideo.dto.member.MemberFollowStateResponseDTO;
+import com.app.bideo.dto.common.LikeToggleResponseDTO;
+import com.app.bideo.dto.gallery.GalleryDetailResponseDTO;
+import com.app.bideo.dto.interaction.CommentResponseDTO;
 import com.app.bideo.service.gallery.GalleryService;
-import com.app.bideo.service.member.MemberFollowService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,98 +26,73 @@ class GalleryInteractionControllerTest {
 
     private MockMvc mockMvc;
     private GalleryService galleryService;
-    private MemberFollowService memberFollowService;
 
     @BeforeEach
     void setUp() {
         galleryService = Mockito.mock(GalleryService.class);
-        memberFollowService = Mockito.mock(MemberFollowService.class);
-        mockMvc = MockMvcBuilders.standaloneSetup(
-                new GalleryAPIController(galleryService),
-                new MemberFollowAPIController(memberFollowService)
-        ).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new GalleryAPIController(galleryService)).build();
     }
 
     @Test
-    void galleryInteractionEndpointsExposeMinimalStatePayloads() throws Exception {
-        given(galleryService.likeGallery(7L)).willReturn(
-                GalleryLikeStateResponseDTO.builder()
+    void galleryEndpointsExposeCurrentDetailAndInteractionPayloads() throws Exception {
+        given(galleryService.getGalleryDetail(7L)).willReturn(
+                GalleryDetailResponseDTO.builder()
+                        .id(7L)
+                        .title("봄 전시")
+                        .isLiked(true)
+                        .isBookmarked(false)
+                        .commentCount(2)
+                        .build()
+        );
+        given(galleryService.getComments(7L)).willReturn(List.of(
+                CommentResponseDTO.builder()
+                        .id(99L)
+                        .memberNickname("curator")
+                        .content("첫 댓글")
+                        .build()
+        ));
+        given(galleryService.toggleLike(7L, null)).willReturn(
+                LikeToggleResponseDTO.builder()
+                        .targetId(7L)
+                        .targetType("GALLERY")
                         .liked(true)
                         .likeCount(14)
                         .build()
         );
-        given(galleryService.removeGalleryLike(7L)).willReturn(
-                GalleryLikeStateResponseDTO.builder()
-                        .liked(false)
-                        .likeCount(13)
-                        .build()
-        );
-        given(galleryService.bookmarkGallery(7L)).willReturn(
-                GalleryBookmarkStateResponseDTO.builder()
-                        .bookmarked(true)
-                        .build()
-        );
-        given(galleryService.removeGalleryBookmark(7L)).willReturn(
-                GalleryBookmarkStateResponseDTO.builder()
-                        .bookmarked(false)
-                        .build()
-        );
-        given(galleryService.getSimilarGalleries(7L, 4)).willReturn(List.of(
-                GalleryCardResponseDTO.builder()
-                        .id(11L)
-                        .title("봄 전시")
-                        .memberNickname("curator")
-                        .coverImageUrl("/image/gallery-cover/11")
-                        .hasCoverImage(true)
+        given(galleryService.writeComment(eq(7L), isNull(), eq("안녕하세요"))).willReturn(List.of(
+                CommentResponseDTO.builder()
+                        .id(100L)
+                        .memberNickname("guest")
+                        .content("안녕하세요")
                         .build()
         ));
+
+        mockMvc.perform(get("/api/galleries/7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(7))
+                .andExpect(jsonPath("$.title").value("봄 전시"))
+                .andExpect(jsonPath("$.isLiked").value(true))
+                .andExpect(jsonPath("$.isBookmarked").value(false))
+                .andExpect(jsonPath("$.commentCount").value(2));
+
+        mockMvc.perform(get("/api/galleries/7/comments"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(99))
+                .andExpect(jsonPath("$[0].memberNickname").value("curator"))
+                .andExpect(jsonPath("$[0].content").value("첫 댓글"));
 
         mockMvc.perform(post("/api/galleries/7/likes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.liked").value(true))
                 .andExpect(jsonPath("$.likeCount").value(14));
 
-        mockMvc.perform(delete("/api/galleries/7/likes"))
+        mockMvc.perform(post("/api/galleries/7/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"targetType":"GALLERY","targetId":7,"content":"안녕하세요"}
+                                """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.liked").value(false))
-                .andExpect(jsonPath("$.likeCount").value(13));
-
-        mockMvc.perform(post("/api/galleries/7/bookmarks"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.bookmarked").value(true));
-
-        mockMvc.perform(delete("/api/galleries/7/bookmarks"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.bookmarked").value(false));
-
-        mockMvc.perform(get("/api/galleries/7/similar").param("limit", "4"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(11))
-                .andExpect(jsonPath("$[0].title").value("봄 전시"))
-                .andExpect(jsonPath("$[0].memberNickname").value("curator"))
-                .andExpect(jsonPath("$[0].coverImageUrl").value("/image/gallery-cover/11"))
-                .andExpect(jsonPath("$[0].hasCoverImage").value(true));
-    }
-
-    @Test
-    void memberFollowEndpointExposesFollowingState() throws Exception {
-        given(memberFollowService.follow(33L)).willReturn(
-                MemberFollowStateResponseDTO.builder()
-                        .following(true)
-                        .build()
-        );
-        given(memberFollowService.unfollow(33L)).willReturn(
-                MemberFollowStateResponseDTO.builder()
-                        .following(false)
-                        .build()
-        );
-
-        mockMvc.perform(post("/api/members/33/follow"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.following").value(true));
-
-        mockMvc.perform(delete("/api/members/33/follow"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.following").value(false));
+                .andExpect(jsonPath("$[0].id").value(100))
+                .andExpect(jsonPath("$[0].content").value("안녕하세요"));
     }
 }

@@ -396,15 +396,6 @@ window.addEventListener('load', () => {
           '</button>' +
           '</div>' +
           '<div class="side-panel__body">' +
-          '<a href="/work/work-register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
-          '<div class="side-panel__menu-icon">' +
-          '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5 3h2a1 1 0 0 1 1 1v3.69l-.92.2a5 5 0 0 0-3.97 4.66l-.1 2.4A1 1 0 0 0 4 16h7v2.3q0 2.7.66 5.33l.09.37h.5l.1-.37a22 22 0 0 0 .65-5.34V16h7a1 1 0 0 0 1-1.1l-.24-2.58a5 5 0 0 0-3.9-4.43l-.86-.2V4a1 1 0 0 1 1-1h2V1H5zm5 1a3 3 0 0 0-.17-1h4.34A3 3 0 0 0 14 4v5.3l2.43.54a3 3 0 0 1 2.34 2.66l.13 1.5H5.05l.06-1.36a3 3 0 0 1 2.38-2.8L10 9.31z"></path></svg>' +
-          '</div>' +
-          '<div class="side-panel__menu-text">' +
-          '<div class="side-panel__menu-title">작품</div>' +
-          '<div class="side-panel__menu-desc">당신의 작품을 게시할 수 있습니다.</div>' +
-          '</div>' +
-          '</a>' +
           '<a href="/gallery-register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
           '<div class="side-panel__menu-icon">' +
           '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M23 5a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14a4 4 0 0 0 4-4zm-10 6V3h6a2 2 0 0 1 2 2v6zm8 8a2 2 0 0 1-2 2h-6v-8h8zM5 3h6v18H5a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2"></path></svg>' +
@@ -412,6 +403,15 @@ window.addEventListener('load', () => {
           '<div class="side-panel__menu-text">' +
           '<div class="side-panel__menu-title">예술관</div>' +
           '<div class="side-panel__menu-desc">예술관을 구성해 작품을 주제별로 소개하세요.</div>' +
+          '</div>' +
+          '</a>' +
+          '<a href="/work/work-register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
+          '<div class="side-panel__menu-icon">' +
+          '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M5 3h2a1 1 0 0 1 1 1v3.69l-.92.2a5 5 0 0 0-3.97 4.66l-.1 2.4A1 1 0 0 0 4 16h7v2.3q0 2.7.66 5.33l.09.37h.5l.1-.37a22 22 0 0 0 .65-5.34V16h7a1 1 0 0 0 1-1.1l-.24-2.58a5 5 0 0 0-3.9-4.43l-.86-.2V4a1 1 0 0 1 1-1h2V1H5zm5 1a3 3 0 0 0-.17-1h4.34A3 3 0 0 0 14 4v5.3l2.43.54a3 3 0 0 1 2.34 2.66l.13 1.5H5.05l.06-1.36a3 3 0 0 1 2.38-2.8L10 9.31z"></path></svg>' +
+          '</div>' +
+          '<div class="side-panel__menu-text">' +
+          '<div class="side-panel__menu-title">작품</div>' +
+          '<div class="side-panel__menu-desc">당신의 작품을 게시할 수 있습니다.</div>' +
           '</div>' +
           '</a>' +
           '<a href="/contest/register" class="side-panel__menu-item" onclick="event.stopPropagation();">' +
@@ -553,6 +553,11 @@ window.addEventListener('load', () => {
   let msgStompClient = null;
   let msgSubscribedRooms = new Set();
   let msgCurrentRoomId = null;
+  let msgCurrentMessages = [];
+  let msgReplyTargetId = null;
+  let msgEditingMessageId = null;
+  let msgCurrentPartnerName = '';
+  let msgCurrentPartnerAvatar = LOCAL_PROFILE_IMAGE;
 
   function msgTimeAgo(dateStr) {
     if (!dateStr) return '';
@@ -577,24 +582,43 @@ window.addEventListener('load', () => {
       const socket = new SockJS('/ws');
       msgStompClient = Stomp.over(socket);
       msgStompClient.debug = null;
-      msgStompClient.connect({}, function() {}, function() {
+      msgStompClient.connect({}, function() {
+        msgSubscribedRooms = new Set();
+        msgSyncSubscriptions();
+      }, function() {
         setTimeout(msgConnectWebSocket, 5000);
       });
     } catch (e) { /* ignore */ }
+  }
+
+  function msgSyncSubscriptions() {
+    if (msgCurrentRoomId) {
+      msgSubscribeRoom(msgCurrentRoomId);
+    }
+    document.querySelectorAll('#message-menu [data-room-id]').forEach(function(item) {
+      const roomId = Number(item.getAttribute('data-room-id'));
+      if (roomId) {
+        msgSubscribeRoom(roomId);
+      }
+    });
   }
 
   function msgSubscribeRoom(roomId) {
     if (!msgStompClient || !msgStompClient.connected) return;
     if (msgSubscribedRooms.has(roomId)) return;
     msgStompClient.subscribe('/topic/room.' + roomId, function(frame) {
-      const msg = JSON.parse(frame.body);
-      if (msgCurrentRoomId === roomId) {
-        const chatBody = document.querySelector('#message-menu .msg-chat-body');
-        if (chatBody) {
-          chatBody.insertAdjacentHTML('beforeend', buildChatBubble(msg));
-          chatBody.scrollTop = chatBody.scrollHeight;
-          fetch('/api/messages/rooms/' + roomId + '/read', { method: 'PATCH' }).catch(function(){});
-        }
+      const payload = JSON.parse(frame.body);
+      const event = payload && payload.type ? payload : { type: 'CREATED', message: payload };
+      const panel = document.getElementById('message-menu');
+
+      if (msgCurrentRoomId === roomId && panel) {
+        msgReloadCurrentRoom(panel, true);
+      } else if (panel && panel.querySelector('[data-test-id="conversation-list-container"]')) {
+        loadMessageRooms(panel);
+      }
+
+      if (event.type === 'CREATED' && msgCurrentRoomId === roomId) {
+        fetch('/api/messages/rooms/' + roomId + '/read', { method: 'PATCH' }).catch(function(){});
       }
       updateMsgUnreadBadge();
     });
@@ -626,17 +650,174 @@ window.addEventListener('load', () => {
       }).catch(function(){});
   }
 
+  function msgFormatBubbleTime(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const sameDay = date.getFullYear() === now.getFullYear()
+      && date.getMonth() === now.getMonth()
+      && date.getDate() === now.getDate();
+    const hour = date.getHours();
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    const meridiem = hour >= 12 ? '오후' : '오전';
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+    if (sameDay) {
+      return meridiem + ' ' + displayHour + ':' + minute;
+    }
+    return (date.getMonth() + 1) + '/' + date.getDate() + ' ' + meridiem + ' ' + displayHour + ':' + minute;
+  }
+
+  function msgFindMessageById(messageId) {
+    return msgCurrentMessages.find(function(message) {
+      return message.id === messageId;
+    }) || null;
+  }
+
+  function msgResetComposer(sidePanel) {
+    msgReplyTargetId = null;
+    msgEditingMessageId = null;
+    const context = sidePanel.querySelector('.msg-composer-context');
+    const input = sidePanel.querySelector('.msg-send-input');
+    const submitLabel = sidePanel.querySelector('.msg-send-label');
+    if (context) {
+      context.style.display = 'none';
+      context.innerHTML = '';
+    }
+    if (input) {
+      input.value = '';
+      input.placeholder = '메시지 보내기';
+    }
+    if (submitLabel) {
+      submitLabel.textContent = '보내기';
+    }
+  }
+
+  function msgShowComposerContext(sidePanel, title, preview) {
+    const context = sidePanel.querySelector('.msg-composer-context');
+    if (!context) return;
+    context.style.display = 'flex';
+    context.innerHTML = '<div style="flex:1;min-width:0;">'
+      + '<div style="font-size:12px;font-weight:700;color:#111;">' + msgEscapeHtml(title) + '</div>'
+      + '<div style="font-size:12px;color:#767676;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + msgEscapeHtml(preview) + '</div>'
+      + '</div>'
+      + '<button type="button" class="button-reset" data-message-action="cancel-compose-context" style="width:28px;height:28px;border-radius:50%;cursor:pointer;">'
+      + '<svg height="14" viewBox="0 0 24 24" width="14"><path d="m12 13.41 8.3 8.3 1.4-1.42L13.42 12l8.3-8.3-1.42-1.4-8.3 8.28-8.3-8.3L2.3 3.7l8.28 8.3-8.3 8.3 1.42 1.4z"></path></svg>'
+      + '</button>';
+  }
+
+  function msgStartReply(sidePanel, messageId) {
+    const message = msgFindMessageById(messageId);
+    if (!message || message.deleted) return;
+    msgEditingMessageId = null;
+    msgReplyTargetId = messageId;
+    const input = sidePanel.querySelector('.msg-send-input');
+    const submitLabel = sidePanel.querySelector('.msg-send-label');
+    msgShowComposerContext(sidePanel, (message.senderNickname || '상대') + '에게 답장', message.content || '');
+    if (submitLabel) submitLabel.textContent = '보내기';
+    if (input) {
+      input.placeholder = '답장 보내기';
+      input.focus();
+    }
+  }
+
+  function msgStartEdit(sidePanel, messageId) {
+    const message = msgFindMessageById(messageId);
+    if (!message || message.deleted || !message.canEdit) return;
+    msgReplyTargetId = null;
+    msgEditingMessageId = messageId;
+    const input = sidePanel.querySelector('.msg-send-input');
+    const submitLabel = sidePanel.querySelector('.msg-send-label');
+    msgShowComposerContext(sidePanel, '메시지 수정 중', message.content || '');
+    if (submitLabel) submitLabel.textContent = '수정';
+    if (input) {
+      input.value = message.content || '';
+      input.placeholder = '메시지 수정';
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    }
+  }
+
+  function msgRenderReplyPreview(msg) {
+    if (!msg.replyToMessageId || !msg.replyPreview) return '';
+    return '<div style="padding:8px 10px;border-radius:12px;background:rgba(0,0,0,0.06);margin-bottom:8px;">'
+      + '<div style="font-size:11px;font-weight:700;opacity:.85;">' + msgEscapeHtml(msg.replySenderNickname || '답장') + '</div>'
+      + '<div style="font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + msgEscapeHtml(msg.replyPreview) + '</div>'
+      + '</div>';
+  }
+
   function buildChatBubble(msg) {
     const currentUserId = window.__bideoUserId;
     const isMine = msg.senderId === currentUserId;
-    if (isMine) {
-      return '<div style="align-self:flex-end;background:#111;color:#fff;padding:10px 14px;border-radius:18px;max-width:75%;font-size:14px;line-height:1.4;margin-bottom:4px;">' + msgEscapeHtml(msg.content) + '</div>';
-    }
+    const bubbleBg = isMine ? '#111' : '#efefef';
+    const bubbleColor = isMine ? '#fff' : '#111';
+    const rowJustify = isMine ? 'flex-end' : 'flex-start';
     const avatar = msg.senderProfileImage || LOCAL_PROFILE_IMAGE;
-    return '<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:4px;">' +
-      '<img src="' + msgEscapeHtml(avatar) + '" style="width:24px;height:24px;border-radius:50%;flex-shrink:0;">' +
-      '<div style="background:#efefef;padding:10px 14px;border-radius:18px;max-width:75%;font-size:14px;color:#111;line-height:1.4;">' + msgEscapeHtml(msg.content) + '</div>' +
-      '</div>';
+    const likeIcon = msg.isLiked ? '♥' : '♡';
+    const actions = [];
+
+    if (!msg.deleted) {
+      actions.push('<button type="button" class="button-reset" data-message-action="reply" data-message-id="' + msg.id + '" style="cursor:pointer;color:#767676;font-size:11px;">답장</button>');
+      actions.push('<button type="button" class="button-reset" data-message-action="like" data-message-id="' + msg.id + '" style="cursor:pointer;color:' + (msg.isLiked ? '#e60023' : '#767676') + ';font-size:11px;">' + likeIcon + '</button>');
+      if (msg.canEdit) {
+        actions.push('<button type="button" class="button-reset" data-message-action="edit" data-message-id="' + msg.id + '" style="cursor:pointer;color:#767676;font-size:11px;">수정</button>');
+      }
+      if (msg.canDelete) {
+        actions.push('<button type="button" class="button-reset" data-message-action="delete" data-message-id="' + msg.id + '" style="cursor:pointer;color:#767676;font-size:11px;">삭제</button>');
+      }
+    }
+
+    const sideContent = '<div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:2px;flex-shrink:0;padding-bottom:2px;">'
+      + '<span style="font-size:10px;color:#767676;white-space:nowrap;">' + msgEscapeHtml(msgFormatBubbleTime(msg.createdDatetime)) + (msg.edited ? ' · 수정됨' : '') + '</span>'
+      + (actions.length ? '<div style="display:flex;gap:6px;">' + actions.join('') + '</div>' : '')
+      + '</div>';
+
+    return '<div class="msg-bubble-row" data-message-id="' + msg.id + '" style="display:flex;justify-content:' + rowJustify + ';margin-bottom:14px;">'
+      + '<div style="display:flex;align-items:flex-end;gap:8px;max-width:82%;">'
+      + (isMine ? '' : '<img src="' + msgEscapeHtml(avatar) + '" style="width:24px;height:24px;border-radius:50%;flex-shrink:0;">')
+      + (isMine ? sideContent : '')
+      + '<div style="background:' + bubbleBg + ';color:' + bubbleColor + ';padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.45;word-break:break-word;min-width:0;">'
+      + msgRenderReplyPreview(msg)
+      + '<div>' + msgEscapeHtml(msg.content) + '</div>'
+      + '</div>'
+      + (isMine ? '' : sideContent)
+      + '</div>'
+      + '</div>';
+  }
+
+  function msgRenderChatMessages(sidePanel, scrollToBottom) {
+    const chatBody = sidePanel.querySelector('.msg-chat-body');
+    if (!chatBody) return;
+    if (!msgCurrentMessages.length) {
+      chatBody.innerHTML = '<div style="text-align:center;padding:32px;color:#767676;font-size:14px;">첫 메시지를 보내보세요!</div>';
+      return;
+    }
+    chatBody.innerHTML = msgCurrentMessages.map(buildChatBubble).join('');
+    if (scrollToBottom) {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  }
+
+  function msgReloadCurrentRoom(panel, scrollToBottom) {
+    if (!panel || !msgCurrentRoomId) return;
+    const sidePanel = panel.querySelector('.side-panel');
+    if (!sidePanel) return;
+    fetch('/api/messages/rooms/' + msgCurrentRoomId + '/messages')
+      .then(function(res) { return res.ok ? res.json() : []; })
+      .then(function(messages) {
+        msgCurrentMessages = messages || [];
+        msgRenderChatMessages(sidePanel, scrollToBottom);
+      })
+      .catch(function() {
+        const chatBody = sidePanel.querySelector('.msg-chat-body');
+        if (chatBody) {
+          chatBody.innerHTML = '<div style="text-align:center;padding:32px;color:#767676;">메시지를 불러올 수 없습니다.</div>';
+        }
+      });
+  }
+
+  function msgReadCurrentRoom(roomId) {
+    fetch('/api/messages/rooms/' + roomId + '/read', { method: 'PATCH' }).catch(function(){});
+    updateMsgUnreadBadge();
   }
 
   function buildMessageListHTML() {
@@ -681,7 +862,7 @@ window.addEventListener('load', () => {
           const partner = room.members && room.members[0];
           const name = partner ? msgEscapeHtml(partner.nickname) : '알 수 없음';
           const avatar = partner && partner.profileImage ? msgEscapeHtml(partner.profileImage) : LOCAL_PROFILE_IMAGE;
-          const preview = msgEscapeHtml(room.lastMessage || '');
+          const preview = msgEscapeHtml(room.lastMessage || '새 대화를 시작해보세요.');
           const time = msgTimeAgo(room.lastMessageAt);
           const unread = room.unreadCount > 0 ? '<span style="background:#e60023;color:#fff;border-radius:50%;min-width:18px;height:18px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;">' + (room.unreadCount > 99 ? '99+' : room.unreadCount) + '</span>' : '';
           html += '<div data-test-id="conversation-list-item" class="side-panel__msg-item" role="button" tabindex="0" data-room-id="' + room.id + '" data-partner-name="' + name + '" data-partner-avatar="' + msgEscapeHtml(avatar) + '">' +
@@ -698,6 +879,7 @@ window.addEventListener('load', () => {
           msgSubscribeRoom(room.id);
         });
         listContainer.innerHTML = html;
+        msgSyncSubscriptions();
       })
       .catch(function() {
         listContainer.innerHTML = '<div style="text-align:center;padding:32px;color:#767676;font-size:14px;">메시지를 불러올 수 없습니다.</div>';
@@ -706,6 +888,9 @@ window.addEventListener('load', () => {
 
   function openChatDetail(panel, roomId, partnerName, partnerAvatar) {
     msgCurrentRoomId = roomId;
+    msgCurrentPartnerName = partnerName;
+    msgCurrentPartnerAvatar = partnerAvatar;
+    msgCurrentMessages = [];
     msgSubscribeRoom(roomId);
 
     const sidePanel = panel.querySelector('.side-panel');
@@ -726,65 +911,119 @@ window.addEventListener('load', () => {
       '<div style="text-align:center;padding:32px;color:#767676;">불러오는 중...</div>' +
       '</div>' +
       '<div style="padding:12px 16px;border-top:1px solid #efefef;background:#fff;">' +
+      '<div class="msg-composer-context" style="display:none;align-items:center;gap:12px;background:#f6f6f6;border-radius:14px;padding:10px 12px;margin-bottom:10px;"></div>' +
       '<form class="msg-send-form" style="display:flex;align-items:center;background:#efefef;border-radius:24px;padding:4px 4px 4px 16px;gap:8px;">' +
       '<input type="text" class="msg-send-input" placeholder="메시지 보내기" style="border:none;background:transparent;flex:1;outline:none;font-size:15px;padding:8px 0;" autocomplete="off">' +
-      '<button type="submit" class="button-reset" style="width:40px;height:40px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">' +
-      '<svg height="20" viewBox="0 0 24 24" width="20" fill="#111"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>' +
+      '<button type="submit" class="button-reset" style="min-width:56px;height:40px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;">' +
+      '<span class="msg-send-label">보내기</span>' +
       '</button>' +
       '</form>' +
       '</div>';
 
-    // 메시지 로드
-    const chatBody = sidePanel.querySelector('.msg-chat-body');
-    fetch('/api/messages/rooms/' + roomId + '/messages')
-      .then(function(res) { return res.ok ? res.json() : []; })
-      .then(function(messages) {
-        if (messages.length === 0) {
-          chatBody.innerHTML = '<div style="text-align:center;padding:32px;color:#767676;font-size:14px;">첫 메시지를 보내보세요!</div>';
-        } else {
-          chatBody.innerHTML = messages.map(buildChatBubble).join('');
-          chatBody.scrollTop = chatBody.scrollHeight;
-        }
-      })
-      .catch(function() {
-        chatBody.innerHTML = '<div style="text-align:center;padding:32px;color:#767676;">메시지를 불러올 수 없습니다.</div>';
-      });
+    msgResetComposer(sidePanel);
+    msgReloadCurrentRoom(panel, true);
 
-    // 읽음 처리
-    fetch('/api/messages/rooms/' + roomId + '/read', { method: 'PATCH' }).catch(function(){});
-    updateMsgUnreadBadge();
+    msgReadCurrentRoom(roomId);
 
-    // 전송 이벤트
     const form = sidePanel.querySelector('.msg-send-form');
     const input = sidePanel.querySelector('.msg-send-input');
     form.addEventListener('submit', function(ev) {
       ev.preventDefault();
       const content = input.value.trim();
       if (!content) return;
-      input.value = '';
-      fetch('/api/messages/rooms/' + roomId + '/send', {
-        method: 'POST',
+      const isEditing = !!msgEditingMessageId;
+      const url = isEditing
+        ? '/api/messages/rooms/' + roomId + '/messages/' + msgEditingMessageId
+        : '/api/messages/rooms/' + roomId + '/send';
+      const method = isEditing ? 'PATCH' : 'POST';
+      const payload = isEditing
+        ? { content: content }
+        : { content: content, replyToMessageId: msgReplyTargetId };
+
+      fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: content })
-      }).then(function(res) { return res.ok ? res.json() : null; })
-        .then(function(msg) {
-          if (!msg) return;
-          // WebSocket이 브로드캐스트 하지만, 연결 안 되어 있을 경우 직접 추가
-          if (!msgStompClient || !msgStompClient.connected) {
-            chatBody.insertAdjacentHTML('beforeend', buildChatBubble(msg));
-            chatBody.scrollTop = chatBody.scrollHeight;
-          }
-        }).catch(function(){});
+        body: JSON.stringify(payload)
+      }).then(function(res) {
+        return res.ok ? res.json() : res.text().then(function(message) {
+          throw new Error(message || '메시지 요청에 실패했습니다.');
+        });
+      }).then(function() {
+        msgResetComposer(sidePanel);
+        if (!msgStompClient || !msgStompClient.connected) {
+          msgReloadCurrentRoom(panel, true);
+          loadMessageRooms(panel);
+          updateMsgUnreadBadge();
+        }
+      }).catch(function(error) {
+        showToast(error.message || '메시지 요청에 실패했습니다.');
+      });
     });
 
-    // 뒤로 가기
+    sidePanel.addEventListener('click', function(ev) {
+      const actionButton = ev.target.closest('[data-message-action]');
+      if (!actionButton) return;
+      const action = actionButton.getAttribute('data-message-action');
+      const messageId = Number(actionButton.getAttribute('data-message-id'));
+
+      if (action === 'cancel-compose-context') {
+        msgResetComposer(sidePanel);
+        return;
+      }
+      if (!messageId) return;
+
+      if (action === 'reply') {
+        msgStartReply(sidePanel, messageId);
+        return;
+      }
+      if (action === 'edit') {
+        msgStartEdit(sidePanel, messageId);
+        return;
+      }
+      if (action === 'delete') {
+        fetch('/api/messages/rooms/' + roomId + '/messages/' + messageId, {
+          method: 'DELETE'
+        }).then(function(res) {
+          return res.ok ? res.json() : res.text().then(function(message) {
+            throw new Error(message || '메시지 삭제에 실패했습니다.');
+          });
+        }).then(function() {
+          if (msgEditingMessageId === messageId || msgReplyTargetId === messageId) {
+            msgResetComposer(sidePanel);
+          }
+          if (!msgStompClient || !msgStompClient.connected) {
+            msgReloadCurrentRoom(panel, true);
+            loadMessageRooms(panel);
+            updateMsgUnreadBadge();
+          }
+        }).catch(function(error) {
+          showToast(error.message || '메시지 삭제에 실패했습니다.');
+        });
+        return;
+      }
+      if (action === 'like') {
+        fetch('/api/messages/rooms/' + roomId + '/messages/' + messageId + '/likes', {
+          method: 'POST'
+        }).then(function(res) {
+          return res.ok ? res.json() : res.text().then(function(message) {
+            throw new Error(message || '좋아요 처리에 실패했습니다.');
+          });
+        }).then(function() {
+          if (!msgStompClient || !msgStompClient.connected) {
+            msgReloadCurrentRoom(panel, false);
+          }
+        }).catch(function(error) {
+          showToast(error.message || '좋아요 처리에 실패했습니다.');
+        });
+      }
+    });
+
     sidePanel.querySelector('.msg-back-btn').addEventListener('click', function(ev) {
       ev.stopPropagation();
       msgCurrentRoomId = null;
+      msgCurrentMessages = [];
       sidePanel.innerHTML = '';
       panel.querySelector('.side-panel') || panel.appendChild(document.createElement('div'));
-      // 패널 전체를 다시 렌더링
-      const nav = document.getElementById('VerticalNavContent');
       panel.remove();
       resetAllNavIcons();
       document.querySelector('[aria-label="메시지"]').click();
@@ -794,6 +1033,7 @@ window.addEventListener('load', () => {
     sidePanel.querySelector('.side-panel__close').addEventListener('click', function(ev) {
       ev.stopPropagation();
       msgCurrentRoomId = null;
+      msgCurrentMessages = [];
       panel.remove();
       resetAllNavIcons();
     });
@@ -914,8 +1154,7 @@ window.addEventListener('load', () => {
             members.forEach(function (m, i) {
               const avatar = m.profileImage ? msgEscapeHtml(m.profileImage) : LOCAL_PROFILE_IMAGE;
               html += '<div class="msg-search-member" data-member-id="' + m.id + '" data-nickname="' + msgEscapeHtml(m.nickname) + '" data-avatar="' + msgEscapeHtml(avatar) + '" ' +
-                'style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px;cursor:pointer;transition:background .2s;" ' +
-                'onmouseover="this.style.background=\'#f0f0f0\'" onmouseout="this.style.background=\'transparent\'">' +
+                'style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:12px;cursor:pointer;transition:background .2s;">' +
                 '<img src="' + avatar + '" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">' +
                 '<div style="flex:1;overflow:hidden;">' +
                 '<div style="font-weight:600;font-size:15px;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + msgEscapeHtml(m.nickname) + '</div>' +

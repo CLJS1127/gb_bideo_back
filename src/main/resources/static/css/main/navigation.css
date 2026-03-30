@@ -374,6 +374,10 @@
     background: var(--hover-bg);
 }
 
+.msg-search-member:hover {
+    background: #f0f0f0;
+}
+
 .side-panel__msg-avatar {
     width: 48px;
     height: 48px;

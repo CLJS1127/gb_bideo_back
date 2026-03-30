@@ -282,7 +282,16 @@ body {
 
 .sort-group {
     display: flex;
+    align-items: center;
     gap: 8px;
+}
+
+.sort-divider {
+    width: 1px;
+    height: 24px;
+    background: #d9d9d9;
+    margin: 0 2px 0 6px;
+    flex-shrink: 0;
 }
 
 .sort-btn {

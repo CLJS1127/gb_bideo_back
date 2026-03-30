@@ -1,11 +1,14 @@
 package com.app.bideo.controller.message;
 
 import com.app.bideo.auth.member.CustomUserDetails;
+import com.app.bideo.dto.common.LikeToggleResponseDTO;
 import com.app.bideo.dto.member.MemberListResponseDTO;
 import com.app.bideo.dto.message.MessageResponseDTO;
 import com.app.bideo.dto.message.MessageRoomCreateRequestDTO;
 import com.app.bideo.dto.message.MessageRoomResponseDTO;
 import com.app.bideo.dto.message.MessageSendRequestDTO;
+import com.app.bideo.dto.message.MessageUpdateRequestDTO;
+import jakarta.validation.Valid;
 import com.app.bideo.service.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -50,9 +53,41 @@ public class MessageAPIController {
     public ResponseEntity<MessageResponseDTO> sendMessage(
             @PathVariable Long roomId,
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody MessageSendRequestDTO dto) {
-        MessageResponseDTO message = messageService.sendMessage(roomId, userDetails.getId(), dto.getContent());
+            @Valid @RequestBody MessageSendRequestDTO dto) {
+        MessageResponseDTO message = messageService.sendMessage(
+                roomId,
+                userDetails.getId(),
+                dto.getContent(),
+                dto.getReplyToMessageId()
+        );
         return ResponseEntity.ok(message);
+    }
+
+    @PatchMapping("/rooms/{roomId}/messages/{messageId}")
+    public ResponseEntity<MessageResponseDTO> updateMessage(
+            @PathVariable Long roomId,
+            @PathVariable Long messageId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody MessageUpdateRequestDTO dto) {
+        return ResponseEntity.ok(
+                messageService.updateMessage(roomId, messageId, userDetails.getId(), dto.getContent())
+        );
+    }
+
+    @DeleteMapping("/rooms/{roomId}/messages/{messageId}")
+    public ResponseEntity<MessageResponseDTO> deleteMessage(
+            @PathVariable Long roomId,
+            @PathVariable Long messageId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(messageService.deleteMessage(roomId, messageId, userDetails.getId()));
+    }
+
+    @PostMapping("/rooms/{roomId}/messages/{messageId}/likes")
+    public ResponseEntity<LikeToggleResponseDTO> toggleMessageLike(
+            @PathVariable Long roomId,
+            @PathVariable Long messageId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ResponseEntity.ok(messageService.toggleMessageLike(roomId, messageId, userDetails.getId()));
     }
 
     @PatchMapping("/rooms/{roomId}/read")

@@ -12,6 +12,7 @@ import com.app.bideo.dto.gallery.GallerySearchDTO;
 import com.app.bideo.dto.gallery.GalleryUpdateRequestDTO;
 import com.app.bideo.dto.interaction.CommentResponseDTO;
 import com.app.bideo.repository.gallery.GalleryDAO;
+import com.app.bideo.repository.interaction.BookmarkDAO;
 import com.app.bideo.repository.work.WorkDAO;
 import com.app.bideo.service.interaction.CommentService;
 import com.app.bideo.service.common.S3FileService;
@@ -38,6 +39,7 @@ public class GalleryService {
 
     private final GalleryDAO galleryDAO;
     private final WorkDAO workDAO;
+    private final BookmarkDAO bookmarkDAO;
     private final CommentService commentService;
     private final NotificationService notificationService;
     private final S3FileService s3FileService;
@@ -102,6 +104,7 @@ public class GalleryService {
 
         Long memberId = resolveAuthenticatedMemberId();
         detail.setIsLiked(memberId != null && galleryDAO.existsLike(memberId, id));
+        detail.setIsBookmarked(memberId != null && bookmarkDAO.exists(memberId, "GALLERY", id));
         return detail;
     }
 
@@ -162,8 +165,12 @@ public class GalleryService {
 
     public List<CommentResponseDTO> writeComment(Long galleryId, Long memberId, String content) {
         Long resolvedMemberId = resolveMemberId(memberId);
-        Long galleryOwnerId = galleryDAO.findMemberIdById(galleryId)
+        GalleryDetailResponseDTO galleryDetail = galleryDAO.findById(galleryId)
                 .orElseThrow(() -> new IllegalArgumentException("gallery not found"));
+        if (Boolean.FALSE.equals(galleryDetail.getAllowComment())) {
+            throw new IllegalStateException("comment not allowed");
+        }
+        Long galleryOwnerId = galleryDetail.getMemberId();
 
         String normalizedContent = content == null ? "" : content.trim();
         if (normalizedContent.isBlank()) {
