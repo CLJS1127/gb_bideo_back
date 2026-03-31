@@ -154,7 +154,7 @@
                 <div class="creator-sub" id="auctionCreatorSub">경매 진행 중</div>
                 <div class="creator-tags" id="auctionCreatorTags"></div>
             </div>
-            <button class="btn-follow">+ 팔로우</button>
+            <button class="btn-follow" id="auctionFollowBtn" type="button">+ 팔로우</button>
         </div>
 
         <!-- 내용 -->
@@ -229,6 +229,16 @@
             <div class="deadline-date" id="auctionDeadlineDate">마감 일정</div>
         </div>
 
+        <div class="bid-history-section">
+            <div class="bid-history-header">
+                <span class="bid-history-title">실시간 입찰 내역</span>
+                <span class="bid-history-caption">최신 입찰 순</span>
+            </div>
+            <div class="bid-history-list" id="auctionBidHistoryList">
+                <div class="bid-history-empty">아직 입찰 내역이 없습니다.</div>
+            </div>
+        </div>
+
         <!-- 현재 최고가 -->
         <div class="price-section">
             <div class="price-label">현재 최고가</div>
@@ -262,7 +272,7 @@
         <div class="bid-btn-section">
             <button class="btn-bid-main" id="bidActionBtn" type="button" onclick="doBid()">입찰하기</button>
             <div class="btn-row-2">
-                <button class="btn-sub">
+                <button class="btn-sub" id="auctionBookmarkBtn" type="button">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"></path>
                     </svg>

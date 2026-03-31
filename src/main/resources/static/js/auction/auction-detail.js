@@ -4,6 +4,8 @@ const auctionThumbStrip = document.getElementById("auctionThumbStrip");
 const deleteWorkButton = document.getElementById("deleteWorkBtn");
 const bidActionButton = document.getElementById("bidActionBtn");
 const shareButton = document.getElementById("shareBtn");
+const followButton = document.getElementById("auctionFollowBtn");
+const bookmarkButton = document.getElementById("auctionBookmarkBtn");
 const auctionShareModal = document.getElementById("workShareModal");
 const auctionShareCloseButton = document.getElementById("auctionShareCloseButton");
 const workShareSearchInput = document.getElementById("workShareSearchInput");
@@ -11,6 +13,7 @@ const workShareSelectedList = document.getElementById("workShareSelectedList");
 const workShareRecipientList = document.getElementById("workShareRecipientList");
 const workShareMessageInput = document.getElementById("workShareMessageInput");
 const workShareSendButton = document.getElementById("workShareSendButton");
+const bidHistoryList = document.getElementById("auctionBidHistoryList");
 
 let auctionDetailState = {
     auction: null,
@@ -18,9 +21,14 @@ let auctionDetailState = {
     selectedFileIndex: 0,
     currentMemberId: null,
     countdownTimerId: null,
+    bidHistoryTimerId: null,
     isBidSubmitting: false,
     shareRecipients: [],
-    selectedShareRecipients: []
+    selectedShareRecipients: [],
+    isFollowingCreator: false,
+    isBookmarked: false,
+    isFollowSubmitting: false,
+    isBookmarkSubmitting: false
 };
 
 function showAuctionSnackbar(message, type = "auction", duration = 3000, action = null) {
@@ -323,6 +331,161 @@ async function loadCurrentMember() {
     }
 }
 
+function formatBidTime(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+
+    const diffMs = Date.now() - date.getTime();
+    if (diffMs < 60000) return "방금 전";
+
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes < 60) return `${diffMinutes}분 전`;
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours}시간 전`;
+
+    return date.toLocaleString("ko-KR", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+async function loadFollowState() {
+    if (!auctionDetailState.currentMemberId || !auctionDetailState.work?.memberId) {
+        auctionDetailState.isFollowingCreator = false;
+        syncFollowButtonState();
+        return;
+    }
+
+    if (Number(auctionDetailState.currentMemberId) === Number(auctionDetailState.work.memberId)) {
+        auctionDetailState.isFollowingCreator = false;
+        syncFollowButtonState();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/members/${auctionDetailState.currentMemberId}/followings`);
+        if (!response.ok) throw new Error();
+        const followings = await response.json();
+        auctionDetailState.isFollowingCreator = followings.some((member) => Number(member.memberId) === Number(auctionDetailState.work.memberId));
+    } catch (error) {
+        auctionDetailState.isFollowingCreator = false;
+    }
+
+    syncFollowButtonState();
+}
+
+async function loadBookmarkState() {
+    if (!auctionDetailState.work?.id) {
+        auctionDetailState.isBookmarked = false;
+        syncBookmarkButtonState();
+        return;
+    }
+
+    if (!auctionDetailState.currentMemberId) {
+        auctionDetailState.isBookmarked = Boolean(auctionDetailState.work?.isBookmarked);
+        syncBookmarkButtonState();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/bookmarks/check?targetType=WORK&targetId=${auctionDetailState.work.id}`);
+        if (!response.ok) throw new Error();
+        const result = await response.json();
+        auctionDetailState.isBookmarked = Boolean(result.bookmarked);
+    } catch (error) {
+        auctionDetailState.isBookmarked = Boolean(auctionDetailState.work?.isBookmarked);
+    }
+
+    syncBookmarkButtonState();
+}
+
+function syncFollowButtonState() {
+    if (!followButton) return;
+
+    const isOwner = Number(auctionDetailState.currentMemberId || 0) > 0
+        && Number(auctionDetailState.currentMemberId) === Number(auctionDetailState.work?.memberId || 0);
+
+    if (isOwner) {
+        followButton.hidden = true;
+        return;
+    }
+
+    followButton.hidden = false;
+    followButton.classList.toggle("is-active", auctionDetailState.isFollowingCreator);
+    followButton.textContent = auctionDetailState.isFollowingCreator ? "팔로잉" : "+ 팔로우";
+}
+
+function syncBookmarkButtonState() {
+    if (!bookmarkButton) return;
+    bookmarkButton.classList.toggle("is-active", auctionDetailState.isBookmarked);
+}
+
+function renderBidHistory(bids) {
+    if (!bidHistoryList) return;
+
+    if (!bids?.length) {
+        bidHistoryList.innerHTML = `<div class="bid-history-empty">아직 입찰 내역이 없습니다.</div>`;
+        return;
+    }
+
+    bidHistoryList.innerHTML = bids.slice(0, 10).map((bid) => `
+        <div class="bid-history-item${bid.isWinning ? " is-winning" : ""}">
+            <div class="bid-history-main">
+                <div class="bid-history-name">${escapeHtml(bid.memberNickname || "입찰자")}${bid.isWinning ? " · 최고가" : ""}</div>
+                <div class="bid-history-meta">${formatBidTime(bid.createdDatetime)}</div>
+            </div>
+            <div class="bid-history-price">${formatPrice(bid.bidPrice)}원</div>
+        </div>
+    `).join("");
+}
+
+async function loadBidHistory() {
+    if (!auctionDetailState.auction?.id) return;
+
+    try {
+        const response = await fetch(`/api/auctions/${auctionDetailState.auction.id}/bids?page=0`);
+        if (!response.ok) throw new Error();
+        const bids = await response.json();
+        renderBidHistory(bids);
+    } catch (error) {
+        if (!bidHistoryList?.children.length) {
+            renderBidHistory([]);
+        }
+    }
+}
+
+async function refreshAuctionPanel() {
+    if (!auctionDetailState.auction?.id) return;
+
+    try {
+        const response = await fetch(`/api/auctions/${auctionDetailState.auction.id}`);
+        if (!response.ok) throw new Error();
+        const latestAuction = await response.json();
+        auctionDetailState.auction = latestAuction;
+        renderAuctionDetail(latestAuction);
+    } catch (error) {
+        // 실시간 갱신 실패는 조용히 무시한다.
+    }
+}
+
+function startBidHistoryPolling() {
+    if (auctionDetailState.bidHistoryTimerId) {
+        window.clearInterval(auctionDetailState.bidHistoryTimerId);
+    }
+
+    refreshAuctionPanel();
+    loadBidHistory();
+    auctionDetailState.bidHistoryTimerId = window.setInterval(() => {
+        refreshAuctionPanel();
+        loadBidHistory();
+    }, 5000);
+}
+
 function renderAuctionDetail(auction) {
     const resolvedCurrentPrice = auction.currentPrice || auction.startingPrice || 0;
     const bidIncrement = auction.bidIncrement || 10000;
@@ -441,6 +604,8 @@ async function initializeAuctionDetail() {
 
         renderWorkDetail(work);
         renderAuctionDetail(auction);
+        startBidHistoryPolling();
+        await Promise.all([loadFollowState(), loadBookmarkState()]);
     } catch (error) {
         showAuctionSnackbar(error.message || "경매 상세를 불러오지 못했습니다.", "error");
     }
@@ -536,6 +701,8 @@ async function doBid() {
         auctionDetailState.auction.currentPrice = nextPrice;
         auctionDetailState.auction.bidCount = Number(auctionDetailState.auction.bidCount || 0) + 1;
         renderAuctionDetail(auctionDetailState.auction);
+        await refreshAuctionPanel();
+        await loadBidHistory();
         showAuctionSnackbar("입찰이 완료되었습니다.", "auction");
     } catch (error) {
         showAuctionSnackbar(error.message || "입찰에 실패했습니다.", "error");
@@ -595,6 +762,95 @@ async function deleteAuctionWork() {
     }
 }
 
+async function toggleAuctionFollow() {
+    if (!auctionDetailState.work?.memberId) {
+        showAuctionSnackbar("작가 정보를 찾을 수 없습니다.", "error");
+        return;
+    }
+    if (!auctionDetailState.currentMemberId) {
+        showAuctionSnackbar("로그인 후 팔로우할 수 있습니다.", "error");
+        return;
+    }
+    if (auctionDetailState.isFollowSubmitting) {
+        return;
+    }
+
+    auctionDetailState.isFollowSubmitting = true;
+    if (followButton) followButton.disabled = true;
+
+    try {
+        const response = await fetch(`/api/members/${auctionDetailState.work.memberId}/follow`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "팔로우 처리에 실패했습니다.");
+        }
+
+        const result = await response.json();
+        auctionDetailState.isFollowingCreator = Boolean(result.followed);
+        syncFollowButtonState();
+        showAuctionSnackbar(
+            auctionDetailState.isFollowingCreator ? "작가를 팔로우했습니다." : "팔로우를 취소했습니다.",
+            "follow"
+        );
+    } catch (error) {
+        showAuctionSnackbar(error.message || "팔로우 처리에 실패했습니다.", "error");
+    } finally {
+        auctionDetailState.isFollowSubmitting = false;
+        if (followButton) followButton.disabled = false;
+    }
+}
+
+async function toggleAuctionBookmark() {
+    if (!auctionDetailState.work?.id) {
+        showAuctionSnackbar("작품 정보를 찾을 수 없습니다.", "error");
+        return;
+    }
+    if (!auctionDetailState.currentMemberId) {
+        showAuctionSnackbar("로그인 후 찜할 수 있습니다.", "error");
+        return;
+    }
+    if (auctionDetailState.isBookmarkSubmitting) {
+        return;
+    }
+
+    auctionDetailState.isBookmarkSubmitting = true;
+    if (bookmarkButton) bookmarkButton.disabled = true;
+
+    try {
+        const response = await fetch("/api/bookmarks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                targetType: "WORK",
+                targetId: auctionDetailState.work.id
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "찜하기 처리에 실패했습니다.");
+        }
+
+        const result = await response.json();
+        auctionDetailState.isBookmarked = Boolean(result.bookmarked);
+        syncBookmarkButtonState();
+        showAuctionSnackbar(
+            auctionDetailState.isBookmarked ? "찜한 작품에 추가했습니다." : "찜한 작품에서 제거했습니다.",
+            "success"
+        );
+    } catch (error) {
+        showAuctionSnackbar(error.message || "찜하기 처리에 실패했습니다.", "error");
+    } finally {
+        auctionDetailState.isBookmarkSubmitting = false;
+        if (bookmarkButton) bookmarkButton.disabled = false;
+    }
+}
+
 initializeAuctionDetail();
 
 shareButton?.addEventListener("click", async () => {
@@ -607,6 +863,8 @@ shareButton?.addEventListener("click", async () => {
         showAuctionSnackbar(error.message || "공유 대상을 불러오지 못했습니다.", "error");
     }
 });
+followButton?.addEventListener("click", toggleAuctionFollow);
+bookmarkButton?.addEventListener("click", toggleAuctionBookmark);
 auctionShareCloseButton?.addEventListener("click", closeShareModal);
 workShareSearchInput?.addEventListener("input", (event) => {
     renderShareRecipientList(event.target.value || "");

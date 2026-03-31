@@ -199,6 +199,7 @@
             transition: background 0.15s, color 0.15s;
         }
         .btn-follow:hover { background: #111; color: #f0d999; }
+        .btn-follow.is-active { background: #111; color: #f0d999; }
 
         /* ── 작가의 말 ── */
         .statement-section { padding: 22px 0; border-bottom: 1px solid #eee; }
@@ -314,6 +315,78 @@
             font-size: 11px; color: #bbb; margin-top: 8px; text-align: center;
         }
 
+        .bid-history-section {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fcfcfc;
+        }
+        .bid-history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .bid-history-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111;
+        }
+        .bid-history-caption {
+            font-size: 11px;
+            color: #999;
+        }
+        .bid-history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .bid-history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .bid-history-item.is-winning {
+            border-color: #f0d999;
+            background: #fffaf0;
+        }
+        .bid-history-main {
+            min-width: 0;
+            flex: 1;
+        }
+        .bid-history-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 2px;
+        }
+        .bid-history-meta {
+            font-size: 11px;
+            color: #888;
+        }
+        .bid-history-price {
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: 700;
+            color: #111;
+        }
+        .bid-history-empty {
+            padding: 14px 10px;
+            border: 1px dashed #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            background: #fff;
+        }
+
         /* 현재 최고가 */
         .price-section {
             padding: 14px 18px;
@@ -406,6 +479,16 @@
             stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
         }
         .btn-sub:hover { border-color: #f0d999; color: #111; }
+        .btn-sub.is-active { border-color: #111; background: #111; color: #f0d999; }
+        #auctionBookmarkBtn.is-active {
+            border-color: #111;
+            background: #111;
+            color: #f0d999;
+        }
+        #auctionBookmarkBtn.is-active svg {
+            fill: currentColor;
+            stroke: currentColor;
+        }
         .btn-wish { color: #c44; }
         .btn-wish:hover { border-color: #f5b5b5; background: #fff7f7; color: #c00; }
         #deleteWorkBtn[hidden] {

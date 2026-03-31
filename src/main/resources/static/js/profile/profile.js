@@ -2518,24 +2518,6 @@ document.getElementById('workDetailTradeButton')?.addEventListener('click', () =
 });
 
 bindWorkBlockModalEvents();
-  document.getElementById('workDetailSavedButton')?.addEventListener('click', async () => {
-    const savedButton = document.getElementById('workDetailSavedButton');
-    if (!savedButton || !currentWorkDetail?.id) return;
-
-    try {
-      const response = await fetch('/api/bookmarks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ targetType: 'WORK', targetId: currentWorkDetail.id })
-      });
-      const result = await response.json();
-      isWorkSaved = Boolean(result.bookmarked);
-    } catch {
-      isWorkSaved = !isWorkSaved;
-    }
-    savedButton.classList.toggle('is-saved', isWorkSaved);
-  });
 
   auctionRegisterPriceInput?.addEventListener('input', (event) => {
     const digitsOnly = event.target.value.replace(/,/g, '').replace(/\D/g, '');

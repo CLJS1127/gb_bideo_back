@@ -53,6 +53,8 @@
 \ir tbl_withdrawal_request.sql
 \ir seed_badge.sql
 \ir tbl_like.sql
+\ir tbl_message_like
+
 
 -- ----------------------------------------------------------
 -- tbl_message 누락 컬럼 추가 (기존 DB 마이그레이션용)
